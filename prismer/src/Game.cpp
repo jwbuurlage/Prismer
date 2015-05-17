@@ -4,16 +4,15 @@
 
 using namespace Arya;
 
+namespace Prismer {
+
 Game::Game()
 {
-    totalTime = 0;
-    session = 0;
+    totalTime = 0.0f;
 }
 
 Game::~Game()
 {
-    if (session)
-        delete session;
 }
 
 bool Game::init()
@@ -35,11 +34,10 @@ bool Game::init()
     input->bind("ctrl+shift+f", [](bool down) { if(down) GameLogDebug << "ctrl+shift+f" << endLog; });
     input->bind("shift+space", [](bool down) { if(down) GameLogDebug << "You pressed shift+space" << endLog; });
 
-    if (session)
-        delete session;
-    session = new GameSessionClient;
+    session = make_shared<GameSessionClient>();
 
-    if (!session->init()) return false;
+    if (!session->init())
+        return false;
 
     return true;
 }
@@ -56,3 +54,4 @@ void Game::update(float dt)
     session->update(dt);
 }
 
+} // namespace Prismer

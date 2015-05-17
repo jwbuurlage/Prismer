@@ -1,11 +1,13 @@
 #include <glm/glm.hpp>
 #include "Arya.h"
 
+namespace Prismer {
+
 class GameSessionInput
 {
     public:
         GameSessionInput();
-        virtual ~GameSessionInput();
+        ~GameSessionInput();
 
         void init();
 
@@ -30,3 +32,5 @@ class GameSessionInput
 
         vec2 originalMousePos;
 };
+
+}

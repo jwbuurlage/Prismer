@@ -2,6 +2,8 @@
 #include "GameLogger.h"
 #include <glm/gtx/rotate_vector.hpp>
 
+namespace Prismer {
+
 using Arya::Camera;
 using std::bind;
 
@@ -135,3 +137,4 @@ void GameSessionInput::mouseMoved(int x, int y, int dx, int dy)
     return;
 }
 
+}

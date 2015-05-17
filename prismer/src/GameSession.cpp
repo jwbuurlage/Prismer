@@ -2,6 +2,8 @@
 #include "GameLogger.h"
 #include "Unit.h"
 
+namespace Prismer {
+
 GameSession::GameSession()
 {
     gameTimer = 0;
@@ -17,7 +19,7 @@ GameSession::~GameSession()
 Unit* GameSession::createUnit(UnitInfo info)
 {
     auto id = generateId();
-    auto unit = new Unit(id, info, this);
+    auto unit = new Unit(id, info, shared_from_this());
     unitMap.insert(std::pair<int, Unit*>(unit->getId(),unit));
     return unit;
 }
@@ -39,3 +41,5 @@ Unit* GameSession::getUnitById(int id)
     if(iter == unitMap.end()) return 0;
     return iter->second;
 }
+
+} // namespace Prismer

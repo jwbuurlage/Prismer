@@ -2,7 +2,7 @@
 
 int main()
 {
-    Game* game = new Game();
+    auto game = new Prismer::Game();
 
     if(!game->init()) {
         return -1;

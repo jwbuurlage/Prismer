@@ -4,18 +4,14 @@
 #include "GameSessionInput.h"
 #include "Unit.h"
 
+namespace Prismer {
+
 GameSessionClient::GameSessionClient() : GameSession()
 {
-    input = 0;
 }
 
 GameSessionClient::~GameSessionClient()
 {
-    //if(unitCells) delete unitCells;
-
-    if (input)
-        delete input;
-
     GameLogInfo << "Game session ended" << endLog;
 }
 
@@ -26,7 +22,7 @@ bool GameSessionClient::init()
     cam->setPitch(-glm::radians(60.0f));
     cam->setZoom(100.0f);
 
-    input = new GameSessionInput;
+    input = make_unique<GameSessionInput>();
     input->init();
 
     return true;
@@ -50,3 +46,4 @@ void GameSessionClient::updateGameLogic(int elapsedTime)
     }
 }
 
+} // namespace Prismer

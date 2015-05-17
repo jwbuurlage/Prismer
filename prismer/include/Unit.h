@@ -1,3 +1,11 @@
+#include <Arya.h>
+
+#include <memory>
+
+namespace Prismer {
+
+using std::shared_ptr;
+
 struct UnitInfo
 {
     int type_id;
@@ -11,7 +19,7 @@ class Unit
     public:
         Unit(int id,
             UnitInfo info,
-            GameSession* session) {
+            shared_ptr<GameSession> session) {
             _id = id;
             _info = info;
             _session = session;
@@ -27,5 +35,8 @@ class Unit
     private:
         int _id;
         UnitInfo _info;
-        GameSession* _session;
+        shared_ptr<GameSession> _session;
+        shared_ptr<Arya::Entity> _entity;
 };
+
+} // namespace Prismer

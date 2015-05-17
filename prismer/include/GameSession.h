@@ -7,11 +7,15 @@
 #pragma once
 
 #include <map>
+#include <memory>
+
+namespace Prismer {
 
 class Unit;
 class UnitInfo;
 
 class GameSession
+    : public std::enable_shared_from_this<GameSession>
 {
     public:
         GameSession();
@@ -54,3 +58,5 @@ class GameSession
         // Called in Unit deconstructor
         void destroyUnit(int id);
 };
+
+} // namespace Prismer

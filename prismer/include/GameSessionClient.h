@@ -1,8 +1,14 @@
 //GameSessionClient is the main (root) class for all ingame related things
 #pragma once
-#include "GameSession.h"
 
+#include "GameSession.h"
 #include <vector>
+#include <memory>
+
+namespace Prismer {
+
+using std::unique_ptr;
+using std::make_unique;
 using std::vector;
 
 class GameSessionInput;
@@ -31,6 +37,8 @@ class GameSessionClient : public GameSession
         void updateGameLogic(int elapsedTime); //in ms
 
      private:
-        GameSessionInput* input;
+        unique_ptr<GameSessionInput> input;
         vector<int> clients;
 };
+
+} // namespace Prismer

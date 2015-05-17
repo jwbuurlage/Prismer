@@ -1,4 +1,10 @@
 #include "Arya.h"
+#include <memory>
+
+namespace Prismer {
+
+using std::shared_ptr;
+using std::make_shared;
 
 class GameSessionClient;
 
@@ -18,5 +24,7 @@ class Game
 
         float totalTime;
 
-        GameSessionClient* session;
+        shared_ptr<GameSessionClient> session;
 };
+
+} // namespace Prismer
