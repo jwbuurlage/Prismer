@@ -14,4 +14,5 @@ shaders/version_convert.rb
 !/build/CMakeLists.txt
 !/game/build/CMakeLists.txt
 !/game/buildserver/CMakeLists.txt
+!/prismer/build/CMakeLists.txt
 !/tools/build/CMakeLists.txt
