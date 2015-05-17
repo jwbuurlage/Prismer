@@ -7,15 +7,13 @@ SET(
 
 SET(
     PROJECT_SOURCES
-    "../src/Faction.cpp"
     "../src/Game.cpp"
     "../src/GameLogger.cpp"
     "../src/GameSession.cpp"
     "../src/GameSessionClient.cpp"
     "../src/GameSessionInput.cpp"
-    "../src/main.cpp"
     "../src/Unit.cpp"
-    "../src/UnitInfo.cpp"
+    "../src/main.cpp"
 )
 
 SET(

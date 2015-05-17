@@ -17,7 +17,6 @@ class Game
         void update(float dt);
 
         float totalTime;
-        bool entityCreated;
 
         GameSessionClient* session;
 };

@@ -1,16 +1,15 @@
-//GameSession is a base class for GameSessionClient and GameSessionServer
-//It serves as a Unit and Faction factory class
-//Units and Factions are created with createUnit and createFaction
-//and they can be deleted by just calling delete on them.
-//Every Unit and Faction has a pointer to this class
-//so that it can de-register itself at deconstruction
+// GameSession is a base class for GameSessionClient and GameSessionServer
+// It serves as a Unit and Faction factory class
+// Units and Factions are created with createUnit and createFaction
+// and they can be deleted by just calling delete on them.
+// Every Unit and Faction has a pointer to this class
+// so that it can de-register itself at deconstruction
 #pragma once
 
 #include <map>
 
 class Unit;
-class Faction;
-class Map;
+class UnitInfo;
 
 class GameSession
 {
@@ -27,34 +26,31 @@ class GameSession
         //! Returns the time since the start of the game in milliseconds
         //! When an event arrives with a certain timestamp, this timer
         //! should be used to correctly predict its curent value
-        int getGameTime() const { return gameTimer; }
-
-        //! Get the Map object
-        Map* getMap() const { return map; }
+        int getGameTime() const {
+            return gameTimer;
+        }
 
         //! Creates a unit
-        Unit* createUnit(int id, int type);
+        Unit* createUnit(UnitInfo info);
 
-        //! Find a unit. ALWAYS check the return value, 0 if not found.
+        /** Generate a unique id */
+        int generateId() const { return 1; }
+
+        /** Return unit by id */
         Unit* getUnitById(int id);
 
-        //! Creates a faction
-        Faction* createFaction(int id);
-        
-        //! Find a faction. ALWAYS check the return value, 0 if not found.
-        Faction* getFactionById(int id);
     protected:
         int gameTimer;
-        Map* map;
 
-        const std::map<int,Unit*>& getUnitMap() const { return unitMap; }
-        const std::map<int,Faction*>& getFactionMap() const { return factionMap; }
+        const std::map<int, Unit*>& getUnitMap() const {
+            return unitMap;
+        }
+
     private:
         friend class Unit;
-        friend class Faction;
-        //We have to use std:: here because we also have a variable called map
+
         std::map<int,Unit*> unitMap;
-        std::map<int,Faction*> factionMap;
-        void destroyUnit(int id); //called in Unit deconstructor
-        void destroyFaction(int id); //called in Faction deconstructor
+
+        // Called in Unit deconstructor
+        void destroyUnit(int id);
 };
