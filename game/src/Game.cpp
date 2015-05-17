@@ -61,17 +61,23 @@ void Game::update(float dt)
         entityCreated = true;
 
         Arya::Model* model = root->getModelManager()->getModel("ogros.aryamodel");
+        Arya::Model* triangle = root->getModelManager()->getModel("triangle");
 
         int counter = 0;
         for(int x = 0; x < 10; ++x) {
             for(int y = 0; y < 10; ++y) {
                 Entity* ent = root->getWorld()->getEntitySystem()->createEntity();
                 ent->setPosition(vec3(30.0f*x,30.0f*y,0));
-                ent->setModel(model);
+                ent->setGraphics(model);
                 ent->getGraphics()->setAnimation( animNames[counter%animCount] );
                 ++counter;
+
+                ent = root->getWorld()->getEntitySystem()->createEntity();
+                ent->setPosition(vec3(30.0f*x + 10.0f,30.0f*y,10.0f));
+                ent->setGraphics(triangle);
             }
         }
+
     }
 }
 

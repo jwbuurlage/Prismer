@@ -9,6 +9,7 @@
 #pragma once
 #include "Resources.h"
 #include "AnimationBase.h"
+#include "GraphicsComponent.h"
 
 #include <vector>
 #include <string>
@@ -22,6 +23,32 @@ namespace Arya
 {
     class Geometry;
     class Material;
+    class Model;
+    class AnimationState;
+
+    class ModelGraphicsComponent : public GraphicsComponent
+    {
+        public:
+            ModelGraphicsComponent();
+            ~ModelGraphicsComponent();
+            RenderType getRenderType() const override { return TYPE_MODEL; }
+
+            Model* getModel() const { return model; }
+            AnimationState* getAnimationState() const override { return animState; }
+            void setAnimation(const char* name) override;
+            void updateAnimation(float elapsedTime) override;
+            void setAnimationTime(float time) override;
+
+            //! setModel releases the old model and animationstate.
+            //! If the new model is nonzero,
+            //! it creates a new AnimationState object
+            void setModel(Model* model);
+
+        private:
+            Model* model;
+            AnimationState* animState;
+    };
+
 
     class Mesh
     {
@@ -93,11 +120,13 @@ namespace Arya
             ModelManager();
             ~ModelManager();
 
-            bool initialize();
+            bool init();
             void cleanup();
 
             Model* getModel(string filename){ return getResource(filename); }
         private:
             Model* loadResource(string filename );
+
+            void loadPrimitives();
     };
 }

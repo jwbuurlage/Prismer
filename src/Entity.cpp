@@ -1,4 +1,5 @@
 #include "Entity.h"
+#include "GraphicsComponent.h"
 #include "Models.h"
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -35,7 +36,14 @@ namespace Arya
         if (graphicsComponent) graphicsComponent->updateAnimation(elapsedTime);
     }
 
-    void Entity::setModel(Model* model)
+    void Entity::setGraphics(GraphicsComponent* gr)
+    {
+        if (graphicsComponent == gr) return;
+        if (graphicsComponent) delete graphicsComponent;
+        graphicsComponent = gr;
+    }
+
+    void Entity::setGraphics(Model* model)
     {
         if (graphicsComponent) delete graphicsComponent;
         ModelGraphicsComponent* comp = new ModelGraphicsComponent;
@@ -43,46 +51,4 @@ namespace Arya
         graphicsComponent = comp;
     }
 
-    //TODO: Separate GraphicsComponent file
-    ModelGraphicsComponent::ModelGraphicsComponent()
-    {
-        model = 0;
-        animState = 0;
-    }
-
-    ModelGraphicsComponent::~ModelGraphicsComponent()
-    {
-        //Release model and animation state
-        setModel(0);
-    }
-
-    void ModelGraphicsComponent::setAnimation(const char* name)
-    {
-        if (animState) animState->setAnimation(name);
-    }
-
-    void ModelGraphicsComponent::updateAnimation(float elapsedTime)
-    {
-        if (animState) animState->updateAnimation(elapsedTime);
-    }
-
-    void ModelGraphicsComponent::setAnimationTime(float time)
-    {
-        if (animState) animState->setAnimationTime(time);
-    }
-
-    void ModelGraphicsComponent::setModel(Model* newModel)
-    {
-        if (model) model->release();
-        if (animState) delete animState;
-        animState = 0;
-
-        //Set new model and get a new animation state object
-        //(subclass of AnimationState)
-        model = newModel;
-        if (model) {
-            animState = model->createAnimationState();
-            model->addRef();
-        }
-    }
 }

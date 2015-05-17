@@ -10,66 +10,13 @@ using glm::mat4;
 namespace Arya
 {
     class Model;
-    class AnimationState;
-
-    enum RenderType
-    {
-        TYPE_NONE = 0,
-        TYPE_MODEL,
-        TYPE_TERRAIN
-    };
-
-    class GraphicsComponent
-    {
-        public:
-            GraphicsComponent() {}
-            virtual ~GraphicsComponent() {}
-            virtual RenderType getRenderType() const { return TYPE_NONE; }
-
-            virtual Model* getModel() const { return 0; }
-            virtual AnimationState* getAnimationState() const { return 0; }
-
-            //! Set the animation
-            virtual void setAnimation(const char* /* name */) { return; }
-
-            //! Call this every frame to let the animation run
-            virtual void updateAnimation(float /* elapsedTime */) { return; }
-
-            //! Set the animation time for the currently set animation
-            //! Meaning it will speedup or slowdown the animation so that
-            //! it finishes in the specified time
-            //! Usefull for making attack animations depend on attack speed
-            virtual void setAnimationTime(float /* time */) { return; }
-    };
-
-    class ModelGraphicsComponent : public GraphicsComponent
-    {
-        public:
-            ModelGraphicsComponent();
-            ~ModelGraphicsComponent();
-            RenderType getRenderType() const override { return TYPE_MODEL; }
-
-            Model* getModel() const override { return model; }
-            AnimationState* getAnimationState() const override { return animState; }
-            void setAnimation(const char* name) override;
-            void updateAnimation(float elapsedTime) override;
-            void setAnimationTime(float time) override;
-
-            //! setModel releases the old model and animationstate.
-            //! If the new model is nonzero,
-            //! it creates a new AnimationState object
-            void setModel(Model* model);
-
-        private:
-            Model* model;
-            AnimationState* animState;
-    };
+    class Primitive;
+    class GraphicsComponent;
 
     class Entity
     {
         private:
-            //TODO: is this ok?
-            //Only EntitySystem can create entities
+            //Private constructor so that only EntitySystem can create entities
             friend class EntitySystem;
             Entity();
             ~Entity();
@@ -89,11 +36,15 @@ namespace Arya
             //! Updates all components
             void update(float elapsedTime);
 
-            //! Creates a ModelGraphicsComponent with the specified model
-            void setModel(Model* model);
-
             //! Get the graphics component (can be zero)
             GraphicsComponent* getGraphics() const { return graphicsComponent; }
+
+            //! Set the graphics component (can be zero)
+            //! If another graphics component was set, it will be deleted
+            void setGraphics(GraphicsComponent* gr);
+
+            //! Creates a ModelGraphicsComponent with the specified model
+            void setGraphics(Model* model);
 
         private:
             vec3 position;

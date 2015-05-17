@@ -3,10 +3,11 @@
 namespace Arya
 {
     class World;
-    class Renderer;
     class Camera;
+    class Renderer;
     class ShaderProgram;
     class GraphicsComponent;
+    class ModelGraphicsComponent;
 
     class Graphics
     {
@@ -43,6 +44,6 @@ namespace Arya
             //Shaders should be in renderspec
             ShaderProgram*  defaultShader;
 
-            void renderModel(GraphicsComponent* gr);
+            void renderModel(ModelGraphicsComponent* gr);
     };
 }

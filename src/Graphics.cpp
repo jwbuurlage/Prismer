@@ -74,7 +74,7 @@ namespace Arya
             RenderType type = gr->getRenderType();
             switch(type) {
                 case TYPE_MODEL:
-                    renderModel(gr);
+                    renderModel((ModelGraphicsComponent*)gr);
                     break;
                 case TYPE_TERRAIN:
                     break;
@@ -90,7 +90,7 @@ namespace Arya
         camera->update(elapsed);
     }
 
-    void Graphics::renderModel(GraphicsComponent* gr)
+    void Graphics::renderModel(ModelGraphicsComponent* gr)
     {
         Model* model = gr->getModel();
         if(!model) return;
@@ -125,5 +125,4 @@ namespace Arya
         for(Mesh* mesh : model->getMeshes())
             renderer->renderMesh(mesh, frame, defaultShader);
     }
-
 }

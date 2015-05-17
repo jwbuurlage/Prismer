@@ -49,6 +49,7 @@ SET(
     "../src/Locator.cpp"
     "../src/Materials.cpp"
     "../src/Models.cpp"
+    "../src/Primitives.cpp"
     "../src/Renderer.cpp"
     "../src/Root.cpp"
     "../src/Shaders.cpp"
