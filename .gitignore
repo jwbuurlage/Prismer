@@ -1,6 +1,7 @@
 build/*
 game/build/*
 game/buildserver/*
+prismer/build/*
 tools/build/*
 obj/
 bin/*
