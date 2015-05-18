@@ -30,7 +30,8 @@ bool GameSessionClient::init()
 
 void GameSessionClient::update(float elapsedTime)
 {
-    if(input) input->update(elapsedTime);
+    if (input)
+        input->update(elapsedTime);
 }
 
 void GameSessionClient::updateGameLogic(int elapsedTime)
