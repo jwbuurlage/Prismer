@@ -2,13 +2,13 @@
 
 int main()
 {
-    auto game = new Prismer::Game();
+    Prismer::Game game;
 
-    if(!game->init()) {
+    if(!game.init()) {
         return -1;
     }
 
-    game->run();
+    game.run();
 
     return 0;
 }
