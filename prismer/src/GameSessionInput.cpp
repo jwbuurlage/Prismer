@@ -1,18 +1,15 @@
+#include "GameSession.h"
 #include "GameSessionInput.h"
 #include "GameLogger.h"
-#include <glm/gtx/rotate_vector.hpp>
+#include "Unit.h"
 
 namespace Prismer {
 
 using Arya::Camera;
-using std::bind;
 
-GameSessionInput::GameSessionInput()
+GameSessionInput::GameSessionInput(shared_ptr<GameSession> session)
 {
-}
-
-GameSessionInput::~GameSessionInput()
-{
+    _session = session;
 }
 
 void GameSessionInput::init()
@@ -33,10 +30,18 @@ void GameSessionInput::init()
                 GameLogInfo << "button" << endLog;
             });
 
-    //TODO: Get keys from config
-    input->bind("W", [this](bool down) {
+    input->bind("w", [this](bool down) {
             // create unit?
-            GameLogInfo << "create unit" << endLog;
+            if(down) {
+                GameLogInfo << "create unit" << endLog;
+                auto unit = _session->createUnit(UnitInfo(1));
+            }
+        });
+
+    input->bind("l", [this](bool down) {
+            // create unit?
+            if (down)
+                _session->_listUnits();
         });
 }
 

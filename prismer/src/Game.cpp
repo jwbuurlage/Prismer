@@ -30,7 +30,10 @@ bool Game::init()
 
     Arya::InputSystem* input = root->getInputSystem();
     input->bind("shift+q", quitFunc);
-    input->bind("shift+space", [](bool down) { if(down) GameLogDebug << "You pressed shift+space" << endLog; });
+    input->bind("shift+space", [](bool down) {
+            if(down)
+                GameLogDebug << "You pressed shift+space" << endLog;
+        });
 
     session = make_shared<GameSessionClient>();
 
@@ -42,7 +45,7 @@ bool Game::init()
 
 void Game::run()
 {
-    root->gameLoop( std::bind(&Game::update, this, std::placeholders::_1) );
+    root->gameLoop([this] (float f) { this->update(f); });
 }
 
 void Game::update(float dt)

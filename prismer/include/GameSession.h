@@ -38,10 +38,16 @@ class GameSession
         Unit* createUnit(UnitInfo info);
 
         /** Generate a unique id */
-        int generateId() const { return 1; }
+        int generateId() const {
+            static int id = 1;
+            return id++;
+        }
 
         /** Return unit by id */
         Unit* getUnitById(int id);
+
+        /** Debug function */
+        void _listUnits() const;
 
     protected:
         int gameTimer;

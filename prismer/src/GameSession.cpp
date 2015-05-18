@@ -42,4 +42,13 @@ Unit* GameSession::getUnitById(int id)
     return iter->second;
 }
 
+void GameSession::_listUnits() const
+{
+
+    GameLogInfo << "Units" << endLog;
+    for(auto& iter : unitMap) {
+        GameLogInfo << "Unit id: " << iter.second->getId() << endLog;
+    }
+}
+
 } // namespace Prismer

@@ -22,7 +22,7 @@ bool GameSessionClient::init()
     cam->setPitch(-glm::radians(60.0f));
     cam->setZoom(100.0f);
 
-    input = make_unique<GameSessionInput>();
+    input = make_unique<GameSessionInput>(shared_from_this());
     input->init();
 
     return true;

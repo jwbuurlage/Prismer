@@ -6,24 +6,28 @@ namespace Prismer {
 
 using std::shared_ptr;
 
+class GameSession;
+
 struct UnitInfo
 {
-    int type_id;
-    // ...
-};
+    UnitInfo(int type_id_) {
+        type_id = type_id_;
+    }
 
-class GameSession;
+    int type_id;
+};
 
 class Unit
 {
     public:
         Unit(int id,
             UnitInfo info,
-            shared_ptr<GameSession> session) {
-            _id = id;
-            _info = info;
-            _session = session;
-        }
+            shared_ptr<GameSession> session) :
+            _id(id),
+            _info(info),
+            _session(session)
+        {}
+
         ~Unit() { }
 
         int getId() const {
