@@ -8,13 +8,31 @@ using std::shared_ptr;
 
 class GameSession;
 
+// unit info is stuff that (in general) does not change turn-to-turn.
+// specific to a unit at creation
 struct UnitInfo
 {
-    UnitInfo(int type_id_) {
+    UnitInfo(int type_id_, Shape shape_) {
         type_id = type_id_;
+        shape = shape_;
     }
 
     int type_id;
+    Shape shape;
+
+    // Abilities depend on Shape
+    // strenth of abilities depend on colors..
+
+    // these also depend on colors, how exactly depends on shape
+//    int health_points;
+//    int movement_points;
+
+    // Colors colors;
+    // Stats stats;
+    //
+    // First stats:
+    // - movement info
+    // - vision == movement?
 };
 
 class Unit
@@ -25,8 +43,7 @@ class Unit
             shared_ptr<GameSession> session) :
             _id(id),
             _info(info),
-            _session(session)
-        {}
+            _session(session);
 
         ~Unit() { }
 

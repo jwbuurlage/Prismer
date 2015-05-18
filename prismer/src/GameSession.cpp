@@ -29,7 +29,7 @@ void GameSession::destroyUnit(int id)
     auto iter = unitMap.find(id);
     if(iter == unitMap.end())
     {
-        GameLogWarning << "Trying to destroy unexisting unit id" << endLog;
+        GameLogWarning << "Trying to destroy non-existing unit id" << endLog;
         return;
     }
     unitMap.erase(iter);
@@ -46,7 +46,7 @@ void GameSession::_listUnits() const
 {
 
     GameLogInfo << "Units" << endLog;
-    for(auto& iter : unitMap) {
+    for (auto& iter : unitMap) {
         GameLogInfo << "Unit id: " << iter.second->getId() << endLog;
     }
 }
