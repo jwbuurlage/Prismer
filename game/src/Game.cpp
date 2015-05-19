@@ -75,6 +75,7 @@ void Game::update(float dt)
                 ent = root->getWorld()->getEntitySystem()->createEntity();
                 ent->setPosition(vec3(30.0f*x,30.0f*y,30.0f));
                 ent->setGraphics(triangle);
+                ent->getGraphics()->setScale(10.0f);
             }
         }
 

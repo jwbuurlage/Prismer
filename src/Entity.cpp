@@ -27,6 +27,8 @@ namespace Arya
             mMatrix = glm::translate(mat4(1.0f), position);
             mMatrix = glm::rotate(mMatrix, yaw,   vec3(0.0, 0.0, 1.0)); //z-axis is up
             mMatrix = glm::rotate(mMatrix, pitch, vec3(1.0, 0.0, 0.0));
+            float scale = (graphicsComponent ? graphicsComponent->getScale() : 1.0f);
+            mMatrix = glm::scale(mMatrix, vec3(scale));
         }
         return mMatrix;
     }

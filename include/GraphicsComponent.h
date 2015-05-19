@@ -19,6 +19,9 @@ namespace Arya
             // RenderType determines the subclass of GraphicsComponent
             virtual RenderType getRenderType() const { return TYPE_NONE; }
 
+            virtual void setScale(float /* scale */) { return; }
+            virtual float getScale() const { return 1.0; }
+
             virtual AnimationState* getAnimationState() const { return 0; }
 
             //! Set the animation

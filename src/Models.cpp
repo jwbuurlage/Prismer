@@ -48,6 +48,7 @@ namespace Arya
     {
         model = 0;
         animState = 0;
+        scale = 1.0f;
     }
 
     ModelGraphicsComponent::~ModelGraphicsComponent()

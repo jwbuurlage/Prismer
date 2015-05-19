@@ -37,6 +37,10 @@ namespace Arya
             RenderType getRenderType() const override { return TYPE_MODEL; }
 
             Model* getModel() const { return model; }
+
+            void setScale(float _scale) { scale = _scale; }
+            float getScale() const { return scale; }
+
             AnimationState* getAnimationState() const override { return animState; }
             void setAnimation(const char* name) override;
             void updateAnimation(float elapsedTime) override;
@@ -50,6 +54,7 @@ namespace Arya
         private:
             Model* model;
             AnimationState* animState;
+            float scale;
     };
 
 
