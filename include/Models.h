@@ -13,8 +13,10 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 using std::string;
 using std::vector;
+using std::shared_ptr;
 
 #include <glm/glm.hpp>
 using glm::vec3;
@@ -25,6 +27,7 @@ namespace Arya
     class Material;
     class Model;
     class AnimationState;
+    class ShaderProgram;
 
     class ModelGraphicsComponent : public GraphicsComponent
     {
@@ -80,6 +83,7 @@ namespace Arya
             const ModelType modelType;
 
             const vector<Mesh*>& getMeshes() const { return meshes; }
+            ShaderProgram* getShaderProgram() const { return shaderProgram.get(); }
             const AnimationData* getAnimationData() const { return animationData; }
 
             //! Entity::setModel will call this function
@@ -104,6 +108,7 @@ namespace Arya
             Mesh* createMesh();
 
             vector<Mesh*> meshes;
+            shared_ptr<ShaderProgram> shaderProgram;
             AnimationData* animationData;
 
             float minX; // Values needed to define
@@ -128,5 +133,9 @@ namespace Arya
             Model* loadResource(string filename );
 
             void loadPrimitives();
+
+            shared_ptr<ShaderProgram> staticShader;
+            shared_ptr<ShaderProgram> animatedShader;
+            shared_ptr<ShaderProgram> primitiveShader;
     };
 }

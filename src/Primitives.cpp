@@ -8,6 +8,7 @@ namespace Arya
     {
         Model* model = new Model(ModelTypeStatic);
         model->animationData = 0;
+        model->shaderProgram = primitiveShader;
         model->minX = 0.0f;
         model->maxX = 0.0f;
         model->minY = 0.0f;
@@ -34,7 +35,7 @@ namespace Arya
         geometry->frameCount = 1;
 
         geometry->createVertexBuffer();
-        geometry->setVertexBufferData(geometry->vertexCount * sizeof(GLfloat),
+        geometry->setVertexBufferData(geometry->vertexCount * 3 * sizeof(GLfloat),
                 triangleVertices);
 
         geometry->createVAOs(1);
@@ -42,8 +43,6 @@ namespace Arya
         geometry->setVAOdata(0, 3, 3 * sizeof(GLfloat), 0);
 
         addResource("triangle", model);
-
-        LogDebug << "Triangle added biatch." << endLog;
     }
 }
 

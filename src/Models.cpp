@@ -4,6 +4,7 @@
 #include "Locator.h"
 #include "Materials.h"
 #include "AnimationVertex.h"
+#include "Shaders.h"
 #include "common/Logger.h"
 #include <map>
 #include <algorithm>
@@ -187,7 +188,34 @@ namespace Arya
 
     bool ModelManager::init()
     {
+        // Load shaders
+        staticShader = shared_ptr<ShaderProgram>(
+                new ShaderProgram("../shaders/basic.vert",
+                    "../shaders/basic.frag"));
+        if (!staticShader->isValid()) {
+            staticShader = nullptr;
+            LogError << "Could not load default shader." << endLog;
+            return false;
+        }
+        animatedShader = shared_ptr<ShaderProgram>(
+                new ShaderProgram("../shaders/vertexanimatedmodel.vert",
+                    "../shaders/vertexanimatedmodel.frag"));
+        if (!animatedShader->isValid()) {
+            animatedShader = nullptr;
+            LogError << "Could not load default shader." << endLog;
+            return false;
+        }
+        primitiveShader = shared_ptr<ShaderProgram>(
+                new ShaderProgram("../shaders/basic.vert",
+                    "../shaders/basic.frag"));
+        if (!primitiveShader->isValid()) {
+            primitiveShader = nullptr;
+            LogError << "Could not load default shader." << endLog;
+            return false;
+        }
+
         loadPrimitives();
+
         return true;
     }
 
@@ -266,6 +294,7 @@ namespace Arya
             if(!animationCount)
             {
                 model->animationData = 0;
+                model->shaderProgram = staticShader;
                 LogDebug << "Model has no animations" << endLog;
             }
             else
@@ -274,6 +303,7 @@ namespace Arya
 
                 animData = new VertexAnimationData;
                 model->animationData = animData;
+                model->shaderProgram = animatedShader;
 
                 VertexAnim newAnim;
                 for(int anim = 0; anim < animationCount; ++anim)

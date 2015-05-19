@@ -73,7 +73,7 @@ void Game::update(float dt)
                 ++counter;
 
                 ent = root->getWorld()->getEntitySystem()->createEntity();
-                ent->setPosition(vec3(30.0f*x + 10.0f,30.0f*y,10.0f));
+                ent->setPosition(vec3(30.0f*x,30.0f*y,30.0f));
                 ent->setGraphics(triangle);
             }
         }
