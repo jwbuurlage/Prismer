@@ -6,13 +6,24 @@ namespace Arya
 {
     void ModelManager::loadPrimitives()
     {
+        shared_ptr<Geometry> geometry;
+        shared_ptr<Model> model;
+        Mesh* mesh;
+
+        // Creates:
+        //  - triangle
+        //  - quad (-1,-1,0) to (1,1,0)
+        //  - hexagon
+        //  - quad2d (-1,-1) to (1,1)
+        // All z-coordinates are 0
+
         GLfloat triangleVertices[] = {
             1.0f, -1.0f, 0.0f,
             0.0f, 1.0f, 0.0f,
             -1.0f, -1.0f, 0.0f
         };
 
-        shared_ptr<Geometry> geometry = make_shared<Geometry>();
+        geometry = make_shared<Geometry>();
 
         geometry->primitiveType = GL_TRIANGLES;
         geometry->vertexCount = 3;
@@ -26,11 +37,37 @@ namespace Arya
         geometry->bindVAO(0);
         geometry->setVAOdata(0, 3, 3 * sizeof(GLfloat), 0);
 
-        shared_ptr<Model> model = make_shared<Model>(ModelTypeStatic);
+        model = make_shared<Model>(ModelTypeStatic);
         model->shaderProgram = primitiveShader;
-        Mesh* mesh = model->createMesh();
+        mesh = model->createMesh();
         mesh->geometry = geometry;
         addResource("triangle", model);
+
+        GLfloat quadVertices[] = {
+            1.0f, -1.0f, 0.0f,
+            1.0f,  1.0f, 0.0f,
+            -1.0f,-1.0f, 0.0f,
+            1.0f,  1.0f, 0.0f
+        };
+
+        geometry = make_shared<Geometry>();
+
+        geometry->primitiveType = GL_TRIANGLE_STRIP;
+        geometry->vertexCount = 4;
+        geometry->indexCount = 0;
+        geometry->frameCount = 1;
+
+        geometry->createVertexBuffer();
+        geometry->setVertexBufferData(sizeof(quadVertices), quadVertices);
+        geometry->createVAOs(1);
+        geometry->bindVAO(0);
+        geometry->setVAOdata(0, 3, 3 * sizeof(GLfloat), 0);
+
+        model = make_shared<Model>(ModelTypeStatic);
+        model->shaderProgram = primitiveShader;
+        mesh = model->createMesh();
+        mesh->geometry = geometry;
+        addResource("quad", model);
 
         const float a = 0.5f * sqrt(3.0f);
         GLfloat hexagonVertices[] = {
@@ -62,7 +99,7 @@ namespace Arya
         geometry = make_shared<Geometry>();
 
         geometry->primitiveType = GL_TRIANGLES;
-        geometry->vertexCount = 3*6;
+        geometry->vertexCount = 6*3;
         geometry->indexCount = 0;
         geometry->frameCount = 1;
 
@@ -78,6 +115,32 @@ namespace Arya
         mesh = model->createMesh();
         mesh->geometry = geometry;
         addResource("hexagon", model);
+
+        GLfloat quad2dVertices[] = {
+            1.0f, -1.0f,
+            1.0f, 1.0f,
+            -1.0f, -1.0f,
+            -1.0f, 1.0f
+        };
+
+        geometry = make_shared<Geometry>();
+
+        geometry->primitiveType = GL_TRIANGLE_STRIP;
+        geometry->vertexCount = 4;
+        geometry->indexCount = 0;
+        geometry->frameCount = 1;
+
+        geometry->createVertexBuffer();
+        geometry->setVertexBufferData(sizeof(quad2dVertices), quad2dVertices);
+        geometry->createVAOs(1);
+        geometry->bindVAO(0);
+        geometry->setVAOdata(0, 2, 2 * sizeof(GLfloat), 0);
+
+        model = make_shared<Model>(ModelTypeStatic);
+        model->shaderProgram = primitiveShader;
+        mesh = model->createMesh();
+        mesh->geometry = geometry;
+        addResource("quad2d", model);
     }
 }
 

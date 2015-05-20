@@ -14,7 +14,7 @@ namespace Arya
     Renderer::Renderer()
     {
     }
-    
+
     Renderer::~Renderer()
     {
     }
@@ -34,6 +34,8 @@ namespace Arya
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
 
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         return true;
     }
 
@@ -46,23 +48,40 @@ namespace Arya
         glClear(GL_DEPTH_BUFFER_BIT);
     }
 
-    void Renderer::renderMesh(Mesh* mesh, int frame, ShaderProgram* shader)
+    void Renderer::enableBlending(bool enable)
+    {
+        if (enable)
+            glEnable(GL_BLEND);
+        else
+            glDisable(GL_BLEND);
+        ////Other possible options for billboards
+        //glDepthMask(GL_FALSE);
+        //glDisable(GL_DEPTH_TEST);
+        ////Reset
+        //glDepthMask(GL_TRUE);
+        //glEnable(GL_DEPTH_TEST);
+    }
+
+    void Renderer::renderMesh(Mesh* mesh, ShaderProgram* shader, int frame)
     {
         if (!mesh->geometry) return;
-        if (frame > mesh->geometry->frameCount) return;
 
+        shared_ptr<Material> mat = mesh->material;
+        if (!mat || !mat->texture)
+            mat = Locator::getMaterialManager().getMaterial("default");
+
+        renderGeometry(mesh->geometry.get(), mat.get(), shader, frame);
+    }
+
+    void Renderer::renderGeometry(Geometry* geom, Material* mat, ShaderProgram* shader, int frame)
+    {
+        if (frame > geom->frameCount) return;
         glActiveTexture(GL_TEXTURE0);
         shader->setUniform1i("tex", 0);
 
-        shared_ptr<Material> mat = mesh->material;
-        if (!mat) mat = Locator::getMaterialManager().getMaterial("default");
+        glBindTexture(GL_TEXTURE_2D, mat->texture->handle);
+        shader->setUniform4fv("parameters", vec4(mat->specAmp,mat->specPow,mat->ambient,mat->diffuse));
 
-        if (mat && mat->texture) {
-            glBindTexture(GL_TEXTURE_2D, mat->texture->handle);
-            shader->setUniform4fv("parameters", vec4(mat->specAmp,mat->specPow,mat->ambient,mat->diffuse));
-        }
-
-        mesh->geometry->draw(frame);
+        geom->draw(frame);
     }
-
 }

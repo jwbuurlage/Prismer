@@ -1,9 +1,13 @@
 #pragma once
 #include "Resources.h"
 #include <GL/glew.h>
+#define GLM_FORCE_RADIANS
+#include <glm/glm.hpp>
 
 namespace Arya
 {
+    using glm::vec4;
+
     class Texture
     {
         public:
@@ -31,10 +35,13 @@ namespace Arya
 
             shared_ptr<Texture> createTextureFromHandle(string name, GLuint handle);
 
+            //This texture will not be stored under a name
+            //so make sure to keep the shared_ptr
+            shared_ptr<Texture> createTexture(const vec4& color);
+
         private:
             shared_ptr<Texture> loadResource( string filename );
 
             void loadDefaultTexture(); //Generates default texture
-            void loadWhiteTexture(); //Generates white texture for overlay
     };
 }

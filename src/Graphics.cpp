@@ -12,6 +12,7 @@
 #include "Shaders.h"
 #include "Textures.h"
 #include "World.h"
+#include "Locator.h"
 
 namespace Arya
 {
@@ -32,6 +33,15 @@ namespace Arya
         if (!renderer->init()) return false;
 
         resize(width, height);
+
+        billboardShader = make_shared<ShaderProgram>(
+                "../shaders/billboard.vert",
+                "../shaders/billboard.frag");
+        if (!billboardShader->isValid()) {
+            billboardShader = nullptr;
+            LogError << "Could not load billboard shader." << endLog;
+            return false;
+        }
 
         return true;
     }
@@ -117,12 +127,34 @@ namespace Arya
         shader->setUniform1f("interpolation", interpolation);
 
         for(auto mesh : model->getMeshes())
-            renderer->renderMesh(mesh, frame, shader);
+            renderer->renderMesh(mesh, shader, frame);
     }
 
     void Graphics::renderBillboard(BillboardGraphicsComponent* gr)
     {
-        (void)gr;
+        // Get the quad if we do not have it yet
+        if (!quad2dGeometry)
+        {
+            shared_ptr<Model> a = Locator::getModelManager().getModel("quad2d");
+            if (a->getMeshes().empty()) return;
+            quad2dGeometry = a->getMeshes().front()->geometry;
+            if (!quad2dGeometry) return;
+        }
+
+        Material* mat = gr->getMaterial();
+        if(!mat) return;
+
+        billboardShader->use();
+        billboardShader->setUniformMatrix4fv("vpMatrix", camera->getVPMatrix());
+        billboardShader->setUniformMatrix4fv("viewMatrix", camera->getVMatrix());
+        billboardShader->setUniformMatrix4fv("mMatrix", gr->getMoveMatrix());
+        billboardShader->setUniform2fv("screenOffset", gr->getScreenOffset());
+        billboardShader->setUniform2fv("screenSize", gr->getScreenSize());
+
+        renderer->enableBlending(true);
+        renderer->renderGeometry(quad2dGeometry.get(), mat, billboardShader.get());
+        renderer->enableBlending(false);
+
         return;
     }
 }

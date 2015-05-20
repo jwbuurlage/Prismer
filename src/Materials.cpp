@@ -25,6 +25,11 @@ namespace Arya
         return mat;
     }
 
+    shared_ptr<Material> MaterialManager::createMaterial(const vec4& color)
+    {
+        return make_shared<Material>(Locator::getTextureManager().createTexture(color));
+    }
+
     void MaterialManager::cleanup()
     {
         unloadAll();

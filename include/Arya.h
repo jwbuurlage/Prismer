@@ -4,6 +4,7 @@
 #include "InputSystem.h"
 #include "Locator.h"
 #include "Models.h"
+#include "Materials.h"
 #include "Root.h"
 #include "World.h"
 

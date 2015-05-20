@@ -41,6 +41,10 @@ namespace Arya
             virtual void setScreenOffset(const vec2& /* offset */) { return; }
             virtual vec2 getScreenOffset() const { return vec2(0,0); }
 
+            // For billboarding
+            virtual void setScreenSize(const vec2& /* size */) { return; }
+            virtual vec2 getScreenSize() const { return vec2(0,0); }
+
             //! Set the animation
             virtual void setAnimation(const char* /* name */) { return; }
 

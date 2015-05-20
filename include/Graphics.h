@@ -1,14 +1,18 @@
 #pragma once
 
+#include <memory>
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 
-using glm::mat4;
-
 namespace Arya
 {
+    using std::shared_ptr;
+    using std::make_shared;
+    using glm::mat4;
+
     class World;
     class Camera;
+    class Geometry;
     class Renderer;
     class ShaderProgram;
     class GraphicsComponent;
@@ -45,6 +49,9 @@ namespace Arya
         private:
             Renderer*       renderer;
             Camera*         camera;
+
+            shared_ptr<ShaderProgram> billboardShader;
+            shared_ptr<Geometry> quad2dGeometry;
 
             void renderModel(ModelGraphicsComponent* gr);
             void renderBillboard(BillboardGraphicsComponent* gr);
