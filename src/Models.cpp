@@ -46,12 +46,8 @@ namespace Arya
 
     Model::Model(ModelType type) : modelType(type)
     {
-        minX = 0.0f;
-        maxX = 0.0f;
-        minY = 0.0f;
-        maxY = 0.0f;
-        minZ = 0.0f;
-        maxZ = 0.0f;
+        boundingMin = vec3(0.0f);
+        boundingMax = vec3(0.0f);
     }
 
     Model::~Model()
@@ -70,14 +66,14 @@ namespace Arya
     {
         switch(vertexNumber)
         {
-            case 0: return vec3(minX, minY, minZ);
-            case 1: return vec3(minX, minY, maxZ);
-            case 2: return vec3(minX, maxY, minZ);
-            case 3: return vec3(minX, maxY, maxZ);
-            case 4: return vec3(maxX, minY, minZ);
-            case 5: return vec3(maxX, minY, maxZ);
-            case 6: return vec3(maxX, maxY, minZ);
-            case 7: return vec3(maxX, maxY, maxZ);
+        //    case 0: return vec3(minX, minY, minZ);
+        //    case 1: return vec3(minX, minY, maxZ);
+        //    case 2: return vec3(minX, maxY, minZ);
+        //    case 3: return vec3(minX, maxY, maxZ);
+        //    case 4: return vec3(maxX, minY, minZ);
+        //    case 5: return vec3(maxX, minY, maxZ);
+        //    case 6: return vec3(maxX, maxY, minZ);
+        //    case 7: return vec3(maxX, maxY, maxZ);
             default: break;
         }
         return vec3(0,0,0);
@@ -94,6 +90,18 @@ namespace Arya
     {
         for (auto mesh : meshes)
             mesh->material = mat;
+    }
+
+    shared_ptr<Model> Model::clone()
+    {
+        shared_ptr<Model> copy = make_shared<Model>(modelType);
+
+        for (auto mesh : meshes)
+            copy->meshes.push_back(new Mesh(*mesh));
+        copy->shaderProgram = shaderProgram;
+        copy->animationData = animationData;
+
+        return copy;
     }
 
 //=============================================================================
@@ -212,7 +220,7 @@ namespace Arya
             //Parse animations
 
             //slight hack with raw-pointer to leave ownership at Model
-            VertexAnimationData* animDataPtr;
+            shared_ptr<VertexAnimationData> animData;
 
             int animationCount = *(int*)pointer; pointer += 4;
             if(!animationCount)
@@ -227,8 +235,8 @@ namespace Arya
 
                 model->shaderProgram = animatedShader;
 
-                unique_ptr<VertexAnimationData> animData = make_unique<VertexAnimationData>();
-                animDataPtr = animData.get(); //leave ownership at Model
+                animData = make_shared<VertexAnimationData>();
+                model->animationData = animData;
 
                 VertexAnim newAnim;
                 for(int anim = 0; anim < animationCount; ++anim)
@@ -258,19 +266,18 @@ namespace Arya
 
                 LogDebug << endLog;
 
-                model->animationData = std::move(animData);
             }
 
             delete[] nameBuf;
 
             float* boundingBoxData = (float*)pointer;
             pointer += 6*sizeof(float);
-            model->minX = boundingBoxData[0];
-            model->maxX = boundingBoxData[1];
-            model->minY = boundingBoxData[2];
-            model->maxY = boundingBoxData[3];
-            model->minZ = boundingBoxData[4];
-            model->maxZ = boundingBoxData[5];
+            model->boundingMin.x = boundingBoxData[0];
+            model->boundingMax.x = boundingBoxData[1];
+            model->boundingMin.y = boundingBoxData[2];
+            model->boundingMax.y = boundingBoxData[3];
+            model->boundingMin.z = boundingBoxData[4];
+            model->boundingMax.z = boundingBoxData[5];
 
             //Parse all geometries
             for(int s = 0; s < header->submeshCount; ++s)
@@ -321,9 +328,9 @@ namespace Arya
                     for(int f = 0; f < geometry->frameCount; ++f)
                     {
                         int nextf = (f+1)%geometry->frameCount;
-                        if(animDataPtr)
+                        if(animData)
                         {
-                            for(auto iter : animDataPtr->animations)
+                            for(auto iter : animData->animations)
                             {
                                 if( iter.second.endFrame == f )
                                 {
