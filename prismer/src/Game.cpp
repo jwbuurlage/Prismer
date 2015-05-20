@@ -37,6 +37,14 @@ bool Game::init()
 
     session = make_shared<GameSessionClient>();
 
+    auto triangle = root->getModelManager()->getModel("triangle");
+
+    auto ent = root->getWorld()->createEntity();
+    ent->setPosition(vec3(x, y, 0));
+    ent->setPitch(0.5f*M_PI);
+    ent->setGraphics(triangle);
+    ent->getGraphics()->setScale(10.0f);
+
     if (!session->init())
         return false;
 

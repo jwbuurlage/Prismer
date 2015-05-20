@@ -6,7 +6,7 @@
 
 namespace Prismer {
 
-enum ColorID : int
+enum ColorID
 {
     na,
     red,
