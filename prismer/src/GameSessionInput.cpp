@@ -32,8 +32,6 @@ void GameSessionInput::init()
                 auto colors = vector<ColorID> { ColorID::red, ColorID::red };
                 auto unitInfo = UnitInfo(Circle(colors));
 
-                int seed = _session->generateId();
-
                 // bad way to do this, but just for lolz
                 int x = GRandom::genrand() % (_session->getGrid()->getWidth() / 2);
                 int y = GRandom::genrand() % (_session->getGrid()->getHeight() / 2);
