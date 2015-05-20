@@ -65,6 +65,10 @@ void Game::update(float dt)
         shared_ptr<Arya::Model> triangle = root->getModelManager()->getModel("triangle");
         shared_ptr<Arya::Material> mat = root->getMaterialManager()->getMaterial("samplebillboard.tga");
         shared_ptr<Arya::Material> mat2 = root->getMaterialManager()->createMaterial(vec4(0.0f, 1.0f, 0.0f, 0.5f));
+        shared_ptr<Arya::Material> mat3 = root->getMaterialManager()->createMaterial(vec4(0.0f, 0.9f, 0.9f, 0.5f));
+        
+        shared_ptr<Arya::Model> hexagon2 = hexagon->clone();
+        hexagon2->setMaterial(mat3);
 
         int counter = 0;
         for(int x = 0; x < 10; ++x) {
@@ -78,7 +82,7 @@ void Game::update(float dt)
 
                 ent = root->getWorld()->createEntity();
                 ent->setPosition(vec3(30.0f*x,30.0f*y,0.0f));
-                ent->setGraphics(hexagon);
+                ent->setGraphics((((x+y)%2) == 0 ? hexagon : hexagon2));
                 ent->getGraphics()->setScale(10.0f);
 
                 ent = root->getWorld()->createEntity();

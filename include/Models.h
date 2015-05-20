@@ -70,20 +70,20 @@ namespace Arya
             //! Sets the material on all Meshes
             void setMaterial(shared_ptr<Material> mat);
 
+            //! Clone the model, making a copy of all Mesh objects
+            //! but they will still have the same shared_ptr to the old geometry
+            shared_ptr<Model> clone();
+
         private:
             friend class ModelManager;
             Mesh* createMesh();
 
             vector<Mesh*> meshes;
             shared_ptr<ShaderProgram> shaderProgram;
-            unique_ptr<AnimationData> animationData;
+            shared_ptr<AnimationData> animationData;
 
-            float minX; // Values needed to define
-            float maxX; // bounding box for model.
-            float minY;
-            float maxY;
-            float minZ;
-            float maxZ;
+            vec3 boundingMin;
+            vec3 boundingMax;
     };
 
     class ModelManager : public ResourceManager<Model>
