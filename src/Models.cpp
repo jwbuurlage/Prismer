@@ -343,8 +343,6 @@ namespace Arya
             addResource(filename, model);
         }while(0);
 
-        LogDebug << "Loaded " << modelfile << endLog;
-
         Locator::getFileSystem().releaseFile(modelfile);
         return model;
     }

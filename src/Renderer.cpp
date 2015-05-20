@@ -5,6 +5,7 @@
 #include "Materials.h"
 #include "Shaders.h"
 #include "Textures.h"
+#include "Locator.h"
 
 #include <GL/glew.h>
 
@@ -53,11 +54,14 @@ namespace Arya
         glActiveTexture(GL_TEXTURE0);
         shader->setUniform1i("tex", 0);
 
-        Material* mat = mesh->material.get();
+        shared_ptr<Material> mat = mesh->material;
+        if (!mat) mat = Locator::getMaterialManager().getMaterial("default");
+
         if (mat && mat->texture) {
             glBindTexture(GL_TEXTURE_2D, mat->texture->handle);
             shader->setUniform4fv("parameters", vec4(mat->specAmp,mat->specPow,mat->ambient,mat->diffuse));
         }
+
         mesh->geometry->draw(frame);
     }
 

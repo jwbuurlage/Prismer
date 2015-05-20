@@ -8,6 +8,7 @@ namespace Arya
 {
     bool MaterialManager::init()
     {
+        loadResource("default");
         return true;
     }
 

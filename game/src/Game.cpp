@@ -61,6 +61,7 @@ void Game::update(float dt)
         entityCreated = true;
 
         shared_ptr<Arya::Model> model = root->getModelManager()->getModel("ogros.aryamodel");
+        shared_ptr<Arya::Model> hexagon = root->getModelManager()->getModel("hexagon");
         shared_ptr<Arya::Model> triangle = root->getModelManager()->getModel("triangle");
 
         int counter = 0;
@@ -68,13 +69,14 @@ void Game::update(float dt)
             for(int y = 0; y < 10; ++y) {
                 Entity* ent = root->getWorld()->getEntitySystem()->createEntity();
                 ent->setPosition(vec3(30.0f*x,30.0f*y,0));
+                ent->setPitch(0.5f*M_PI);
                 ent->setGraphics(model);
                 ent->getGraphics()->setAnimation( animNames[counter%animCount] );
                 ++counter;
 
                 ent = root->getWorld()->getEntitySystem()->createEntity();
-                ent->setPosition(vec3(30.0f*x,30.0f*y,30.0f));
-                ent->setGraphics(triangle);
+                ent->setPosition(vec3(30.0f*x,30.0f*y,0.0f));
+                ent->setGraphics(hexagon);
                 ent->getGraphics()->setScale(10.0f);
             }
         }
