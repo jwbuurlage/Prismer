@@ -49,7 +49,7 @@ namespace Arya
 
     void Graphics::render(World* world)
     {
-        const list<Entity*>& entities = world->getEntitySystem()->getEntities();
+        auto entities = world->getEntities();
         for(auto ent : entities) {
             GraphicsComponent* gr = ent->getGraphics();
             if (!gr) continue;

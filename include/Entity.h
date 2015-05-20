@@ -18,13 +18,10 @@ namespace Arya
 
     class Entity
     {
-        private:
-            //Private constructor so that only EntitySystem can create entities
-            friend class EntitySystem;
+        public:
             Entity();
             ~Entity();
 
-        public:
             inline const vec3& getPosition() const { return position; }
             inline vec2 getPosition2() const { return vec2(position.x, position.y); }
             inline float getPitch() const { return pitch; }

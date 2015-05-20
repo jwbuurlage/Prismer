@@ -40,7 +40,6 @@ SET(
     "../src/AnimationVertex.cpp"
     "../src/Camera.cpp"
     "../src/Entity.cpp"
-    "../src/EntitySystem.cpp"
     "../src/Files.cpp"
     "../src/Geometry.cpp"
     "../src/Graphics.cpp"

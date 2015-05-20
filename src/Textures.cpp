@@ -90,10 +90,10 @@ namespace Arya
         unsigned int pixelCount = defaultTex->width * defaultTex->height;
         float* imageData = new float[pixelCount * 4];
         for(unsigned int i = 0; i < pixelCount; ++i){
-            bool purple=(((i%defaultTex->width)/16+(i/defaultTex->width/16))%2==0);
-            imageData[4*i+0] = purple?1.0f:0.0f; //red
-            imageData[4*i+1] = 0.0f; //green
-            imageData[4*i+2] = purple?1.0f:0.0f; //blue
+            bool darker=(((i%defaultTex->width)/16+(i/defaultTex->width/16))%2==0);
+            imageData[4*i+0] = darker?0.8f:0.6f; //red
+            imageData[4*i+1] = darker?0.8f:0.6f; //green
+            imageData[4*i+2] = darker?0.8f:0.6f; //blue
             imageData[4*i+3] = 0.8f; //alpha
         }
 
