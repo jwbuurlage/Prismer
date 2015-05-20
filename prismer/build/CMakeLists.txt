@@ -11,11 +11,15 @@ SET(
     PROJECT_SOURCES
     "../src/Shapes/Circle.cpp"
     "../src/Abilities/AGather.cpp"
+    "../src/Grid.cpp"
+    "../src/GridGraphics.cpp"
+    "../src/Tile.cpp"
     "../src/Game.cpp"
     "../src/GameLogger.cpp"
     "../src/GameSessionInput.cpp"
     "../src/GameSession.cpp"
     "../src/GameSessionClient.cpp"
+    "../src/GameCamera.cpp"
     "../src/Unit.cpp"
     "../src/main.cpp"
 )

@@ -12,9 +12,11 @@
 namespace Prismer {
 
 using std::shared_ptr;
+using std::unique_ptr;
 
 class Unit;
 class UnitInfo;
+class Grid;
 
 class GameSession
     : public std::enable_shared_from_this<GameSession>
@@ -22,6 +24,8 @@ class GameSession
     public:
         GameSession();
         virtual ~GameSession();
+
+        void init();
 
         //! Check if this session is running on a server
         //! If a Unit performs an action on
@@ -37,7 +41,7 @@ class GameSession
         }
 
         //! Creates a unit
-        shared_ptr<Unit> createUnit(UnitInfo info);
+        virtual shared_ptr<Unit> createUnit(UnitInfo info);
 
         /** Generate a unique id */
         int generateId() const {
@@ -57,6 +61,8 @@ class GameSession
         const std::map<int, shared_ptr<Unit>>& getUnitMap() const {
             return unitMap;
         }
+
+        shared_ptr<Grid> _grid;
 
     private:
         friend class Unit;

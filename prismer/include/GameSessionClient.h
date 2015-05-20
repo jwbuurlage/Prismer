@@ -8,10 +8,13 @@
 namespace Prismer {
 
 using std::unique_ptr;
-using std::make_unique;
+using std::make_shared;
 using std::vector;
 
 class GameSessionInput;
+class GameCamera;
+class GridEntity;
+class UnitInfo;
 
 class GameSessionClient : public GameSession
 {
@@ -36,9 +39,15 @@ class GameSessionClient : public GameSession
         //! synchronized with the server
         void updateGameLogic(int elapsedTime); //in ms
 
+        //! Creates a unit
+        virtual shared_ptr<Unit> createUnit(UnitInfo info) override;
+
      private:
         unique_ptr<GameSessionInput> input;
         vector<int> clients;
+
+        shared_ptr<GridEntity> _grid_entity;
+        shared_ptr<GameCamera> _camera;
 };
 
 } // namespace Prismer

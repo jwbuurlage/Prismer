@@ -1,11 +1,14 @@
 #include "GameSession.h"
 #include "GameLogger.h"
 #include "Unit.h"
+#include "Grid.h"
+
 #include <memory>
 
 namespace Prismer {
 
 using std::make_shared;
+using std::make_unique;
 using std::shared_ptr;
 
 GameSession::GameSession()
@@ -18,6 +21,12 @@ GameSession::~GameSession()
     //After deleting the factions, there should be no more units left
     if(!unitMap.empty())
         GameLogError << "List of units is not empty at deconstruction of GameSession. Possible memory leak" << endLog;
+}
+
+void GameSession::init()
+{
+    _grid = make_unique<Grid>(100, 100);
+    _grid->init();
 }
 
 shared_ptr<Unit> GameSession::createUnit(UnitInfo info)
@@ -48,7 +57,6 @@ shared_ptr<Unit> GameSession::getUnitById(int id)
 
 void GameSession::_listUnits() const
 {
-
     GameLogInfo << "Units" << endLog;
     for (auto& iter : unitMap) {
         GameLogInfo << "Unit id: " << iter.second->getId() << endLog;

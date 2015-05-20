@@ -25,23 +25,7 @@ void GameSessionInput::init()
 {
     auto input = Arya::Locator::getRoot().getInputSystem();
 
-//    input->bind(Arya::INPUT_MOUSEWHEEL,
-//            [this](int delta) {
-//                GameLogInfo << "wheel" << endLog;
-//        });
-//
-//    input->bindMouseMove(
-//            [this](int x, int y, int dx, int dy) {
-//                //mouseMoved(x,y,dx,dy);
-//        });
-//
-//    input->bindMouseButton(
-//            [this](Arya::MOUSEBUTTON btn, bool down, int x, int y) {
-//                // mouseDown(btn,down,x,y);
-//                GameLogInfo << "button" << endLog;
-//        });
-//
-    input->bind("w", [this](bool down) {
+    input->bind("c", [this](bool down) {
             // create unit?
             if(down) {
                 GameLogInfo << "create unit" << endLog;
