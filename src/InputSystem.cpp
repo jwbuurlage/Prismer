@@ -27,6 +27,7 @@ namespace Arya
             keyMap["/"] = SDLK_SLASH;
             keyMap["period"] = SDLK_PERIOD;
             keyMap["."] = SDLK_PERIOD;
+            keyMap["tab"] = SDLK_TAB;
         }
     }
 
