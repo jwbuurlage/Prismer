@@ -47,18 +47,18 @@ namespace Arya
 
     void Renderer::renderMesh(Mesh* mesh, int frame, ShaderProgram* shader)
     {
-        if (!mesh->getGeometry()) return;
-        if (mesh->getGeometry()->frameCount <= frame) return;
+        if (!mesh->geometry) return;
+        if (frame > mesh->geometry->frameCount) return;
 
         glActiveTexture(GL_TEXTURE0);
         shader->setUniform1i("tex", 0);
 
-        Material* mat = mesh->getMaterial();
+        Material* mat = mesh->material.get();
         if (mat && mat->texture) {
             glBindTexture(GL_TEXTURE_2D, mat->texture->handle);
             shader->setUniform4fv("parameters", vec4(mat->specAmp,mat->specPow,mat->ambient,mat->diffuse));
         }
-        mesh->getGeometry()->draw(frame);
+        mesh->geometry->draw(frame);
     }
 
 }

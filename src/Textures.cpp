@@ -3,7 +3,11 @@
 #include "Files.h"
 #include "Locator.h"
 #include <sstream>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 #include "stb_image.c"
+#pragma GCC diagnostic pop
 
 namespace Arya
 {
@@ -24,19 +28,19 @@ namespace Arya
         unloadAll();
     }
 
-    Texture* TextureManager::loadResource( string filename ){
+    shared_ptr<Texture> TextureManager::loadResource( string filename ){
         filename.insert(0, "textures/");
         File* imagefile = Locator::getFileSystem().getFile(filename);
         if( imagefile == 0 ) return 0;
 
-        Texture* texture = 0;
+        shared_ptr<Texture> texture = nullptr;
 
         int width, height, channels;
         // NOTE: using STBI_default as last arg gives wrong pixel data
         unsigned char* ptr = stbi_load_from_memory((stbi_uc*)imagefile->getData(), imagefile->getSize(), &width, &height, &channels, STBI_rgb_alpha); 
         if(ptr)
         {
-            texture = new Texture;
+            texture = make_shared<Texture>();
             texture->width = width;
             texture->height = height;
 
@@ -61,11 +65,11 @@ namespace Arya
         return texture;
     }
 
-    Texture* TextureManager::createTextureFromHandle(string name, GLuint handle)
+    shared_ptr<Texture> TextureManager::createTextureFromHandle(string name, GLuint handle)
     {
         if(resourceLoaded(name)) return getTexture(name);
 
-        Texture* texture = new Texture;
+        shared_ptr<Texture> texture = make_shared<Texture>();
         addResource(name, texture);
         texture->handle = handle;
         //Get width and height
@@ -78,7 +82,7 @@ namespace Arya
     void TextureManager::loadDefaultTexture(){
         if( resourceLoaded("default") ) return;
 
-        Texture* defaultTex = new Texture;
+        shared_ptr<Texture> defaultTex = make_shared<Texture>();
         defaultTex->handle = 0;
         defaultTex->width = 128;
         defaultTex->height = 128;
@@ -110,7 +114,7 @@ namespace Arya
 
     void TextureManager::loadWhiteTexture()
     {
-        Texture* whiteTex= new Texture;
+        shared_ptr<Texture> whiteTex = make_shared<Texture>();
         whiteTex->handle = 0;
         whiteTex->width = 4;
         whiteTex->height = 4;

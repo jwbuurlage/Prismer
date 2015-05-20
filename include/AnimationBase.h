@@ -1,14 +1,17 @@
 //See top of Models.h for more explanation
 #pragma once
 #include <string>
-using std::string;
+#include <memory>
 
 namespace Arya
 {
+    using std::string;
+    using std::unique_ptr;
+
     //
-    // Base class for an animation state. Every Entity that has
-    // a model that is animatable will have a (copy) of a specific
-    // AnimationState subclass.
+    // Base class for an animation state.
+    // Entity holds a ModelGraphicsComponent
+    // with a unique_ptr to a subclass of AnimationState
     // 
     // Subclasses of this state (in the cpp file) could be a float specifying
     // the percentage of the animation that is completed
@@ -37,11 +40,14 @@ namespace Arya
     };
 
     //Base class for animation data
-    //This is stored inside the model, not in the entity
+    //Model holds a unique_ptr to a subclass of this
     class AnimationData
     {
         public:
             AnimationData(){}
             virtual ~AnimationData(){}
+
+            //! Create an AnimationState instance
+            virtual unique_ptr<AnimationState> createAnimationState() const { return 0; }
     };
 }

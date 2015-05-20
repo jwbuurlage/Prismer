@@ -60,8 +60,8 @@ void Game::update(float dt)
     if (!entityCreated && totalTime > 0.5f) {
         entityCreated = true;
 
-        Arya::Model* model = root->getModelManager()->getModel("ogros.aryamodel");
-        Arya::Model* triangle = root->getModelManager()->getModel("triangle");
+        shared_ptr<Arya::Model> model = root->getModelManager()->getModel("ogros.aryamodel");
+        shared_ptr<Arya::Model> triangle = root->getModelManager()->getModel("triangle");
 
         int counter = 0;
         for(int x = 0; x < 10; ++x) {

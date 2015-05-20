@@ -1,6 +1,6 @@
 #include "Entity.h"
 #include "GraphicsComponent.h"
-#include "Models.h"
+#include "ModelGraphicsComponent.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Arya
@@ -11,13 +11,10 @@ namespace Arya
         pitch = 0;
         yaw = 0;
         updateMatrix = true;
-
-        graphicsComponent = 0;
     }
 
     Entity::~Entity()
     {
-        if (graphicsComponent) delete graphicsComponent;
     }
 
     const mat4& Entity::getMoveMatrix()
@@ -38,19 +35,16 @@ namespace Arya
         if (graphicsComponent) graphicsComponent->updateAnimation(elapsedTime);
     }
 
-    void Entity::setGraphics(GraphicsComponent* gr)
+    void Entity::setGraphics(unique_ptr<GraphicsComponent> gr)
     {
-        if (graphicsComponent == gr) return;
-        if (graphicsComponent) delete graphicsComponent;
-        graphicsComponent = gr;
+        graphicsComponent = std::move(gr);
     }
 
-    void Entity::setGraphics(Model* model)
+    void Entity::setGraphics(shared_ptr<Model> model)
     {
-        if (graphicsComponent) delete graphicsComponent;
         ModelGraphicsComponent* comp = new ModelGraphicsComponent;
         comp->setModel(model);
-        graphicsComponent = comp;
+        graphicsComponent.reset(comp);
     }
 
 }

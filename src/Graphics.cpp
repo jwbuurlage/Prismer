@@ -7,6 +7,7 @@
 #include "Graphics.h"
 #include "Materials.h"
 #include "Models.h"
+#include "ModelGraphicsComponent.h"
 #include "Renderer.h"
 #include "Shaders.h"
 #include "Textures.h"
@@ -112,7 +113,7 @@ namespace Arya
         }
         shader->setUniform1f("interpolation", interpolation);
 
-        for(Mesh* mesh : model->getMeshes())
+        for(auto mesh : model->getMeshes())
             renderer->renderMesh(mesh, frame, shader);
     }
 }

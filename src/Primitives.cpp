@@ -6,21 +6,12 @@ namespace Arya
 {
     void ModelManager::loadPrimitives()
     {
-        Model* model = new Model(ModelTypeStatic);
-        model->animationData = 0;
+        shared_ptr<Model> model = make_shared<Model>(ModelTypeStatic);
         model->shaderProgram = primitiveShader;
-        model->minX = 0.0f;
-        model->maxX = 0.0f;
-        model->minY = 0.0f;
-        model->maxY = 0.0f;
-        model->minZ = 0.0f;
-        model->maxZ = 0.0f;
 
+        shared_ptr<Geometry> geometry = make_shared<Geometry>();
         Mesh* mesh = model->createMesh();
-        mesh->setMaterial(0);
-
-        Geometry* geometry = new Geometry();
-        mesh->setGeometry(geometry); //adds refcount
+        mesh->geometry = geometry;
 
         // Vertices
         GLfloat triangleVertices[] = {

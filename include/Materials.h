@@ -15,8 +15,17 @@ namespace Arya
     class Material
     {
         public:
-            string name;
-            Texture* texture;
+            Material(shared_ptr<Texture> _texture) :
+                texture(_texture),
+                type("default"),
+                specAmp(1.0f),
+                specPow(1.0f),
+                ambient(0.3f),
+                diffuse(0.7f) {};
+
+            ~Material(){}
+
+            shared_ptr<Texture> texture;
             string type;
             float specAmp;    // The "amount" of highlights
             float specPow;    // The "sharpness" of highlights
@@ -26,23 +35,6 @@ namespace Arya
             vec4 getParameters() {
                 return vec4(specAmp, specPow, ambient, diffuse);
             }
-        private:
-            friend class MaterialManager;
-            friend class ResourceManager<Material>;
-
-            Material(string _name, Texture* _texture, string _type,
-                    float _specAmp, float _specPow,
-                    float _ambient, float _diffuse)
-            {
-                name=_name;
-                texture=_texture;
-                type=_type;
-                specAmp=_specAmp;
-                specPow=_specPow;
-                ambient=_ambient;
-                diffuse=_diffuse;
-            }
-            ~Material(){}
     };
 
     class MaterialManager : public ResourceManager<Material> {
@@ -55,9 +47,9 @@ namespace Arya
 
             void loadMaterials(const vector<string>& filenames);
 
-            Material* getMaterial( string filename ){return getResource(filename); }
+            shared_ptr<Material> getMaterial( string filename ) { return getResource(filename); }
 
         private:
-            Material* loadResource(string filename);
+            shared_ptr<Material> loadResource(string filename);
     };
 };

@@ -11,7 +11,6 @@ namespace Arya
         indexBuffer = 0;
         indexCount = 0;
         primitiveType = 0;
-        refCount = 0;
     }
 
     Geometry::~Geometry()

@@ -3,7 +3,14 @@
 
 namespace Arya
 {
-    VertexAnimationState::VertexAnimationState(VertexAnimationData* data)
+    using std::make_unique;
+    
+    unique_ptr<AnimationState> VertexAnimationData::createAnimationState() const
+    {
+        return make_unique<VertexAnimationState>(this);
+    }
+
+    VertexAnimationState::VertexAnimationState(const VertexAnimationData* data)
     {
         animData = data;
         curAnim = 0;

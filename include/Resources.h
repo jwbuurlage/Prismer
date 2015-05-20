@@ -9,54 +9,59 @@
 #pragma once
 #include <string>
 #include <map>
-
-using std::string;
-using std::multimap;
+#include <memory>
 
 namespace Arya
 {
+    using std::string;
+    using std::multimap;
+    using std::shared_ptr;
+    using std::unique_ptr;
+    using std::make_shared;
+    using std::make_unique;
+
     template <typename T> class ResourceManager {
+        private:
+            typedef multimap<string, shared_ptr<T> > ResourceContainer;
+            ResourceContainer resources;
+
         public:
-            ResourceManager(){ defaultResource = 0; };
+            ResourceManager(){ defaultResource = nullptr; };
             virtual ~ResourceManager(){ unloadAll(); }
 
             //Will load the resource if not already loaded
-            T* getResource( string filename )
+            shared_ptr<T> getResource( string filename )
             {
-                ResourceContainer::iterator iter = resources.find(filename);
-                if( iter != resources.end() )
-                    return (T*)(iter->second);
-                T* ret = loadResource(filename);
-                if(ret) return ret;
+                typename ResourceContainer::iterator iter = resources.find(filename);
+                if (iter != resources.end())
+                    return iter->second;
+
+                shared_ptr<T> ret = loadResource(filename);
+                if (ret) return ret;
                 return defaultResource;
             }
 
             void unloadAll()
             {
-                for( ResourceContainer::iterator iter = resources.begin(); iter != resources.end(); ++iter ){
-                    T* resource = (T*)iter->second;
-                    delete resource; //This will call the deconstructor
-                }
+                // This will clear all shared_ptr objects
+                // automatically deleting everything if needed
                 resources.clear();
             }
 
             bool resourceLoaded( string name ){
-                ResourceContainer::iterator iter = resources.find(name);
+                typename ResourceContainer::iterator iter = resources.find(name);
                 return (iter != resources.end());
             }
 
-        private:
-            typedef multimap<string,void*> ResourceContainer;
-            ResourceContainer resources;
-
         protected:
-            //Must be implemented by subclass and use addResource to add the resource
-            virtual T* loadResource( string filename )=0;
+            //Must be implemented by subclass and must use addResource to add the resource
+            virtual shared_ptr<T> loadResource( string filename )=0;
 
-            T* defaultResource;
+            shared_ptr<T> defaultResource;
 
-            void addResource( string name, T* res ){
-                resources.insert( ResourceContainer::value_type( name, res ) );
+            void addResource( string name, shared_ptr<T> res ){
+                //resources.insert( ResourceContainer::value_type( name, res ) );
+                resources.insert( make_pair( name, res ) );
             }
     };
 }

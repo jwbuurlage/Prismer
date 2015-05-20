@@ -11,7 +11,7 @@ SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 
 #-- Display warnings and compile with debug information and optimize
-SET(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} -Wall -Wextra -g -O3")
+SET(CMAKE_CXX_FLAGS "-std=c++14 ${CMAKE_CXX_FLAGS} -Wall -Wextra -g -Og")
 
 IF(APPLE)
     SET(
@@ -49,6 +49,7 @@ SET(
     "../src/Locator.cpp"
     "../src/Materials.cpp"
     "../src/Models.cpp"
+    "../src/ModelGraphicsComponent.cpp"
     "../src/Primitives.cpp"
     "../src/Renderer.cpp"
     "../src/Root.cpp"

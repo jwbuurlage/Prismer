@@ -19,13 +19,15 @@ namespace Arya
     class VertexAnimationData : public AnimationData
     {
         public:
+            unique_ptr<AnimationState> createAnimationState() const;
+
             map<string, VertexAnim> animations;
     };
 
     class VertexAnimationState : public AnimationState
     {
         public:
-            VertexAnimationState(VertexAnimationData* data);
+            VertexAnimationState(const VertexAnimationData* data);
             ~VertexAnimationState();
 
             //Base class overloads
@@ -40,9 +42,9 @@ namespace Arya
             void setAnimationTime(float newTime);
 
         private:
-            VertexAnimationData* animData;
+            const VertexAnimationData* animData;
 
-            VertexAnim* curAnim; //one of the animations in animData
+            const VertexAnim* curAnim; //one of the animations in animData
 
             int startFrame;
             int curFrame; //current frame RELATIVE TO STARTFRAME

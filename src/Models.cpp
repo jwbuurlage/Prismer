@@ -40,115 +40,30 @@ typedef struct{
 
 namespace Arya
 {
-//=============================================================================
-//ModelGraphicsComponent
-//TODO: Separate GraphicsComponent file
-
-    ModelGraphicsComponent::ModelGraphicsComponent()
-    {
-        model = 0;
-        animState = 0;
-        scale = 1.0f;
-    }
-
-    ModelGraphicsComponent::~ModelGraphicsComponent()
-    {
-        //Release model and animation state
-        setModel(0);
-    }
-
-    void ModelGraphicsComponent::setAnimation(const char* name)
-    {
-        if (animState) animState->setAnimation(name);
-    }
-
-    void ModelGraphicsComponent::updateAnimation(float elapsedTime)
-    {
-        if (animState) animState->updateAnimation(elapsedTime);
-    }
-
-    void ModelGraphicsComponent::setAnimationTime(float time)
-    {
-        if (animState) animState->setAnimationTime(time);
-    }
-
-    void ModelGraphicsComponent::setModel(Model* newModel)
-    {
-        if (model) model->release();
-        if (animState) delete animState;
-        animState = 0;
-
-        //Set new model and get a new animation state object
-        //(subclass of AnimationState)
-        model = newModel;
-        if (model) {
-            animState = model->createAnimationState();
-            model->addRef();
-        }
-    }
-
-//=============================================================================
-//Mesh
-    Mesh::Mesh()
-    {
-        geometry = 0;
-        material = 0;
-    }
-
-    Mesh::~Mesh()
-    {
-        setGeometry(0); //deletes reference
-    }
-
-    void Mesh::setGeometry(Geometry* geom)
-    {
-        if( geometry == geom ) return;
-        if( geometry ) {
-            geometry->release();
-            if( geometry->getRefCount() == 0 )
-                delete geometry;
-        }
-        geometry = geom;
-        if( geometry ) geometry->addRef();
-    }
-
-    void Mesh::setMaterial(Material* mat)
-    {
-        material = mat;
-    }
 
 //=============================================================================
 //Model
 
     Model::Model(ModelType type) : modelType(type)
     {
-        animationData = 0;
         minX = 0.0f;
         maxX = 0.0f;
         minY = 0.0f;
         maxY = 0.0f;
         minZ = 0.0f;
         maxZ = 0.0f;
-        refCount = 0;
     }
 
     Model::~Model()
     {
-        if (animationData) delete animationData;
         for(unsigned int i = 0; i < meshes.size(); ++i)
             delete meshes[i];
     }
 
-    AnimationState* Model::createAnimationState()
+    unique_ptr<AnimationState> Model::createAnimationState()
     {
         if(animationData == 0) return 0;
-        //If bone, create BoneAnimationState
-        //If vertex, create VertexAnimationState
-        //else return 0
-
-        if(modelType == VertexAnimated)
-            return new VertexAnimationState((VertexAnimationData*)animationData);
-        return 0;
+        return animationData->createAnimationState();
     }
 
     vec3 Model::getBoundingBoxVertex(int vertexNumber)
@@ -190,28 +105,28 @@ namespace Arya
     bool ModelManager::init()
     {
         // Load shaders
-        staticShader = shared_ptr<ShaderProgram>(
-                new ShaderProgram("../shaders/basic.vert",
-                    "../shaders/basic.frag"));
+        staticShader = make_shared<ShaderProgram>(
+                "../shaders/basic.vert",
+                "../shaders/basic.frag");
         if (!staticShader->isValid()) {
             staticShader = nullptr;
-            LogError << "Could not load default shader." << endLog;
+            LogError << "Could not load basic shader." << endLog;
             return false;
         }
-        animatedShader = shared_ptr<ShaderProgram>(
-                new ShaderProgram("../shaders/vertexanimatedmodel.vert",
-                    "../shaders/vertexanimatedmodel.frag"));
+        animatedShader = make_shared<ShaderProgram>(
+                "../shaders/vertexanimatedmodel.vert",
+                "../shaders/vertexanimatedmodel.frag");
         if (!animatedShader->isValid()) {
             animatedShader = nullptr;
-            LogError << "Could not load default shader." << endLog;
+            LogError << "Could not load vertexanimatedmodel shader." << endLog;
             return false;
         }
-        primitiveShader = shared_ptr<ShaderProgram>(
-                new ShaderProgram("../shaders/basic.vert",
-                    "../shaders/basic.frag"));
+        primitiveShader = make_shared<ShaderProgram>(
+                "../shaders/basic.vert",
+                "../shaders/basic.frag");
         if (!primitiveShader->isValid()) {
             primitiveShader = nullptr;
-            LogError << "Could not load default shader." << endLog;
+            LogError << "Could not load primitive shader." << endLog;
             return false;
         }
 
@@ -225,10 +140,10 @@ namespace Arya
         unloadAll();
     }
 
-    Model* ModelManager::loadResource(string filename)
+    shared_ptr<Model> ModelManager::loadResource(string filename)
     {
         File* modelfile = Locator::getFileSystem().getFile(string("models/") + filename);
-        if( modelfile == 0 ) return 0;
+        if( modelfile == 0 ) return nullptr;
 
         //Note: except for the first magic int
         //this loader does not check the integrity of the data
@@ -238,7 +153,7 @@ namespace Arya
 
         AryaHeader* header = (AryaHeader*)pointer;
 
-        Model* model = 0;
+        shared_ptr<Model> model = nullptr;
 
         do{ //for easy break on errors
 
@@ -260,10 +175,10 @@ namespace Arya
                 break;
             }
 
-            model = new Model((ModelType)header->modeltype);
+            model = make_shared<Model>((ModelType)header->modeltype);
 
             //All materials in the file
-            vector<Material*> materials;
+            vector< shared_ptr<Material> > materials;
 
             LogDebug << "Loading model " << filename << " with " << header->submeshCount << " meshes." << endLog;
 
@@ -284,27 +199,30 @@ namespace Arya
                 nameBuf[count++] = 'a';
                 nameBuf[count++] = 0;
                 
-                Material* mat = Locator::getMaterialManager().getMaterial(nameBuf);
+                shared_ptr<Material> mat = Locator::getMaterialManager().getMaterial(nameBuf);
                 materials.push_back(mat);
             }
 
             //Parse animations
-            VertexAnimationData* animData = 0;
+
+            //slight hack with raw-pointer to leave ownership at Model
+            VertexAnimationData* animDataPtr;
 
             int animationCount = *(int*)pointer; pointer += 4;
             if(!animationCount)
             {
-                model->animationData = 0;
                 model->shaderProgram = staticShader;
+                model->animationData = nullptr;
                 LogDebug << "Model has no animations" << endLog;
             }
             else
             {
                 LogDebug << "Model has " << animationCount << " animations in " << header->frameCount << " frames: ";
 
-                animData = new VertexAnimationData;
-                model->animationData = animData;
                 model->shaderProgram = animatedShader;
+
+                unique_ptr<VertexAnimationData> animData = make_unique<VertexAnimationData>();
+                animDataPtr = animData.get(); //leave ownership at Model
 
                 VertexAnim newAnim;
                 for(int anim = 0; anim < animationCount; ++anim)
@@ -333,6 +251,8 @@ namespace Arya
                 }
 
                 LogDebug << endLog;
+
+                model->animationData = std::move(animData);
             }
 
             delete[] nameBuf;
@@ -350,10 +270,10 @@ namespace Arya
             for(int s = 0; s < header->submeshCount; ++s)
             {
                 Mesh* mesh = model->createMesh();
-                mesh->setMaterial(materials[header->submesh[s].materialIndex]);
+                mesh->material = materials[header->submesh[s].materialIndex];
 
-                Geometry* geometry = new Geometry();
-                mesh->setGeometry(geometry); //adds refcount
+                shared_ptr<Geometry> geometry = make_shared<Geometry>();
+                mesh->geometry = geometry;
 
                 geometry->primitiveType = header->submesh[s].primitiveType;
                 geometry->vertexCount = header->submesh[s].vertexCount;
@@ -395,13 +315,13 @@ namespace Arya
                     for(int f = 0; f < geometry->frameCount; ++f)
                     {
                         int nextf = (f+1)%geometry->frameCount;
-                        if(animData)
+                        if(animDataPtr)
                         {
-                            for(auto iter = animData->animations.begin(); iter != animData->animations.end(); ++iter)
+                            for(auto iter : animDataPtr->animations)
                             {
-                                if( iter->second.endFrame == f )
+                                if( iter.second.endFrame == f )
                                 {
-                                    nextf = iter->second.startFrame;
+                                    nextf = iter.second.startFrame;
                                     break;
                                 }
                             }
@@ -422,6 +342,8 @@ namespace Arya
 
             addResource(filename, model);
         }while(0);
+
+        LogDebug << "Loaded " << modelfile << endLog;
 
         Locator::getFileSystem().releaseFile(modelfile);
         return model;
