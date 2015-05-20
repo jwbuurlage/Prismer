@@ -1,13 +1,17 @@
 #include <Arya.h>
+#include <memory>
 
 #include "GameSessionClient.h"
 #include "GridGraphics.h"
 #include "GameLogger.h"
 #include "GameSessionInput.h"
-#include "Unit.h"
 #include "GameCamera.h"
+#include "Unit.h"
+#include "UnitGraphics.h"
 
 namespace Prismer {
+
+using std::make_shared;
 
 GameSessionClient::GameSessionClient() : GameSession()
 {
@@ -25,10 +29,7 @@ bool GameSessionClient::init()
     input = make_unique<GameSessionInput>(shared_from_this());
     input->init();
 
-    auto& root = Arya::Locator::getRoot();
-
-
-    _grid_entity = make_unique<GridEntity>(_grid);
+    _grid_entity = make_shared<GridEntity>(_grid);
 
     _camera = make_shared<GameCamera>();
 
@@ -56,11 +57,13 @@ void GameSessionClient::updateGameLogic(int elapsedTime)
     }
 }
 
-shared_ptr<Unit> GameSessionClient::createUnit(UnitInfo info)
+shared_ptr<Unit> GameSessionClient::createUnit(UnitInfo info, int x, int y)
 {
-    auto unit = GameSession::createUnit(info);
+    auto unit = GameSession::createUnit(info, x, y);
     GameLogInfo << "GameSessionClient::createUnit()" << endLog;
     // also create a unit entity
+    auto unitEntity = make_shared<UnitEntity>(unit, _grid_entity);
+    unit->setEntity(unitEntity);
     return unit;
 }
 

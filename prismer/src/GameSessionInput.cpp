@@ -1,12 +1,13 @@
 #include <vector>
 #include <memory>
 
+#include "common.h"
 #include "Unit.h"
 #include "Tile.h"
 #include "GameSession.h"
 #include "GameSessionInput.h"
 #include "GameLogger.h"
-
+#include "Grid.h"
 #include "Colors.h"
 #include "Shapes/Circle.h"
 
@@ -28,10 +29,18 @@ void GameSessionInput::init()
     input->bind("c", [this](bool down) {
             // create unit?
             if(down) {
-                GameLogInfo << "create unit" << endLog;
                 auto colors = vector<ColorID> { ColorID::red, ColorID::red };
                 auto unitInfo = UnitInfo(Circle(colors));
-                auto unit = _session->createUnit(unitInfo);
+
+                int seed = _session->generateId();
+
+                // bad way to do this, but just for lolz
+                int x = GRandom::genrand() % (_session->getGrid()->getWidth() / 2);
+                int y = GRandom::genrand() % (_session->getGrid()->getHeight() / 2);
+
+                GameLogInfo << "create unit " << x << " " << y << endLog;
+
+                auto unit = _session->createUnit(unitInfo, x, y);
             }
         });
 

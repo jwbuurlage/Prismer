@@ -21,6 +21,7 @@ SET(
     "../src/GameSessionClient.cpp"
     "../src/GameCamera.cpp"
     "../src/Unit.cpp"
+    "../src/UnitGraphics.cpp"
     "../src/main.cpp"
 )
 

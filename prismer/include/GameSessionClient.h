@@ -40,7 +40,7 @@ class GameSessionClient : public GameSession
         void updateGameLogic(int elapsedTime); //in ms
 
         //! Creates a unit
-        virtual shared_ptr<Unit> createUnit(UnitInfo info) override;
+        virtual shared_ptr<Unit> createUnit(UnitInfo info, int x, int y) override;
 
      private:
         unique_ptr<GameSessionInput> input;

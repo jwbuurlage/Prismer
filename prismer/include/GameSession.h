@@ -41,7 +41,7 @@ class GameSession
         }
 
         //! Creates a unit
-        virtual shared_ptr<Unit> createUnit(UnitInfo info);
+        virtual shared_ptr<Unit> createUnit(UnitInfo info, int x, int y);
 
         /** Generate a unique id */
         int generateId() const {
@@ -54,6 +54,10 @@ class GameSession
 
         /** Debug function */
         void _listUnits() const;
+
+        shared_ptr<Grid> getGrid() {
+            return _grid;
+        }
 
     protected:
         int gameTimer;
