@@ -87,6 +87,8 @@ namespace Arya
             void setUniform4fv(const char* name, const vec4& values);
             void setUniformMatrix4fv(const char* name, const mat4& matrix);
 
+            // TODO Include RenderSpec
+
         private:
             bool init();
 

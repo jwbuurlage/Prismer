@@ -7,6 +7,7 @@
 #include "Graphics.h"
 #include "Materials.h"
 #include "Models.h"
+#include "ModelGraphicsComponent.h"
 #include "Renderer.h"
 #include "Shaders.h"
 #include "Textures.h"
@@ -18,28 +19,17 @@ namespace Arya
     {
         renderer = new Renderer;
         camera = new Camera;
-        defaultShader = 0;
     }
 
     Graphics::~Graphics()
     {
         delete camera;
         delete renderer;
-        if (defaultShader) delete defaultShader;
     }
 
     bool Graphics::init(int width, int height)
     {
         if (!renderer->init()) return false;
-
-        defaultShader = new ShaderProgram("../shaders/staticmodel.vert",
-                "../shaders/staticmodel.frag");
-        if (!defaultShader->isValid()) {
-            delete defaultShader;
-            defaultShader = 0;
-            LogError << "Could not load default shader." << endLog;
-            return false;
-        }
 
         resize(width, height);
 
@@ -59,22 +49,15 @@ namespace Arya
 
     void Graphics::render(World* world)
     {
-        defaultShader->use();
-        defaultShader->setUniformMatrix4fv("vpMatrix", camera->getVPMatrix());
-        defaultShader->setUniformMatrix4fv("viewMatrix", camera->getVMatrix());
-
-        const list<Entity*>& entities = world->getEntitySystem()->getEntities();
+        auto entities = world->getEntities();
         for(auto ent : entities) {
             GraphicsComponent* gr = ent->getGraphics();
             if (!gr) continue;
 
-            defaultShader->setUniformMatrix4fv("mMatrix", ent->getMoveMatrix());
-            defaultShader->setUniform3fv("tintColor", vec3(0.5, 1.0, 0.5));
-
             RenderType type = gr->getRenderType();
             switch(type) {
                 case TYPE_MODEL:
-                    renderModel(gr);
+                    renderModel((ModelGraphicsComponent*)gr, ent->getMoveMatrix());
                     break;
                 case TYPE_TERRAIN:
                     break;
@@ -90,10 +73,18 @@ namespace Arya
         camera->update(elapsed);
     }
 
-    void Graphics::renderModel(GraphicsComponent* gr)
+    void Graphics::renderModel(ModelGraphicsComponent* gr, const mat4& moveMatrix)
     {
         Model* model = gr->getModel();
         if(!model) return;
+        ShaderProgram* shader = model->getShaderProgram();
+        if(!shader) return;
+
+        shader->use();
+        shader->setUniformMatrix4fv("vpMatrix", camera->getVPMatrix());
+        shader->setUniformMatrix4fv("viewMatrix", camera->getVMatrix());
+        shader->setUniformMatrix4fv("mMatrix", moveMatrix);
+        shader->setUniform3fv("tintColor", vec3(0.5, 1.0, 0.5));
 
         //TODO: Investigate the bounding box and also check onScreen.z ?
         //mat4 totalMatrix = camera->getVPMatrix() * ent->getMoveMatrix();
@@ -120,10 +111,9 @@ namespace Arya
             frame = animState->getCurFrame();
             interpolation = animState->getInterpolation();
         }
-        defaultShader->setUniform1f("interpolation", interpolation);
+        shader->setUniform1f("interpolation", interpolation);
 
-        for(Mesh* mesh : model->getMeshes())
-            renderer->renderMesh(mesh, frame, defaultShader);
+        for(auto mesh : model->getMeshes())
+            renderer->renderMesh(mesh, frame, shader);
     }
-
 }

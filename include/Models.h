@@ -9,11 +9,17 @@
 #pragma once
 #include "Resources.h"
 #include "AnimationBase.h"
+#include "GraphicsComponent.h"
 
 #include <vector>
 #include <string>
+#include <memory>
 using std::string;
 using std::vector;
+using std::shared_ptr;
+using std::unique_ptr;
+using std::make_shared;
+using std::make_unique;
 
 #include <glm/glm.hpp>
 using glm::vec3;
@@ -22,21 +28,18 @@ namespace Arya
 {
     class Geometry;
     class Material;
+    class AnimationState;
+    class ShaderProgram;
 
     class Mesh
     {
         public:
-            Mesh();
-            ~Mesh();
-
-            Geometry* getGeometry() const { return geometry; }
-            Material* getMaterial() const { return material; }
-
-            void setGeometry(Geometry* geom);
-            void setMaterial(Material* mat);
-        private:
-            Geometry* geometry;
-            Material* material;
+            // Note that geometry is shared and not unique.
+            // One could make a copy of a model and its meshes
+            // but let it point to the same geometry but
+            // with a different material.
+            shared_ptr<Geometry> geometry;
+            shared_ptr<Material> material;
     };
 
     enum ModelType //Note: Same constats as in the AryaModel file format
@@ -50,34 +53,27 @@ namespace Arya
     class Model
     {
         public:
+            Model(ModelType type);
+            virtual ~Model();
+
             const ModelType modelType;
 
             const vector<Mesh*>& getMeshes() const { return meshes; }
-            const AnimationData* getAnimationData() const { return animationData; }
+            ShaderProgram* getShaderProgram() const { return shaderProgram.get(); }
 
             //! Entity::setModel will call this function
             //! to create the appropriate subclass of AnimationState
-            AnimationState* createAnimationState();
-
-            void addRef(){ refCount++; }
-            void release(){ refCount--; }
+            unique_ptr<AnimationState> createAnimationState();
 
             vec3 getBoundingBoxVertex(int vertexNumber);
 
         private:
-            //Private constructor because only
-            //ModelManager is allowed to create Models
             friend class ModelManager;
-            friend class ResourceManager<Model>;
-            Model(ModelType type);
-            virtual ~Model();
-
-            int refCount;
-
             Mesh* createMesh();
 
             vector<Mesh*> meshes;
-            AnimationData* animationData;
+            shared_ptr<ShaderProgram> shaderProgram;
+            unique_ptr<AnimationData> animationData;
 
             float minX; // Values needed to define
             float maxX; // bounding box for model.
@@ -93,11 +89,17 @@ namespace Arya
             ModelManager();
             ~ModelManager();
 
-            bool initialize();
+            bool init();
             void cleanup();
 
-            Model* getModel(string filename){ return getResource(filename); }
+            shared_ptr<Model> getModel(string filename){ return getResource(filename); }
         private:
-            Model* loadResource(string filename );
+            shared_ptr<Model> loadResource(string filename );
+
+            void loadPrimitives();
+
+            shared_ptr<ShaderProgram> staticShader;
+            shared_ptr<ShaderProgram> animatedShader;
+            shared_ptr<ShaderProgram> primitiveShader;
     };
 }

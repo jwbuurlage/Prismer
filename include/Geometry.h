@@ -10,16 +10,11 @@
 
 namespace Arya
 {
-    //TODO: Make this class more general
     class Geometry
     {
         public:
             Geometry();
             ~Geometry();
-
-            void addRef(){ refCount++; }
-            void release(){ refCount--; }
-            int getRefCount() const { return refCount; }
 
             bool isAnimated() const { return frameCount > 1; }
 
@@ -44,7 +39,5 @@ namespace Arya
             GLuint* vaoHandles; //a list of framecount handles
             GLuint vertexBuffer;
             GLuint indexBuffer;
-
-            int refCount;
     };
 }

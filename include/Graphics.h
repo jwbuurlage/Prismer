@@ -1,12 +1,18 @@
 #pragma once
 
+#define GLM_FORCE_RADIANS
+#include <glm/glm.hpp>
+
+using glm::mat4;
+
 namespace Arya
 {
     class World;
-    class Renderer;
     class Camera;
+    class Renderer;
     class ShaderProgram;
     class GraphicsComponent;
+    class ModelGraphicsComponent;
 
     class Graphics
     {
@@ -39,10 +45,6 @@ namespace Arya
             Renderer*       renderer;
             Camera*         camera;
 
-            //TODO: This should be replaced
-            //Shaders should be in renderspec
-            ShaderProgram*  defaultShader;
-
-            void renderModel(GraphicsComponent* gr);
+            void renderModel(ModelGraphicsComponent* gr, const mat4& moveMatrix);
     };
 }
