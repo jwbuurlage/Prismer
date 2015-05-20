@@ -1,12 +1,13 @@
 #include <Arya.h>
+
 #include "Shape.h"
 
 namespace Prismer {
 
-class Circle : Shape
+class Circle : public Shape
 {
     public:
-        Circle(multiset<Color> colors);
+        Circle(vector<ColorID> colors);
 };
 
 } // namespace Prismer

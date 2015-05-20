@@ -9,6 +9,8 @@ SET(
 
 SET(
     PROJECT_SOURCES
+    "../src/Shapes/Circle.cpp"
+    "../src/Abilities/AGather.cpp"
     "../src/Game.cpp"
     "../src/GameLogger.cpp"
     "../src/GameSessionInput.cpp"
@@ -22,28 +24,17 @@ SET(
     PROJECT_INCLUDES
     "../../include"
     "../include"
-    # "/usr/include/lua5.1"
 )
 
 IF(APPLE)
     SET(
         PROJECT_LIBRARIES
         "Arya"
-#       "PocoNet"
-#       "PocoFoundation"
-#       "pthread"
-#       "luabind"
-#       "lua"
     )
 ELSE()
     SET(
         PROJECT_LIBRARIES
         "Arya"
-#       "PocoNet"
-#       "PocoFoundation"
-#       "pthread"
-#       "luabind"
-#       "lua5.1"
     )
 ENDIF()
 

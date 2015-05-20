@@ -1,3 +1,5 @@
+#pragma once
+
 #include <Arya.h>
 
 // TODO: discuss moving this to resource file
@@ -12,39 +14,7 @@ enum ColorID : int
     green
 };
 
-struct Color
-{
-    Color(int r, int g, int b) {
-        red = r;
-        blue = b;
-        green = g;
-        id = ColorID::na;
-    };
 
-    int red;
-    int blue;
-    int green;
-    ColorID id;
-};
-
-struct Red : Color
-{
-    Red() {
-        red = 1.0;
-        blue = 0.0;
-        green = 0.0;
-        id = ColorID::red;
-    }
-};
-
-struct Blue : Color
-{
-    Red() {
-        red = 0.0;
-        blue = 1.0;
-        green = 0.0;
-        id = ColorID::blue;
-    }
-};
+// rgbColors = map<ColorID, tuple(int, 3)>; //rgbColors[ColorID::red) 
 
 } // namespace Prismer

@@ -11,6 +11,8 @@
 
 namespace Prismer {
 
+using std::shared_ptr;
+
 class Unit;
 class UnitInfo;
 
@@ -35,7 +37,7 @@ class GameSession
         }
 
         //! Creates a unit
-        Unit* createUnit(UnitInfo info);
+        shared_ptr<Unit> createUnit(UnitInfo info);
 
         /** Generate a unique id */
         int generateId() const {
@@ -44,7 +46,7 @@ class GameSession
         }
 
         /** Return unit by id */
-        Unit* getUnitById(int id);
+        shared_ptr<Unit> getUnitById(int id);
 
         /** Debug function */
         void _listUnits() const;
@@ -52,14 +54,14 @@ class GameSession
     protected:
         int gameTimer;
 
-        const std::map<int, Unit*>& getUnitMap() const {
+        const std::map<int, shared_ptr<Unit>>& getUnitMap() const {
             return unitMap;
         }
 
     private:
         friend class Unit;
 
-        std::map<int,Unit*> unitMap;
+        std::map<int,shared_ptr<Unit>> unitMap;
 
         // Called in Unit deconstructor
         void destroyUnit(int id);

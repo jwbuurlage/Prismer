@@ -1,4 +1,5 @@
 #include "Unit.h"
+#include "Colors.h"
 
 namespace Prismer {
 
@@ -12,6 +13,11 @@ Unit::Unit(int id,
 
 void Unit::update(int gameTimer) const
 {
+}
+
+void Unit::addColor(ColorID color)
+{
+    // shape...
 }
 
 } // namespace Prismer

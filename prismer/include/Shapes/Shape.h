@@ -1,23 +1,34 @@
+#pragma once
+
 #include <Arya.h>
-#include <set>
 #include <vector>
+#include <memory>
+
+#include "../Colors.h"
+#include "../Abilities/Ability.h"
 
 namespace Prismer {
 
-using std::multiset;
 using std::vector;
+using std::shared_ptr;
 
-class Color;
-class Arya::RenderableComponent;
+//class Arya::RenderableComponent;
 
 class Shape
 {
     public:
-        Shape(multiset<Color> colors);
+        Shape(vector<ColorID> colors) : _colors(colors) { };
 
-    private:
-//        Arya::RenderableComponent _graphic;
-//        vector<Ability> _abilities;
+        const vector<shared_ptr<Ability>>& getAbilities() const {
+            return _abilities;
+        }
+
+    protected:
+        int _max_health;
+        int _movement_points;
+        vector<shared_ptr<Ability>> _abilities;
+        vector<ColorID> _colors;
+        Arya::GraphicsComponent _graphics;
 };
 
 } // namespace Prismer

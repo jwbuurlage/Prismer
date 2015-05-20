@@ -42,7 +42,7 @@ void GameSessionClient::updateGameLogic(int elapsedTime)
     //mat4 vpMatrix = Arya::Locator::getRoot().getGraphics()->getCamera()->getVPMatrix();
     for(auto unitIter : getUnitMap())
     {
-        Unit* unit = unitIter.second;
+        auto unit = unitIter.second;
         unit->update(gameTimer);
     }
 }

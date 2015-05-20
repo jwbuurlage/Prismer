@@ -1,5 +1,8 @@
 #include <Arya.h>
 
+#include "Shapes/Shape.h"
+#include "GameLogger.h"
+
 #include <memory>
 
 namespace Prismer {
@@ -7,44 +10,26 @@ namespace Prismer {
 using std::shared_ptr;
 
 class GameSession;
+enum ColorID;
 
 // unit info is stuff that (in general) does not change turn-to-turn.
 // specific to a unit at creation
 struct UnitInfo
 {
-    UnitInfo(int type_id_, Shape shape_) {
-        type_id = type_id_;
-        shape = shape_;
-    }
+    UnitInfo(Shape shape_)
+        : shape(shape_)
+    { }
 
-    int type_id;
     Shape shape;
-
-    // Abilities depend on Shape
-    // strenth of abilities depend on colors..
-
-    // these also depend on colors, how exactly depends on shape
-//    int health_points;
-//    int movement_points;
-
-    // Colors colors;
-    // Stats stats;
-    //
-    // First stats:
-    // - movement info
-    // - vision == movement?
 };
 
 class Unit
+    : public std::enable_shared_from_this<Unit>
 {
     public:
         Unit(int id,
             UnitInfo info,
-            shared_ptr<GameSession> session) :
-            _id(id),
-            _info(info),
-            _session(session);
-
+            shared_ptr<GameSession> session);
         ~Unit() { }
 
         int getId() const {
@@ -52,6 +37,26 @@ class Unit
         }
 
         void update(int gameTimer) const;
+
+        void addColor(ColorID color);
+
+        const Shape& getShape() const {
+            return _info.shape;
+        };
+
+        void cast(int abilityId, shared_ptr<TileInfo> tile) {
+            auto shape = getShape();
+            auto ability = shape.getAbilities().front();
+            if (!ability) {
+                GameLogInfo << "No castable ability" << endLog;
+            }
+            else if (!ability->isValid(tile)) {
+                GameLogInfo << "Ability is invalid" << endLog;
+            } else {
+                GameLogInfo << "Performing ability" << endLog;
+                ability->perform(tile, shared_from_this());
+            }
+        }
 
     private:
         int _id;

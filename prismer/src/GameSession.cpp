@@ -1,8 +1,12 @@
 #include "GameSession.h"
 #include "GameLogger.h"
 #include "Unit.h"
+#include <memory>
 
 namespace Prismer {
+
+using std::make_shared;
+using std::shared_ptr;
 
 GameSession::GameSession()
 {
@@ -16,11 +20,11 @@ GameSession::~GameSession()
         GameLogError << "List of units is not empty at deconstruction of GameSession. Possible memory leak" << endLog;
 }
 
-Unit* GameSession::createUnit(UnitInfo info)
+shared_ptr<Unit> GameSession::createUnit(UnitInfo info)
 {
     auto id = generateId();
-    auto unit = new Unit(id, info, shared_from_this());
-    unitMap.insert(std::pair<int, Unit*>(unit->getId(),unit));
+    auto unit = make_shared<Unit>(id, info, shared_from_this());
+    unitMap.insert(std::pair<int, shared_ptr<Unit>>(unit->getId(),unit));
     return unit;
 }
 
@@ -35,7 +39,7 @@ void GameSession::destroyUnit(int id)
     unitMap.erase(iter);
 }
 
-Unit* GameSession::getUnitById(int id)
+shared_ptr<Unit> GameSession::getUnitById(int id)
 {
     auto iter = unitMap.find(id);
     if(iter == unitMap.end()) return 0;
