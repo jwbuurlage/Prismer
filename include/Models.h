@@ -67,6 +67,9 @@ namespace Arya
 
             vec3 getBoundingBoxVertex(int vertexNumber);
 
+            //! Sets the material on all Meshes
+            void setMaterial(shared_ptr<Material> mat);
+
         private:
             friend class ModelManager;
             Mesh* createMesh();

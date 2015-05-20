@@ -90,6 +90,12 @@ namespace Arya
         return mesh;
     }
 
+    void Model::setMaterial(shared_ptr<Material> mat)
+    {
+        for (auto mesh : meshes)
+            mesh->material = mat;
+    }
+
 //=============================================================================
 //ModelManager
 
