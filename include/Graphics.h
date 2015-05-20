@@ -13,6 +13,7 @@ namespace Arya
     class ShaderProgram;
     class GraphicsComponent;
     class ModelGraphicsComponent;
+    class BillboardGraphicsComponent;
 
     class Graphics
     {
@@ -45,6 +46,7 @@ namespace Arya
             Renderer*       renderer;
             Camera*         camera;
 
-            void renderModel(ModelGraphicsComponent* gr, const mat4& moveMatrix);
+            void renderModel(ModelGraphicsComponent* gr);
+            void renderBillboard(BillboardGraphicsComponent* gr);
     };
 }

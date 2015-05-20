@@ -1,6 +1,5 @@
 #include "Camera.h"
 #include "Entity.h"
-#include "EntitySystem.h"
 #include "Graphics.h"
 #include "InputSystem.h"
 #include "Locator.h"

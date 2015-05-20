@@ -13,6 +13,7 @@ namespace Arya
     using glm::mat4;
 
     class Model;
+    class Material;
     class Primitive;
     class GraphicsComponent;
 
@@ -27,11 +28,9 @@ namespace Arya
             inline float getPitch() const { return pitch; }
             inline float getYaw() const { return yaw; }
 
-            inline void setPosition(const vec3& pos) { position = pos; updateMatrix = true; }
-            inline void setPitch(float p) { pitch = p; updateMatrix = true; }
-            inline void setYaw(float y) { yaw = y; updateMatrix = true; }
-
-            const mat4& getMoveMatrix();
+            inline void setPosition(const vec3& pos) { position = pos; updateMatrix(); }
+            inline void setPitch(float p) { pitch = p; updateMatrix(); }
+            inline void setYaw(float y) { yaw = y; updateMatrix(); }
 
             //! Updates all components
             void update(float elapsedTime);
@@ -46,13 +45,16 @@ namespace Arya
             //! Creates a ModelGraphicsComponent with the specified model
             void setGraphics(shared_ptr<Model> model);
 
+            //! Creates a BillboardGraphicsComponent with the specified material
+            void setGraphics(shared_ptr<Material> material);
+
         private:
+            //cached movematrix version of position, pitch, yaw, scale is in GraphicsComponent
             vec3 position;
             float pitch;
             float yaw;
 
-            mat4 mMatrix; //cached version of position, pitch, yaw, graphics.Scale
-            bool updateMatrix;
+            void updateMatrix();
 
             //Components
             unique_ptr<GraphicsComponent> graphicsComponent;

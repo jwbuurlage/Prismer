@@ -43,6 +43,7 @@ SET(
     "../src/Files.cpp"
     "../src/Geometry.cpp"
     "../src/Graphics.cpp"
+    "../src/GraphicsComponent.cpp"
     "../src/InputSystem.cpp"
     "../src/Interface.cpp"
     "../src/Locator.cpp"
