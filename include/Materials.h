@@ -49,6 +49,8 @@ namespace Arya
 
             shared_ptr<Material> getMaterial( string filename ) { return getResource(filename); }
 
+            shared_ptr<Material> createMaterial(const vec4& color);
+
         private:
             shared_ptr<Material> loadResource(string filename);
     };

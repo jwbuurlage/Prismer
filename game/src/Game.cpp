@@ -64,6 +64,7 @@ void Game::update(float dt)
         shared_ptr<Arya::Model> hexagon = root->getModelManager()->getModel("hexagon");
         shared_ptr<Arya::Model> triangle = root->getModelManager()->getModel("triangle");
         shared_ptr<Arya::Material> mat = root->getMaterialManager()->getMaterial("samplebillboard.tga");
+        shared_ptr<Arya::Material> mat2 = root->getMaterialManager()->createMaterial(vec4(0.0f, 1.0f, 0.0f, 0.5f));
 
         int counter = 0;
         for(int x = 0; x < 10; ++x) {
@@ -83,6 +84,11 @@ void Game::update(float dt)
                 ent = root->getWorld()->createEntity();
                 ent->setPosition(vec3(30.0f*x,30.0f*y,15.0f));
                 ent->setGraphics(mat);
+                ent->getGraphics()->setScreenSize(vec2(0.08f, 0.02f));
+
+                ent = root->getWorld()->createEntity();
+                ent->setPosition(vec3(30.0f*x,30.0f*y,20.0f));
+                ent->setGraphics(mat2);
                 ent->getGraphics()->setScreenSize(vec2(0.08f, 0.02f));
             }
         }

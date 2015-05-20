@@ -20,7 +20,6 @@ namespace Arya
 
     bool TextureManager::init(){
         loadDefaultTexture();
-        loadWhiteTexture();
         return true;
     }
 
@@ -112,32 +111,18 @@ namespace Arya
         return;
     }
 
-    void TextureManager::loadWhiteTexture()
+    shared_ptr<Texture> TextureManager::createTexture(const vec4& color)
     {
-        shared_ptr<Texture> whiteTex = make_shared<Texture>();
-        whiteTex->handle = 0;
-        whiteTex->width = 4;
-        whiteTex->height = 4;
-        unsigned int pixelCount = whiteTex->width * whiteTex->height;
-        float* imageData = new float[pixelCount * 4];
-        for(unsigned int i = 0; i < pixelCount; ++i)
-        {
-            imageData[4*i+0] = 1.0f; //red
-            imageData[4*i+1] = 1.0f; //green
-            imageData[4*i+2] = 1.0f; //blue
-            imageData[4*i+3] = 1.0f; //alpha
-        }
-        glGenTextures(1, &whiteTex->handle);
-        glBindTexture( GL_TEXTURE_2D, whiteTex->handle );
+        shared_ptr<Texture> tex = make_shared<Texture>();
+        tex->handle = 0;
+        tex->width = 1;
+        tex->height = 1;
+        glGenTextures(1, &tex->handle);
+        glBindTexture( GL_TEXTURE_2D, tex->handle );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, whiteTex->width, whiteTex->height, 0, GL_RGBA, GL_FLOAT, imageData );
-
-        delete[] imageData;
-
-        addResource("white", whiteTex);
-        return;
-
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, tex->width, tex->height, 0, GL_RGBA, GL_FLOAT, &color[0]);
+        return tex;
     }
 }
 
