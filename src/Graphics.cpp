@@ -2,12 +2,12 @@
 #include "AnimationVertex.h"
 #include "Camera.h"
 #include "Entity.h"
-#include "EntitySystem.h"
 #include "Geometry.h"
 #include "Graphics.h"
 #include "Materials.h"
 #include "Models.h"
 #include "ModelGraphicsComponent.h"
+#include "BillboardGraphicsComponent.h"
 #include "Renderer.h"
 #include "Shaders.h"
 #include "Textures.h"
@@ -57,9 +57,12 @@ namespace Arya
             RenderType type = gr->getRenderType();
             switch(type) {
                 case TYPE_MODEL:
-                    renderModel((ModelGraphicsComponent*)gr, ent->getMoveMatrix());
+                    renderModel((ModelGraphicsComponent*)gr);
                     break;
                 case TYPE_TERRAIN:
+                    break;
+                case TYPE_BILLBOARD:
+                    renderBillboard((BillboardGraphicsComponent*)gr);
                     break;
                 default:
                     break;
@@ -73,7 +76,7 @@ namespace Arya
         camera->update(elapsed);
     }
 
-    void Graphics::renderModel(ModelGraphicsComponent* gr, const mat4& moveMatrix)
+    void Graphics::renderModel(ModelGraphicsComponent* gr)
     {
         Model* model = gr->getModel();
         if(!model) return;
@@ -83,7 +86,7 @@ namespace Arya
         shader->use();
         shader->setUniformMatrix4fv("vpMatrix", camera->getVPMatrix());
         shader->setUniformMatrix4fv("viewMatrix", camera->getVMatrix());
-        shader->setUniformMatrix4fv("mMatrix", moveMatrix);
+        shader->setUniformMatrix4fv("mMatrix", gr->getMoveMatrix());
         shader->setUniform3fv("tintColor", vec3(0.5, 1.0, 0.5));
 
         //TODO: Investigate the bounding box and also check onScreen.z ?
@@ -115,5 +118,11 @@ namespace Arya
 
         for(auto mesh : model->getMeshes())
             renderer->renderMesh(mesh, frame, shader);
+    }
+
+    void Graphics::renderBillboard(BillboardGraphicsComponent* gr)
+    {
+        (void)gr;
+        return;
     }
 }

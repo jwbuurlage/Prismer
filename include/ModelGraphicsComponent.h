@@ -15,11 +15,9 @@ namespace Arya
             ~ModelGraphicsComponent();
             RenderType getRenderType() const override { return TYPE_MODEL; }
 
-            Model* getModel() const { return model.get(); }
 
-            void setScale(float _scale) { scale = _scale; }
-            float getScale() const { return scale; }
-            AnimationState* getAnimationState() const override { return animState.get(); }
+            void setScale(float _scale) override { scale = _scale; }
+            float getScale() const override { return scale; }
 
             void setAnimation(const char* name) override;
             void updateAnimation(float elapsedTime) override;
@@ -30,6 +28,8 @@ namespace Arya
             //! it creates a new AnimationState object
             void setModel(shared_ptr<Model> model);
 
+            Model* getModel() const { return model.get(); }
+            AnimationState* getAnimationState() const { return animState.get(); }
         private:
             shared_ptr<Model> model;
             unique_ptr<AnimationState> animState;
