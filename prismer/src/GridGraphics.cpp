@@ -7,7 +7,9 @@
 
 namespace Prismer {
 
-GridEntity::GridEntity(shared_ptr<Grid> grid)
+using std::shared_ptr;
+
+GridEntity::GridEntity(weak_ptr<Grid> grid)
     : _grid(grid)
 {
     _scale = 10.0f;
@@ -20,28 +22,39 @@ GridEntity::GridEntity(shared_ptr<Grid> grid)
     auto hexagon_clone = hexagon->clone();
     hexagon_clone->setMaterial(root.getMaterialManager()->createMaterial(vec4(1.0f, 0.0f, 0.5f, 0.5f)));
 
-    for (const auto& tile : _grid->getTiles())
-    {
-        auto ent = root.getWorld()->createEntity();
-        ent->setPosition(vec3(boardToWorld(tile.getX(), tile.getY()), 0.0f));
-        ent->setYaw(M_PI / 6);
+    shared_ptr<Grid> gridl = _grid.lock();
+    if (gridl) {
+        for (const auto& tile : gridl->getTiles())
+        {
+            auto ent = root.getWorld()->createEntity();
+            ent->setPosition(vec3(boardToWorld(tile.getX(), tile.getY()), 0.0f));
+            ent->setYaw(M_PI / 6);
 
-        if (tile.getX() == 3)
-            ent->setGraphics(hexagon_clone);
-        else
-            ent->setGraphics(hexagon);
+            if (tile.getX() == 3)
+                ent->setGraphics(hexagon_clone);
+            else
+                ent->setGraphics(hexagon);
 
-        ent->getGraphics()->setScale(0.95f * _scale);
+            ent->getGraphics()->setScale(0.95f * _scale);
+        }
     }
 }
 
 vec2 GridEntity::boardToWorld(int row, int col)
 {
-    float offsetX = sqrt(3) * 0.5 * _grid->getWidth() * _scale;
-    float offsetY = _grid->getHeight() * _scale;
+    float x = 0.0;
+    float y = 0.0;
+    shared_ptr<Grid> gridl = _grid.lock();
+    if (gridl) {
 
-    float x = -offsetX + _scale * sqrt(3) * (row + 0.5f * col);
-    float y = -offsetY + _scale * 1.5f * col;
+        float offsetX = sqrt(3) * 0.5 * gridl->getWidth() * _scale;
+        float offsetY = gridl->getHeight() * _scale;
+
+        x = -offsetX + _scale * sqrt(3) * (row + 0.5f * col);
+        y = -offsetY + _scale * 1.5f * col;
+    } else {
+        // FIXME: error
+    }
 
     return vec2(x, y);
 }
