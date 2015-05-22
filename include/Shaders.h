@@ -97,11 +97,8 @@ namespace Arya
         {
             public:
                 const char* name;
-                GLuint handle;
+                GLint handle;
                 function< T (Entity*)> func;
-
-                ShaderUniform(const char* n, GLuint h, function< T (Entity*)> f)
-                    : name(n), handle(h), func(f) {};
         };
 
     class ShaderProgram

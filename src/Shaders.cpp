@@ -305,7 +305,7 @@ namespace Arya
             LogError << "ShaderProgram::addUniform : " << name << " not found." << endLog;
             return false;
         }
-        uniforms1i.push_back( ShaderUniform<int>(name, loc, f) );
+        uniforms1i.push_back( ShaderUniform<int>{name, loc, f} );
         return true;
     }
 
@@ -317,7 +317,7 @@ namespace Arya
             LogError << "ShaderProgram::addUniform : " << name << " not found." << endLog;
             return false;
         }
-        uniforms1f.push_back( ShaderUniform<float>(name, loc, f) );
+        uniforms1f.push_back( ShaderUniform<float>{name, loc, f} );
         return true;
     }
 
@@ -329,7 +329,7 @@ namespace Arya
             LogError << "ShaderProgram::addUniform : " << name << " not found." << endLog;
             return false;
         }
-        uniforms2fv.push_back( ShaderUniform<vec2>(name, loc, f) );
+        uniforms2fv.push_back( ShaderUniform<vec2>{name, loc, f} );
         return true;
     }
 
@@ -341,7 +341,7 @@ namespace Arya
             LogError << "ShaderProgram::addUniform : " << name << " not found." << endLog;
             return false;
         }
-        uniforms3fv.push_back( ShaderUniform<vec3>(name, loc, f) );
+        uniforms3fv.push_back( ShaderUniform<vec3>{name, loc, f} );
         return true;
     }
 
@@ -353,7 +353,7 @@ namespace Arya
             LogError << "ShaderProgram::addUniform : " << name << " not found." << endLog;
             return false;
         }
-        uniforms4fv.push_back( ShaderUniform<vec4>(name, loc, f) );
+        uniforms4fv.push_back( ShaderUniform<vec4>{name, loc, f} );
         return true;
     }
 
@@ -365,7 +365,7 @@ namespace Arya
             LogError << "ShaderProgram::addUniform : " << name << " not found." << endLog;
             return false;
         }
-        uniformsMat4fv.push_back( ShaderUniform<mat4>(name, loc, f) );
+        uniformsMat4fv.push_back( ShaderUniform<mat4>{name, loc, f} );
         return true;
     }
 
