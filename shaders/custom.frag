@@ -13,13 +13,11 @@ void main()
     fragColor = texture(tex, texCoo);
 
     float r = dot(texCoo,texCoo);
-    if (r < 0.35)
-        fragColor *= customUniform;
-    else
+    if (r > 0.35)
     {
         float a = (r-0.35)/(1.0-0.35);
         // r interval [0.35 , 1] now mapped to [0,1]
-        // map [0,1] to [customUniform,1]
-        fragColor *= (1.0-a)*customUniform + a*vec4(1.0);
+        // map [0,1] to [1,customUniform]
+        fragColor *= a*customUniform + (1.0-a)*vec4(1.0);
     }
 }

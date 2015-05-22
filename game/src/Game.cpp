@@ -73,7 +73,6 @@ void Game::update(float dt)
         auto hexagon2 = hexagon->clone();
         hexagon2->setMaterial(mat);
 
-
         auto myShader = make_shared<ShaderProgram>(
                 "../shaders/custom.vert",
                 "../shaders/custom.frag");
@@ -85,8 +84,17 @@ void Game::update(float dt)
         {
             myShader->enableUniform(Arya::UNIFORM_MOVEMATRIX | Arya::UNIFORM_VPMATRIX | Arya::UNIFORM_TEXTURE);
             myShader->addUniform4fv("customUniform", [this](Entity* e){
-                    return vec4(0.5f + 0.5f*sin(0.10f*totalTime*e->getPosition().x), 0.5f + 0.5f*sin(0.10f * totalTime * e->getPosition().y), 1.0f, 1.0f);
+                    if (e->getPosition().x > 50.0f && e->getPosition().x < 150.0f
+                            && e->getPosition().y > 20.0f && e->getPosition().y < 80.0f)
+                    return vec4(
+                            0.7f + 0.3f*sin(0.06f * totalTime * e->getPosition().x),
+                            0.7f + 0.3f*sin(0.09f * totalTime * e->getPosition().y),
+                            1.0f,
+                            1.0f);
+                    else
+                    return vec4(1.0f,1.0f,1.0f,1.0f);
                     });
+            hexagon->setShaderProgram(myShader);
             hexagon2->setShaderProgram(myShader);
         }
 
