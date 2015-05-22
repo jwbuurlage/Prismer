@@ -59,20 +59,25 @@ void Game::update(float dt)
     if (!entityCreated && totalTime > 0.5f) {
         entityCreated = true;
 
-        shared_ptr<Arya::Entity> ent;
+        shared_ptr<Arya::Entity> ent, ent2;
         shared_ptr<Arya::Model> model = root->getModelManager()->getModel("ogros.aryamodel");
         shared_ptr<Arya::Model> hexagon = root->getModelManager()->getModel("hexagon");
         shared_ptr<Arya::Model> triangle = root->getModelManager()->getModel("triangle");
         shared_ptr<Arya::Material> mat = root->getMaterialManager()->getMaterial("samplebillboard.tga");
-        shared_ptr<Arya::Material> mat2 = root->getMaterialManager()->createMaterial(vec4(0.0f, 1.0f, 0.0f, 0.5f));
-        shared_ptr<Arya::Material> mat3 = root->getMaterialManager()->createMaterial(vec4(0.0f, 0.9f, 0.9f, 0.5f));
+        shared_ptr<Arya::Material> mat2 = root->getMaterialManager()->createMaterial(vec4(0.0f, 1.0f, 0.0f, 0.8f));
+        shared_ptr<Arya::Material> mat3 = root->getMaterialManager()->createMaterial(vec4(1.0f, 0.0f, 0.0f, 0.8f));
         
         shared_ptr<Arya::Model> hexagon2 = hexagon->clone();
-        hexagon2->setMaterial(mat3);
+        hexagon2->setMaterial(mat);
 
         int counter = 0;
         for(int x = 0; x < 10; ++x) {
             for(int y = 0; y < 10; ++y) {
+                ent = root->getWorld()->createEntity();
+                ent->setPosition(vec3(30.0f*x,30.0f*y,0.0f));
+                ent->setGraphics((((x+y)%2) == 0 ? hexagon : hexagon2));
+                ent->getGraphics()->setScale(10.0f);
+
                 ent = root->getWorld()->createEntity();
                 ent->setPosition(vec3(30.0f*x,30.0f*y,0));
                 ent->setPitch(0.5f*M_PI);
@@ -80,20 +85,21 @@ void Game::update(float dt)
                 ent->getGraphics()->setAnimation( animNames[counter%animCount] );
                 ++counter;
 
-                ent = root->getWorld()->createEntity();
-                ent->setPosition(vec3(30.0f*x,30.0f*y,0.0f));
-                ent->setGraphics((((x+y)%2) == 0 ? hexagon : hexagon2));
-                ent->getGraphics()->setScale(10.0f);
+                ent2 = ent;
 
                 ent = root->getWorld()->createEntity();
-                ent->setPosition(vec3(30.0f*x,30.0f*y,15.0f));
-                ent->setGraphics(mat);
-                ent->getGraphics()->setScreenSize(vec2(0.08f, 0.02f));
-
-                ent = root->getWorld()->createEntity();
-                ent->setPosition(vec3(30.0f*x,30.0f*y,20.0f));
+                ent->setPosition(vec3(0.0f, 15.0f, 0.0f));
+                ent->setParent(ent2);
                 ent->setGraphics(mat2);
-                ent->getGraphics()->setScreenSize(vec2(0.08f, 0.02f));
+                ent->getGraphics()->setScreenSize(vec2(0.03f, 0.005f));
+                ent->getGraphics()->setScreenOffset(vec2(-0.02f, 0.0f));
+
+                ent = root->getWorld()->createEntity();
+                ent->setPosition(vec3(0.0f, 15.0f, 0.0f));
+                ent->setParent(ent2);
+                ent->setGraphics(mat3);
+                ent->getGraphics()->setScreenSize(vec2(0.05f, 0.005f));
+                ent->getGraphics()->setScreenOffset(vec2(0.0f, 0.0f));
             }
         }
 

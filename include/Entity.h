@@ -8,6 +8,7 @@ namespace Arya
 {
     using std::unique_ptr;
     using std::shared_ptr;
+    using std::weak_ptr;
     using glm::vec2;
     using glm::vec3;
     using glm::mat4;
@@ -32,6 +33,9 @@ namespace Arya
             inline void setPitch(float p) { pitch = p; updateMatrix(); }
             inline void setYaw(float y) { yaw = y; updateMatrix(); }
 
+            inline void setParent(shared_ptr<Entity> ent) { parent = ent; }
+            inline shared_ptr<Entity> getParent() const { return parent.lock(); }
+
             //! Updates all components
             void update(float elapsedTime);
 
@@ -53,6 +57,8 @@ namespace Arya
             vec3 position;
             float pitch;
             float yaw;
+
+            weak_ptr<Entity> parent;
 
             void updateMatrix();
 

@@ -48,6 +48,6 @@ namespace Arya
     void Entity::updateMatrix()
     {
         if (graphicsComponent)
-            graphicsComponent->matrixDirty();
+            graphicsComponent->setDirty();
     }
 }
