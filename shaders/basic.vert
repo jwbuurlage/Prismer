@@ -4,7 +4,6 @@
 layout (location = 0) in vec3 vertexPosition;
 
 uniform mat4 mMatrix;
-uniform mat4 viewMatrix;
 uniform mat4 vpMatrix;
 
 out vec2 texCoo;

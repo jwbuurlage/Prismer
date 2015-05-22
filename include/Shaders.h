@@ -13,12 +13,16 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <functional>
+#include <cstdint>
 
 #include <glm/glm.hpp>
 
 //Prevents having to include full OpenGL header
+typedef int	            GLint;
 typedef unsigned int	GLuint;
 
+using std::function;
 using std::string;
 using std::vector;
 using std::map;
@@ -65,6 +69,41 @@ namespace Arya
             ShaderType type;
     };
 
+    // Built-in uniforms, using flags
+    // Other uniforms can be passed using the custom uniform method using callbacks
+    // The built-in uniforms have fixed types and names shown after the enum
+    enum UNIFORM_FLAG : std::int32_t
+    {
+        UNIFORM_NONE            = 0,
+        UNIFORM_MOVEMATRIX      = 1,    //mat4 mMatrix
+        UNIFORM_VIEWMATRIX      = 2,    //mat4 viewMatrix
+        UNIFORM_VPMATRIX        = 4,    //mat4 vpMatrix
+        UNIFORM_TEXTURE         = 8,    //sampler2D tex
+        UNIFORM_MATERIALPARAMS  = 16,   //vec4 material
+        UNIFORM_ANIM_INTERPOL   = 32    //float interpolation
+    };
+    //bit operators because it is not a primitive type
+    using UnderType = std::underlying_type_t<UNIFORM_FLAG>;
+    inline UNIFORM_FLAG operator| (UNIFORM_FLAG lhs, UNIFORM_FLAG rhs)
+    {
+        return (UNIFORM_FLAG)(static_cast<UnderType>(lhs) | static_cast<UnderType>(rhs));
+    }
+
+    class Entity;
+
+    // Custom uniforms using callbacks
+    template <typename T>
+        class ShaderUniform
+        {
+            public:
+                const char* name;
+                GLuint handle;
+                function< T (Entity*)> func;
+
+                ShaderUniform(const char* n, GLuint h, function< T (Entity*)> f)
+                    : name(n), handle(h), func(f) {};
+        };
+
     class ShaderProgram
     {
         public:
@@ -79,7 +118,8 @@ namespace Arya
             GLuint getHandle() { return handle; };
 			bool isValid() const { return valid; }
 
-            GLuint getUniformLocation(const char* name);
+            // -- Manual way of setting uniforms
+            GLint getUniformLocation(const char* name);
             void setUniform1i(const char* name, int val);
             void setUniform1f(const char* name, float val);
             void setUniform2fv(const char* name, const vec2& values);
@@ -87,7 +127,35 @@ namespace Arya
             void setUniform4fv(const char* name, const vec4& values);
             void setUniformMatrix4fv(const char* name, const mat4& matrix);
 
-            // TODO Include RenderSpec
+            // -- Built-in uniforms
+
+            void enableUniform(UNIFORM_FLAG flag);
+            bool isEnabled(UNIFORM_FLAG flag);
+
+            //! These functions only set the uniform if the flag is enabled
+            //! So the Graphics class will always call them
+            void setMoveMatrix(const mat4& m);
+            void setViewMatrix(const mat4& m);
+            void setViewProjectionMatrix(const mat4& m);
+            void setTexture(int t);
+            void setMaterialParams(vec4 par);
+            void setAnimInterpolation(float t);
+
+            // -- Custom uniforms
+
+            //! Add a custom uniform
+            //! ShaderProgram should be valid before adding uniforms (isValid())
+            //! Returns true if the uniform is present in the shader
+            //! Note that contents of name is not copied and should remain valid
+            bool addUniform1i(const char* name, function<int(Entity*)> f);
+            bool addUniform1f(const char* name, function<float(Entity*)> f);
+            bool addUniform2fv(const char* name, function<vec2(Entity*)> f);
+            bool addUniform3fv(const char* name, function<vec3(Entity*)> f);
+            bool addUniform4fv(const char* name, function<vec4(Entity*)> f);
+            bool addUniformMatrix4fv(const char* name, function<mat4(Entity*)> f);
+
+            //! Called by Graphics. Will perform all callbacks and set the uniforms
+            void doUniforms(Entity* e);
 
         private:
             bool init();
@@ -97,6 +165,16 @@ namespace Arya
 			bool valid;
 
             vector<Shader*> shaders;
-            map<string,GLuint> uniforms;
+
+            std::int32_t builtinUniforms;
+            vector<ShaderUniform<int> >     uniforms1i;
+            vector<ShaderUniform<float> >   uniforms1f;
+            vector<ShaderUniform<vec2> >    uniforms2fv;
+            vector<ShaderUniform<vec3> >    uniforms3fv;
+            vector<ShaderUniform<vec4> >    uniforms4fv;
+            vector<ShaderUniform<mat4> >    uniformsMat4fv;
+
+            // Caching for glGetUniformLocation
+            map<string,GLint> uniforms;
     };
 }

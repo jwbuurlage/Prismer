@@ -59,7 +59,12 @@ namespace Arya
             const ModelType modelType;
 
             const vector<Mesh*>& getMeshes() const { return meshes; }
-            ShaderProgram* getShaderProgram() const { return shaderProgram.get(); }
+
+            //! Get the ShaderProgram
+            shared_ptr<ShaderProgram> getShaderProgram() const { return shaderProgram; }
+
+            //! Set a different ShaderProgram
+            void setShaderProgram(shared_ptr<ShaderProgram> shader) { shaderProgram = shader; }
 
             //! Entity::setModel will call this function
             //! to create the appropriate subclass of AnimationState

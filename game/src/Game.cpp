@@ -63,7 +63,7 @@ void Game::update(float dt)
         shared_ptr<Arya::Model> model = root->getModelManager()->getModel("ogros.aryamodel");
         shared_ptr<Arya::Model> hexagon = root->getModelManager()->getModel("hexagon");
         shared_ptr<Arya::Model> triangle = root->getModelManager()->getModel("triangle");
-        shared_ptr<Arya::Material> mat = root->getMaterialManager()->getMaterial("samplebillboard.tga");
+        shared_ptr<Arya::Material> mat = root->getMaterialManager()->getMaterial("grass.tga");
         shared_ptr<Arya::Material> mat2 = root->getMaterialManager()->createMaterial(vec4(0.0f, 1.0f, 0.0f, 0.8f));
         shared_ptr<Arya::Material> mat3 = root->getMaterialManager()->createMaterial(vec4(1.0f, 0.0f, 0.0f, 0.8f));
         

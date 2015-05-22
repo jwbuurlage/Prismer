@@ -43,6 +43,13 @@ namespace Arya
             return false;
         }
 
+        billboardShader->enableUniform(UNIFORM_MOVEMATRIX | UNIFORM_VPMATRIX | UNIFORM_TEXTURE);
+
+        billboardShader->addUniform2fv("screenOffset",
+                [](Entity* e) { return e->getGraphics()->getScreenOffset(); } );
+        billboardShader->addUniform2fv("screenSize",
+                [](Entity* e) { return e->getGraphics()->getScreenSize(); } );
+
         return true;
     }
 
@@ -67,12 +74,12 @@ namespace Arya
             RenderType type = gr->getRenderType();
             switch(type) {
                 case TYPE_MODEL:
-                    renderModel((ModelGraphicsComponent*)gr);
+                    renderModel((ModelGraphicsComponent*)gr, ent.get());
                     break;
                 case TYPE_TERRAIN:
                     break;
                 case TYPE_BILLBOARD:
-                    renderBillboard((BillboardGraphicsComponent*)gr);
+                    renderBillboard((BillboardGraphicsComponent*)gr, ent.get());
                     break;
                 default:
                     break;
@@ -86,18 +93,18 @@ namespace Arya
         camera->update(elapsed);
     }
 
-    void Graphics::renderModel(ModelGraphicsComponent* gr)
+    void Graphics::renderModel(ModelGraphicsComponent* gr, Entity* e)
     {
         Model* model = gr->getModel();
         if(!model) return;
-        ShaderProgram* shader = model->getShaderProgram();
+        ShaderProgram* shader = model->getShaderProgram().get();
         if(!shader) return;
 
         shader->use();
-        shader->setUniformMatrix4fv("vpMatrix", camera->getVPMatrix());
-        shader->setUniformMatrix4fv("viewMatrix", camera->getVMatrix());
-        shader->setUniformMatrix4fv("mMatrix", gr->getMoveMatrix());
-        shader->setUniform3fv("tintColor", vec3(0.5, 1.0, 0.5));
+        shader->setMoveMatrix(gr->getMoveMatrix());
+        shader->setViewMatrix(camera->getVMatrix());
+        shader->setViewProjectionMatrix(camera->getVPMatrix());
+        shader->doUniforms(e);
 
         //TODO: Investigate the bounding box and also check onScreen.z ?
         //mat4 totalMatrix = camera->getVPMatrix() * ent->getMoveMatrix();
@@ -117,20 +124,22 @@ namespace Arya
         //if(flag == false) continue;
 
         int frame = 0;
-        float interpolation = 0.0f;
-        AnimationState* animState = gr->getAnimationState();
-        if(animState)
+        if (shader->isEnabled(UNIFORM_ANIM_INTERPOL))
         {
-            frame = animState->getCurFrame();
-            interpolation = animState->getInterpolation();
+            float interpolation = 0.0f;
+            if (auto animState = gr->getAnimationState())
+            {
+                frame = animState->getCurFrame();
+                interpolation = animState->getInterpolation();
+            }
+            shader->setAnimInterpolation(interpolation);
         }
-        shader->setUniform1f("interpolation", interpolation);
 
         for(auto mesh : model->getMeshes())
             renderer->renderMesh(mesh, shader, frame);
     }
 
-    void Graphics::renderBillboard(BillboardGraphicsComponent* gr)
+    void Graphics::renderBillboard(BillboardGraphicsComponent* gr, Entity* e)
     {
         // Get the quad if we do not have it yet
         if (!quad2dGeometry)
@@ -145,11 +154,11 @@ namespace Arya
         if(!mat) return;
 
         billboardShader->use();
-        billboardShader->setUniformMatrix4fv("vpMatrix", camera->getVPMatrix());
-        billboardShader->setUniformMatrix4fv("viewMatrix", camera->getVMatrix());
-        billboardShader->setUniformMatrix4fv("mMatrix", gr->getMoveMatrix());
-        billboardShader->setUniform2fv("screenOffset", gr->getScreenOffset());
-        billboardShader->setUniform2fv("screenSize", gr->getScreenSize());
+
+        billboardShader->setMoveMatrix(gr->getMoveMatrix());
+        billboardShader->setViewMatrix(camera->getVMatrix());
+        billboardShader->setViewProjectionMatrix(camera->getVPMatrix());
+        billboardShader->doUniforms(e);
 
         renderer->enableBlending(true);
         renderer->renderGeometry(quad2dGeometry.get(), mat, billboardShader.get());

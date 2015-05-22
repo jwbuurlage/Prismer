@@ -11,6 +11,7 @@ namespace Arya
     using glm::mat4;
 
     class World;
+    class Entity;
     class Camera;
     class Geometry;
     class Renderer;
@@ -53,7 +54,9 @@ namespace Arya
             shared_ptr<ShaderProgram> billboardShader;
             shared_ptr<Geometry> quad2dGeometry;
 
-            void renderModel(ModelGraphicsComponent* gr);
-            void renderBillboard(BillboardGraphicsComponent* gr);
+            // The Entity is temporary untill shader-uniform-setting has
+            // been moved into render()
+            void renderModel(ModelGraphicsComponent* gr, Entity* e);
+            void renderBillboard(BillboardGraphicsComponent* gr, Entity* e);
     };
 }
