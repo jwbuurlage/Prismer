@@ -8,6 +8,7 @@ namespace Arya
 {
     using std::shared_ptr;
     using std::make_shared;
+    using glm::vec2;
     using glm::mat4;
 
     class World;
@@ -44,12 +45,18 @@ namespace Arya
             //! Update camera
             void update(float elapsed);
 
+            //! Convert from x,y pixel coordinates with origin top left
+            //! to [-1,1] coordinates with (-1,-1) bottom left
+            vec2 normalizeMouseCoordinates(int x, int y);
+
             Renderer*       getRenderer() const { return renderer; }
             Camera*         getCamera() const { return camera; }
 
         private:
             Renderer*       renderer;
             Camera*         camera;
+            int windowWidth;
+            int windowHeight;
 
             shared_ptr<ShaderProgram> billboardShader;
             shared_ptr<Geometry> quad2dGeometry;

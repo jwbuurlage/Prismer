@@ -61,6 +61,14 @@ namespace Arya
         inverseProjectionMatrix = glm::inverse(projectionMatrix);
     }
 
+    vec3 Camera::getWorldCoordinates(vec3 screenCoords)
+    {
+        updateInverseMatrix();
+        vec4 result = inverseVPMatrix * vec4(screenCoords, 1.0f);
+        result /= result.w;
+        return vec3(result);
+    }
+
     void Camera::update(float elapsedTime)
     {
         // prevent camera from bugging. TODO: proper fix

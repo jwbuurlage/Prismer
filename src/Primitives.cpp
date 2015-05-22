@@ -6,6 +6,8 @@ namespace Arya
 {
     void ModelManager::loadPrimitives()
     {
+        const float a = 0.5f * sqrt(3.0f);
+
         shared_ptr<Geometry> geometry;
         shared_ptr<Model> model;
         Mesh* mesh;
@@ -18,9 +20,9 @@ namespace Arya
         // All z-coordinates are 0
 
         GLfloat triangleVertices[] = {
-            1.0f, -1.0f, 0.0f,
+            a, -0.5f, 0.0f,
             0.0f, 1.0f, 0.0f,
-            -1.0f, -1.0f, 0.0f
+            -a, -0.5f, 0.0f
         };
 
         geometry = make_shared<Geometry>();
@@ -69,7 +71,6 @@ namespace Arya
         mesh->geometry = geometry;
         addResource("quad", model);
 
-        const float a = 0.5f * sqrt(3.0f);
         GLfloat hexagonVertices[] = {
             0.0f, 0.0f, 0.0f,
             1.0f, 0.0f, 0.0f,

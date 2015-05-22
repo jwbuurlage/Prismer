@@ -2,8 +2,12 @@
 #pragma once
 #include "GameSession.h"
 
+#include <memory>
 #include <vector>
 using std::vector;
+using std::shared_ptr;
+
+namespace Arya{ class Entity; }
 
 class GameSessionInput;
 class Faction;
@@ -40,7 +44,14 @@ class GameSessionClient : public GameSession
         //TODO
         //void handleEvent(Packet& packet);
 
+        shared_ptr<Arya::Entity> debugEntity;
+
      private:
+        // Time since the creation of this session object
+        // This is not the game-timer
+        float totalSessionTime;
+        bool entityCreated;
+
         GameSessionInput* input;
         Faction* localFaction;
         vector<int> clients;

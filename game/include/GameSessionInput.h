@@ -1,10 +1,12 @@
 #include <glm/glm.hpp>
 #include "Arya.h"
 
+class GameSessionClient;
+
 class GameSessionInput
 {
     public:
-        GameSessionInput();
+        GameSessionInput(GameSessionClient* s);
         virtual ~GameSessionInput();
 
         void init();
@@ -12,6 +14,8 @@ class GameSessionInput
         void update(float elapsedTime);
 
     private: 
+        GameSessionClient* session;
+
         void mouseDown(Arya::MOUSEBUTTON button, bool buttonDown, int x, int y);
         void mouseWheelMoved(int delta);
         void mouseMoved(int x, int y, int dx, int dy);

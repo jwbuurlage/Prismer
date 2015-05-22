@@ -58,6 +58,10 @@ namespace Arya
             //! Call this on startup and when the window has resized
             void setProjectionMatrix(float fov, float aspect, float near, float far);
 
+            //! Get world space coordinates from screen space coordinates
+            //! Screen coordinates have to be in [-1,1] range
+            vec3 getWorldCoordinates(vec3 screenCoords);
+
             //
             // Methods called by Graphics
             //

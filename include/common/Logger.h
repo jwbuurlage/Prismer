@@ -11,6 +11,7 @@
 #include <fstream>
 #include <glm/glm.hpp>
 
+using glm::vec2;
 using glm::vec3;
 using glm::vec4;
 
@@ -108,6 +109,12 @@ namespace Arya
                     break;
             };
         }
+        return logger;
+    }
+
+    inline Logger& operator<<(Logger& logger, const vec2& v)
+    {
+        logger << '(' << v.x << ',' << v.y << ')';
         return logger;
     }
 

@@ -1,12 +1,15 @@
 #include "GameSessionInput.h"
 #include "GameLogger.h"
+#include "GameSessionClient.h"
 #include <glm/gtx/rotate_vector.hpp>
 
 using Arya::Camera;
 using std::bind;
 
-GameSessionInput::GameSessionInput()
+GameSessionInput::GameSessionInput(GameSessionClient* s)
 {
+    session = s;
+
     goingForward = goingBackward = goingLeft = goingRight = goingUp = goingDown = false;
     rotatingRight = rotatingLeft = false;
     mouseLeft = mouseRight = mouseTop = mouseBot = false;
@@ -108,9 +111,36 @@ void GameSessionInput::mouseDown(Arya::MOUSEBUTTON button, bool buttonDown, int 
 {
     (void)x; (void)y;
     if(button == Arya::MOUSEBUTTON_LEFT)
+    {
         draggingLeftMouse = (buttonDown == true);
+
+        if (!buttonDown)
+        {
+            auto gr = Arya::Locator::getRoot().getGraphics();
+            auto cam = gr->getCamera();
+
+            vec2 mouse = gr->normalizeMouseCoordinates(x,y);
+            vec3 world1 = cam->getWorldCoordinates(vec3(mouse, -1.0f));
+            vec3 world2 = cam->getWorldCoordinates(vec3(mouse, 1.0f));
+            vec3 diff = world2-world1;
+            if (glm::abs(diff.z) > 0.001)
+            {
+                vec3 point = world1 - (world1.z/diff.z)*diff;
+                point.z += 0.02f;
+                if (session && session->debugEntity)
+                    session->debugEntity->setPosition(point);
+            }
+
+            // cross line through world1,world2 with z=0
+            // line = a + lambda*(b-a)
+            // line.z == 0
+            // lambda = -a.z/(b.z-a.z)
+        }
+    }
     else if(button == Arya::MOUSEBUTTON_RIGHT)
+    {
         draggingRightMouse = (buttonDown == true);
+    }
 }
 
 void GameSessionInput::mouseWheelMoved(int delta)

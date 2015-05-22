@@ -57,6 +57,8 @@ namespace Arya
     {
         if(height > 0)
             camera->setProjectionMatrix(45.0f, ((float)width)/((float)height), 0.1f, 2000.0f);
+        windowWidth = width;
+        windowHeight = height;
     }
 
     void Graphics::clear(int width, int height)
@@ -91,6 +93,13 @@ namespace Arya
     void Graphics::update(float elapsed)
     {
         camera->update(elapsed);
+    }
+
+    vec2 Graphics::normalizeMouseCoordinates(int x, int y)
+    {
+        return vec2(
+                -1.0f + 2.0f*float(x)/float(windowWidth),
+                1.0f - 2.0f*float(y)/float(windowHeight) );
     }
 
     void Graphics::renderModel(ModelGraphicsComponent* gr, Entity* e)

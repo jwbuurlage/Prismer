@@ -22,7 +22,8 @@ namespace Arya
     {
         MOUSEBUTTON_LEFT = 1,
         MOUSEBUTTON_MIDDLE,
-        MOUSEBUTTON_RIGHT
+        MOUSEBUTTON_RIGHT,
+        MOUSEBUTTON_OTHER
     };
 
     class InputSystem
