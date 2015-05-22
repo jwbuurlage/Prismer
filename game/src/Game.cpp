@@ -59,16 +59,36 @@ void Game::update(float dt)
     if (!entityCreated && totalTime > 0.5f) {
         entityCreated = true;
 
-        shared_ptr<Arya::Entity> ent, ent2;
-        shared_ptr<Arya::Model> model = root->getModelManager()->getModel("ogros.aryamodel");
-        shared_ptr<Arya::Model> hexagon = root->getModelManager()->getModel("hexagon");
-        shared_ptr<Arya::Model> triangle = root->getModelManager()->getModel("triangle");
-        shared_ptr<Arya::Material> mat = root->getMaterialManager()->getMaterial("grass.tga");
-        shared_ptr<Arya::Material> mat2 = root->getMaterialManager()->createMaterial(vec4(0.0f, 1.0f, 0.0f, 0.8f));
-        shared_ptr<Arya::Material> mat3 = root->getMaterialManager()->createMaterial(vec4(1.0f, 0.0f, 0.0f, 0.8f));
+        using Arya::Entity;
+        using Arya::ShaderProgram;
+
+        shared_ptr<Entity> ent, ent2;
+        auto model = root->getModelManager()->getModel("ogros.aryamodel");
+        auto hexagon = root->getModelManager()->getModel("hexagon");
+        auto triangle = root->getModelManager()->getModel("triangle");
+        auto mat = root->getMaterialManager()->getMaterial("grass.tga");
+        auto mat2 = root->getMaterialManager()->createMaterial(vec4(0.0f, 1.0f, 0.0f, 0.8f));
+        auto mat3 = root->getMaterialManager()->createMaterial(vec4(1.0f, 0.0f, 0.0f, 0.8f));
         
-        shared_ptr<Arya::Model> hexagon2 = hexagon->clone();
+        auto hexagon2 = hexagon->clone();
         hexagon2->setMaterial(mat);
+
+
+        auto myShader = make_shared<ShaderProgram>(
+                "../shaders/custom.vert",
+                "../shaders/custom.frag");
+        if (!myShader->isValid()) {
+            myShader = nullptr;
+            LogError << "Could not load custom shader." << Arya::endLog;
+        }
+        else
+        {
+            myShader->enableUniform(Arya::UNIFORM_MOVEMATRIX | Arya::UNIFORM_VPMATRIX | Arya::UNIFORM_TEXTURE);
+            myShader->addUniform4fv("customUniform", [this](Entity*){
+                        return vec4(1.0f, 0.5f + 0.5f*sin(totalTime), 1.0f, 1.0f);
+                    });
+            hexagon2->setShaderProgram(myShader);
+        }
 
         int counter = 0;
         for(int x = 0; x < 10; ++x) {
