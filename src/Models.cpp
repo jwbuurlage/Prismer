@@ -56,6 +56,11 @@ namespace Arya
             delete meshes[i];
     }
 
+    shared_ptr<Model> Model::create(string filename)
+    {
+        return Locator::getModelManager().getModel(filename);
+    }
+
     unique_ptr<AnimationState> Model::createAnimationState()
     {
         if(animationData == 0) return 0;

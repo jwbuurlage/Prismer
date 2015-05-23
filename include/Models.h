@@ -58,6 +58,13 @@ namespace Arya
 
             const ModelType modelType;
 
+            //! Create a new model from file
+            static shared_ptr<Model> create(string filename);
+
+            //! Clone the model, making a copy of all Mesh objects
+            //! but they will still have the same shared_ptr to the old geometry
+            shared_ptr<Model> clone();
+
             const vector<Mesh*>& getMeshes() const { return meshes; }
 
             //! Get the ShaderProgram
@@ -74,11 +81,6 @@ namespace Arya
 
             //! Sets the material on all Meshes
             void setMaterial(shared_ptr<Material> mat);
-
-            //! Clone the model, making a copy of all Mesh objects
-            //! but they will still have the same shared_ptr to the old geometry
-            shared_ptr<Model> clone();
-
         private:
             friend class ModelManager;
             Mesh* createMesh();

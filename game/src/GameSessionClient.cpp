@@ -70,18 +70,18 @@ void GameSessionClient::update(float elapsedTime)
         int idCounter = 1;
 
         using Arya::Entity;
+        using Arya::Model;
+        using Arya::Material;
         using Arya::ShaderProgram;
-
-        auto root = &Arya::Locator::getRoot();
 
         Unit* unit;
         shared_ptr<Entity> ent, ent2;
-        auto model = root->getModelManager()->getModel("ogros.aryamodel");
-        auto hexagon = root->getModelManager()->getModel("hexagon");
-        auto triangle = root->getModelManager()->getModel("triangle");
-        auto mat = root->getMaterialManager()->getMaterial("grass.tga");
-        auto mat2 = root->getMaterialManager()->createMaterial(vec4(0.0f, 1.0f, 0.0f, 0.8f));
-        auto mat3 = root->getMaterialManager()->createMaterial(vec4(1.0f, 0.0f, 0.0f, 0.8f));
+        auto model = Model::create("ogros.aryamodel");
+        auto hexagon = Model::create("hexagon");
+        auto triangle = Model::create("triangle");
+        auto mat = Material::create("grass.tga");
+        auto mat2 = Material::create(vec4(0.0f, 1.0f, 0.0f, 0.8f));
+        auto mat3 = Material::create(vec4(1.0f, 0.0f, 0.0f, 0.8f));
 
         auto hexagon2 = hexagon->clone();
         hexagon2->setMaterial(mat);
