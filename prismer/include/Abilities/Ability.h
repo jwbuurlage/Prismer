@@ -28,18 +28,18 @@ class Ability
     public:
         Ability() { } 
         
-        virtual void perform(shared_ptr<Tile> tile,
-                shared_ptr<Unit> actor) = 0;
+        virtual void perform(shared_ptr<Unit> actor) = 0;
+        virtual bool isValid(shared_ptr<Unit> actor) = 0;
 
-        virtual bool isValid(shared_ptr<Tile> tile,
-                shared_ptr<Unit> actor) = 0;
-
-        virtual void activate() = 0;
+        virtual void activate(shared_ptr<Unit> actor) = 0;
         virtual void deactivate() = 0;
+        
+        virtual void hover(shared_ptr<Tile> hover) {
+            _hover = hover;
+        }
 
-    private:
-        // FIXME: ACTUALLY SAVE CURRENT TARGET
-        // shared_ptr<Tile> currentTarget;
+    protected:
+        shared_ptr<Tile> _hover;
 };
 
 } // namespace Prismer

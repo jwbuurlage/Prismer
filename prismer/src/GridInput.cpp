@@ -1,7 +1,9 @@
-#include "Tile.h"
-#include "Grid.h"
 #include "GridInput.h"
+
+#include "Grid.h"
 #include "GameLogger.h"
+#include "Tile.h"
+#include "Unit.h"
 
 namespace Prismer {
 
@@ -73,6 +75,12 @@ void GridInput::setHovered(shared_ptr<Tile> tile) {
 
     hovered = tile;
     hovered->setHovered(true);
+
+    if(active) {
+        if (active->getInfo()->hasUnit()) {
+            active->getInfo()->getUnit()->hover(hovered);
+        }
+    }
 }
 
 void GridInput::setHovered(TileDirection dir) {

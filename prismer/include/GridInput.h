@@ -2,6 +2,9 @@
 
 #include <memory>
 
+// FIXME: move TileDireftion to separate file
+#include "Tile.h"
+
 namespace Prismer {
 
 using std::weak_ptr;

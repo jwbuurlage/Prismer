@@ -15,10 +15,15 @@ UnitEntity::UnitEntity(shared_ptr<Unit> unit,
     triangle->setMaterial(root.getMaterialManager()->createMaterial(vec4(0.6f, 0.6f, 0.6f, 0.5f)));
 
     _entity = Arya::Entity::create();
-    _entity->setPosition(vec3(_grid_entity->boardToWorld(unit->getX(), unit->getY()), 1.0f));
+    _entity->setPosition(vec3(_grid_entity->boardToWorld(_unit->getX(), _unit->getY()), 1.0f));
 
     _entity->setGraphics(triangle);
     _entity->getGraphics()->setScale(5.0f);
+}
+
+void UnitEntity::update()
+{
+    _entity->setPosition(vec3(_grid_entity->boardToWorld(_unit->getX(), _unit->getY()), 1.0f));
 }
 
 } // namespace Prismer

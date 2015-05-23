@@ -6,23 +6,24 @@
 
 namespace Prismer {
 
-void AGather::perform(shared_ptr<Tile> tile,
-                shared_ptr<Unit> actor)
+void AGather::perform(shared_ptr<Unit> actor)
 {
-    // check if tile has resource
-    auto color = tile->getInfo()->popResource(); // ColorID::red;
-    GameLogInfo << "Popped: " << color << endLog;
-    actor->addColor(color);
+    if (!_hover)
+        return;
+
+    //actor->setTile(_hover);
 };
 
-bool AGather::isValid(shared_ptr<Tile> tile,
-                shared_ptr<Unit>)
+bool AGather::isValid(shared_ptr<Unit>)
 {
+    if (!_hover)
+        return false;
+
     // FIXME: unit next to it?
-    return tile->getInfo()->hasResource();
+    return _hover->getInfo()->hasResource();
 }
 
-void AGather::activate()
+void AGather::activate(shared_ptr<Unit> actor)
 {
 
 }

@@ -20,7 +20,7 @@ class UnitEntity
                 shared_ptr<GridEntity> grid_entity);
 
          // unit state changed; update appearance
-        void update() = delete;
+        void update();
 
     private:
         shared_ptr<Unit> _unit;

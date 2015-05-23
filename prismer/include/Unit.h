@@ -8,6 +8,7 @@
 namespace Prismer {
 
 using std::shared_ptr;
+using std::weak_ptr;
 
 class GameSession;
 class UnitEntity;
@@ -66,6 +67,14 @@ class Unit
         void deactivate();
 
         void setTile(shared_ptr<Tile> tile);
+
+        weak_ptr<Tile> getTile() {
+            return _tile;
+        }
+
+        // pass on to ability
+        void hover(shared_ptr<Tile> tile);
+
     private:
         int _id;
         int _x = 0;
@@ -75,6 +84,7 @@ class Unit
         UnitInfo _info;
         shared_ptr<GameSession> _session;
         shared_ptr<UnitEntity> _entity;
+        weak_ptr<Tile> _tile;
 };
 
 } // namespace Prismer

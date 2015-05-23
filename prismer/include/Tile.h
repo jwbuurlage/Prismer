@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 
+#include "GameLogger.h"
 #include "Colors.h"
 
 namespace Prismer {
@@ -19,7 +20,7 @@ enum TileDirection {
 
 using std::vector;
 using std::shared_ptr;
-using std::weak_ptr;
+using std::weak_ptr; 
 
 class Grid;
 class Unit;
@@ -43,9 +44,15 @@ class TileInfo {
         }
 
         void setUnit(shared_ptr<Unit> unit) {
-            if(hasUnit())
+            if(unit && hasUnit()) {
+                GameLogError << "Tile " << this << " already has unit." << endLog;
                 return;
+            }
             _unit = unit;
+        }
+
+        shared_ptr<Unit> getUnit() const {
+            return _unit;
         }
 
         ColorID popResource() {
