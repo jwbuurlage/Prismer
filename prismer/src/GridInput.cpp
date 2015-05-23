@@ -16,7 +16,7 @@ GridInput::GridInput(weak_ptr<Grid> grid)
     else {
         auto first_tile = l_grid->getTile(l_grid->getWidth() / 2, l_grid->getHeight() / 2);
 
-        setActive(first_tile);
+        //setActive(first_tile);
         setHovered(first_tile);
     }
 

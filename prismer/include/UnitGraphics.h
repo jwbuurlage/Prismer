@@ -1,5 +1,9 @@
 #include <memory>
 
+namespace Arya {
+    class Entity;
+}
+
 namespace Prismer {
 
 using std::shared_ptr;
@@ -21,6 +25,7 @@ class UnitEntity
     private:
         shared_ptr<Unit> _unit;
         shared_ptr<GridEntity> _grid_entity;
+        shared_ptr<Arya::Entity> _entity;
 };
 
 } // namespace Prismer

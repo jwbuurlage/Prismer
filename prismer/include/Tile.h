@@ -36,6 +36,18 @@ class TileInfo {
             return !_resources.empty();
         }
 
+        bool hasUnit() {
+            if(_unit)
+                return true;
+            return false;
+        }
+
+        void setUnit(shared_ptr<Unit> unit) {
+            if(hasUnit())
+                return;
+            _unit = unit;
+        }
+
         ColorID popResource() {
             if (_resources.empty())
                 return ColorID::na;
@@ -58,10 +70,8 @@ class TileInfo {
     protected:
         bool _active = false;
         bool _hovered = false;
-
-    private:
-        vector<ColorID> _resources;
         shared_ptr<Unit> _unit = nullptr;
+        vector<ColorID> _resources;
 };
 
 class Tile {
@@ -85,6 +95,8 @@ class Tile {
         }
 
         shared_ptr<Tile> getNeighbor(TileDirection dir);
+
+        int distance(shared_ptr<Tile> rhs);
 
         void setEntity(shared_ptr<TileEntity> entity) {
             _entity = entity;

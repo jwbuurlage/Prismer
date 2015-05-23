@@ -5,7 +5,7 @@
 namespace Prismer {
 
 class Unit;
-class TileInfo;
+class Tile;
 
 using std::shared_ptr;
 
@@ -28,13 +28,18 @@ class Ability
     public:
         Ability() { } 
         
-
-        virtual void perform(shared_ptr<TileInfo> tile,
+        virtual void perform(shared_ptr<Tile> tile,
                 shared_ptr<Unit> actor) = 0;
 
-        virtual bool isValid(shared_ptr<TileInfo> tile) = 0;
+        virtual bool isValid(shared_ptr<Tile> tile,
+                shared_ptr<Unit> actor) = 0;
+
+        virtual void activate() = 0;
+        virtual void deactivate() = 0;
+
     private:
-        // Animation? / Graphics?
+        // FIXME: ACTUALLY SAVE CURRENT TARGET
+        // shared_ptr<Tile> currentTarget;
 };
 
 } // namespace Prismer

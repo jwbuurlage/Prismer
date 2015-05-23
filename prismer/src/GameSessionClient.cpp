@@ -68,6 +68,10 @@ void GameSessionClient::updateGameLogic(int elapsedTime)
 shared_ptr<Unit> GameSessionClient::createUnit(UnitInfo info, int x, int y)
 {
     auto unit = GameSession::createUnit(info, x, y);
+
+    if (!unit)
+        return unit;
+
     GameLogInfo << "GameSessionClient::createUnit()" << endLog;
     // also create a unit entity
     auto unitEntity = make_shared<UnitEntity>(unit, _grid_entity);

@@ -11,6 +11,7 @@ using std::shared_ptr;
 
 class GameSession;
 class UnitEntity;
+class Tile;
 enum ColorID;
 
 // unit info is stuff that (in general) does not change turn-to-turn.
@@ -45,20 +46,6 @@ class Unit
             return _info.shape;
         };
 
-        void cast(int abilityId, shared_ptr<TileInfo> tile) {
-            auto shape = getShape();
-            auto ability = shape.getAbilities().front();
-            if (!ability) {
-                GameLogInfo << "No castable ability" << endLog;
-            }
-            else if (!ability->isValid(tile)) {
-                GameLogInfo << "Ability is invalid" << endLog;
-            } else {
-                GameLogInfo << "Performing ability" << endLog;
-                ability->perform(tile, shared_from_this());
-            }
-        }
-
         void setEntity(shared_ptr<UnitEntity> entity) {
             _entity = entity;
         }
@@ -71,18 +58,19 @@ class Unit
             return _y;
         }
 
-        void setX(int x) {
-            _x = x;
+        int getMovePoints() const {
+            return _mp;
         }
 
-        void setY(int y) {
-            _y = y;
-        }
+        void activate();
+        void deactivate();
 
+        void setTile(shared_ptr<Tile> tile);
     private:
         int _id;
         int _x = 0;
         int _y = 0;
+        int _mp = 2;
 
         UnitInfo _info;
         shared_ptr<GameSession> _session;

@@ -35,6 +35,12 @@ class Grid
 
         shared_ptr<Tile> getNeighbor(int x, int y, TileDirection dir);
 
+        int distance(int x1, int y1, int x2, int y2) {
+            int z1 = -x1 - y1;
+            int z2 = -x2 - y2;
+            return (abs(x1 - x2) + abs(y2 - y1) + abs(z2 - z1)) / 2;
+        }
+
         void setEntity(shared_ptr<GridEntity> entity) {
             _entity = entity;
         }

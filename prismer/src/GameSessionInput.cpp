@@ -33,12 +33,15 @@ void GameSessionInput::init()
                 auto unitInfo = UnitInfo(Circle(colors));
 
                 // bad way to do this, but just for lolz
-                int x = GRandom::genrand() % (_session->getGrid()->getWidth() / 2);
-                int y = GRandom::genrand() % (_session->getGrid()->getHeight() / 2);
-
-                GameLogInfo << "create unit " << x << " " << y << endLog;
+                int x = (_session->getGrid()->getWidth() / 2);
+                int y = (_session->getGrid()->getHeight() / 2);
 
                 auto unit = _session->createUnit(unitInfo, x, y);
+                if (!unit) {
+                    GameLogInfo << "cannot create unit" << endLog;
+                } else {
+                    GameLogInfo << "create unit " << x << " " << y << endLog;
+                }
             }
         });
 
@@ -46,15 +49,6 @@ void GameSessionInput::init()
             // create unit?
             if (down)
                 _session->_listUnits();
-        });
-
-    input->bind("1", [this](bool down) {
-            static auto tile = make_shared<TileInfo>();
-            // create unit?
-            if (down) {
-                auto unit = _session->getUnitById(1);
-                unit->cast(0, tile);
-            }
         });
 }
 

@@ -11,6 +11,7 @@ SET(
     PROJECT_SOURCES
     "../src/Shapes/Circle.cpp"
     "../src/Abilities/AGather.cpp"
+    "../src/Abilities/AMove.cpp"
     "../src/Grid.cpp"
     "../src/GridGraphics.cpp"
     "../src/GridInput.cpp"
