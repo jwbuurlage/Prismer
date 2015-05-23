@@ -45,10 +45,15 @@ namespace Arya
 
             glGenTextures(1, &texture->handle);
             glBindTexture(GL_TEXTURE_2D, texture->handle);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->width, texture->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, ptr);
+
+            //high quality, low speed
+            glGenerateMipmap(GL_TEXTURE_2D);
+
+            //low quality, high speed
+            //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
 
             addResource(filename, texture);
 
