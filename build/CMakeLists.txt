@@ -11,7 +11,7 @@ SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 
 #-- Display warnings and compile with debug information and optimize
-SET(CMAKE_CXX_FLAGS "-std=c++14 ${CMAKE_CXX_FLAGS} -Wall -Wextra -g -Og")
+SET(CMAKE_CXX_FLAGS "-std=c++14 ${CMAKE_CXX_FLAGS} -Wall -Wextra -g -O3")
 
 IF(APPLE)
     SET(
@@ -71,4 +71,5 @@ ADD_LIBRARY( ${LIB_NAME} STATIC ${LIB_SOURCES} )
 TARGET_LINK_LIBRARIES( ${LIB_NAME} ${LIB_LIBRARIES} )
 
 ADD_SUBDIRECTORY(../game/build ../game/build)
+ADD_SUBDIRECTORY(../prismer/build ../prismer/build)
 ADD_SUBDIRECTORY(../tools/build ../tools/build)

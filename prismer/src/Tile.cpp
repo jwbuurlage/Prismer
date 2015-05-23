@@ -1,0 +1,33 @@
+#include "Tile.h"
+#include "TileGraphics.h"
+#include "Grid.h"
+
+namespace Prismer
+{
+
+Tile::Tile(int x, int y, weak_ptr<Grid> grid)
+    : _x(x), _y(y), _grid(grid)
+{
+    _info = make_shared<TileInfo>();
+}
+
+void Tile::setActive(bool active) {
+    _info->_active = active;
+    _entity->update();
+}
+
+void Tile::setHovered(bool hovered) {
+    _info->_hovered = hovered;
+    _entity->update();
+}
+
+shared_ptr<Tile> Tile::getNeighbor(TileDirection dir)
+{
+    if (_grid.expired())
+        return nullptr;
+
+    auto l_grid = _grid.lock();
+    return l_grid->getNeighbor(_x, _y, dir);
+}
+
+} // namespace Prismer

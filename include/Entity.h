@@ -20,7 +20,7 @@ namespace Arya
     class GraphicsComponent;
 
     //! The user can subclass EntityUserData
-    class EntityUserData{};
+    class EntityUserData {};
 
     class Entity
     {
@@ -30,6 +30,7 @@ namespace Arya
             struct this_is_private {};
             Entity(const Entity&) = delete;
             const Entity& operator =(const Entity&) = delete;
+
         public:
             explicit Entity(const this_is_private&);
             ~Entity();
@@ -67,6 +68,7 @@ namespace Arya
 
             void setUserData(EntityUserData* data) { userData = data; }
             EntityUserData* getUserData() const { return userData; }
+
         private:
             //cached movematrix version of position, pitch, yaw, scale is in GraphicsComponent
             vec3 position;
