@@ -16,7 +16,10 @@
 #include <functional>
 #include <cstdint>
 
+#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
+
+#include "ShaderUniformBase.h"
 
 //Prevents having to include full OpenGL header
 typedef int	            GLint;
@@ -89,8 +92,6 @@ namespace Arya
         return (UNIFORM_FLAG)(static_cast<UnderType>(lhs) | static_cast<UnderType>(rhs));
     }
 
-    class Entity;
-
     // Custom uniforms using callbacks
     template <typename T>
         class ShaderUniform
@@ -98,7 +99,7 @@ namespace Arya
             public:
                 const char* name;
                 GLint handle;
-                function< T (Entity*)> func;
+                function< T (ShaderUniformBase*)> func;
         };
 
     class ShaderProgram
@@ -144,15 +145,15 @@ namespace Arya
             //! ShaderProgram should be valid before adding uniforms (isValid())
             //! Returns true if the uniform is present in the shader
             //! Note that contents of name is not copied and should remain valid
-            bool addUniform1i(const char* name, function<int(Entity*)> f);
-            bool addUniform1f(const char* name, function<float(Entity*)> f);
-            bool addUniform2fv(const char* name, function<vec2(Entity*)> f);
-            bool addUniform3fv(const char* name, function<vec3(Entity*)> f);
-            bool addUniform4fv(const char* name, function<vec4(Entity*)> f);
-            bool addUniformMatrix4fv(const char* name, function<mat4(Entity*)> f);
+            bool addUniform1i(const char* name, function<int(ShaderUniformBase*)> f);
+            bool addUniform1f(const char* name, function<float(ShaderUniformBase*)> f);
+            bool addUniform2fv(const char* name, function<vec2(ShaderUniformBase*)> f);
+            bool addUniform3fv(const char* name, function<vec3(ShaderUniformBase*)> f);
+            bool addUniform4fv(const char* name, function<vec4(ShaderUniformBase*)> f);
+            bool addUniformMatrix4fv(const char* name, function<mat4(ShaderUniformBase*)> f);
 
             //! Called by Graphics. Will perform all callbacks and set the uniforms
-            void doUniforms(Entity* e);
+            void doUniforms(ShaderUniformBase* e);
 
         private:
             bool init();

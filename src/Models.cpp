@@ -144,7 +144,7 @@ namespace Arya
         }
         animatedShader->enableUniform(UNIFORM_MOVEMATRIX | UNIFORM_VIEWMATRIX | UNIFORM_VPMATRIX | UNIFORM_TEXTURE | UNIFORM_MATERIALPARAMS | UNIFORM_ANIM_INTERPOL);
         // TODO - Move this out of the engine
-        animatedShader->addUniform3fv("tintColor", [](Entity*){ return vec3(0.5, 1.0, 0.5); });
+        animatedShader->addUniform3fv("tintColor", [](ShaderUniformBase*){ return vec3(0.5, 1.0, 0.5); });
 
         primitiveShader = make_shared<ShaderProgram>(
                 "../shaders/basic.vert",

@@ -21,6 +21,11 @@ namespace Arya
 
             void enableBlending(bool enable = true);
 
+            //! Note that it IS possible to write to the depth buffer without testing
+            //! and also to do the depth test without writing (updating)
+            void enableDepthWrite(bool enable = true);
+            void enableDepthTest(bool enable = true);
+
             //! Render a piece of geometry with texture
             //! Wrapper for lower-level renderGeometry
             //! Assumes mesh, shader are valid pointers

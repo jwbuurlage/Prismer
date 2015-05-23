@@ -297,7 +297,7 @@ namespace Arya
             setUniform1f("interpolation", t);
     }
 
-    bool ShaderProgram::addUniform1i(const char* name, function<int(Entity*)> f)
+    bool ShaderProgram::addUniform1i(const char* name, function<int(ShaderUniformBase*)> f)
     {
         GLint loc = glGetUniformLocation(handle, name);
         if (loc == -1)
@@ -309,7 +309,7 @@ namespace Arya
         return true;
     }
 
-    bool ShaderProgram::addUniform1f(const char* name, function<float(Entity*)> f)
+    bool ShaderProgram::addUniform1f(const char* name, function<float(ShaderUniformBase*)> f)
     {
         GLint loc = glGetUniformLocation(handle, name);
         if (loc == -1)
@@ -321,7 +321,7 @@ namespace Arya
         return true;
     }
 
-    bool ShaderProgram::addUniform2fv(const char* name, function<vec2(Entity*)> f)
+    bool ShaderProgram::addUniform2fv(const char* name, function<vec2(ShaderUniformBase*)> f)
     {
         GLint loc = glGetUniformLocation(handle, name);
         if (loc == -1)
@@ -333,7 +333,7 @@ namespace Arya
         return true;
     }
 
-    bool ShaderProgram::addUniform3fv(const char* name, function<vec3(Entity*)> f)
+    bool ShaderProgram::addUniform3fv(const char* name, function<vec3(ShaderUniformBase*)> f)
     {
         GLint loc = glGetUniformLocation(handle, name);
         if (loc == -1)
@@ -345,7 +345,7 @@ namespace Arya
         return true;
     }
 
-    bool ShaderProgram::addUniform4fv(const char* name, function<vec4(Entity*)> f)
+    bool ShaderProgram::addUniform4fv(const char* name, function<vec4(ShaderUniformBase*)> f)
     {
         GLint loc = glGetUniformLocation(handle, name);
         if (loc == -1)
@@ -357,7 +357,7 @@ namespace Arya
         return true;
     }
 
-    bool ShaderProgram::addUniformMatrix4fv(const char* name, function<mat4(Entity*)> f)
+    bool ShaderProgram::addUniformMatrix4fv(const char* name, function<mat4(ShaderUniformBase*)> f)
     {
         GLint loc = glGetUniformLocation(handle, name);
         if (loc == -1)
@@ -369,7 +369,7 @@ namespace Arya
         return true;
     }
 
-    void ShaderProgram::doUniforms(Entity* e)
+    void ShaderProgram::doUniforms(ShaderUniformBase* e)
     {
         for (auto a : uniforms1i) glUniform1i(a.handle, a.func(e));
         for (auto a : uniforms1f) glUniform1f(a.handle, a.func(e));

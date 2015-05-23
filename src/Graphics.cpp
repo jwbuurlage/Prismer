@@ -12,7 +12,9 @@
 #include "Shaders.h"
 #include "Textures.h"
 #include "World.h"
+#include "Interface.h"
 #include "Locator.h"
+#include <typeinfo>
 
 namespace Arya
 {
@@ -46,9 +48,36 @@ namespace Arya
         billboardShader->enableUniform(UNIFORM_MOVEMATRIX | UNIFORM_VPMATRIX | UNIFORM_TEXTURE);
 
         billboardShader->addUniform2fv("screenOffset",
-                [](Entity* e) { return e->getGraphics()->getScreenOffset(); } );
+                [](ShaderUniformBase* b) {
+                Entity* e = dynamic_cast<Entity*>(b);
+                return e->getGraphics()->getScreenOffset();
+                } );
         billboardShader->addUniform2fv("screenSize",
-                [](Entity* e) { return e->getGraphics()->getScreenSize(); } );
+                [](ShaderUniformBase* b) {
+                Entity* e = dynamic_cast<Entity*>(b);
+                return e->getGraphics()->getScreenSize();
+                } );
+
+        viewShader = make_shared<ShaderProgram>(
+                "../shaders/view.vert",
+                "../shaders/view.frag");
+        if (!viewShader->isValid()) {
+            viewShader = nullptr;
+            LogError << "Could not load view shader." << endLog;
+            return false;
+        }
+
+        viewShader->enableUniform(UNIFORM_TEXTURE);
+        viewShader->addUniform2fv("screenOffset",
+                [this](ShaderUniformBase* b) {
+                View* v = dynamic_cast<View*>(b);
+                return v->getScreenOffset(inverseWindowSize);
+                } );
+        viewShader->addUniform2fv("screenSize",
+                [this](ShaderUniformBase* b) {
+                View* v = dynamic_cast<View*>(b);
+                return v->getScreenSize(inverseWindowSize);
+                } );
 
         return true;
     }
@@ -59,6 +88,8 @@ namespace Arya
             camera->setProjectionMatrix(45.0f, ((float)width)/((float)height), 0.1f, 2000.0f);
         windowWidth = width;
         windowHeight = height;
+        inverseWindowSize.x = 1.0f / float(windowWidth);
+        inverseWindowSize.y = 1.0f / float(windowHeight);
     }
 
     void Graphics::clear(int width, int height)
@@ -94,6 +125,48 @@ namespace Arya
         return;
     }
 
+    void Graphics::render(Interface* interface)
+    {
+        // Get the quad if we do not have it yet
+        if (!quad2dGeometry)
+        {
+            shared_ptr<Model> a = Locator::getModelManager().getModel("quad2d");
+            if (a->getMeshes().empty()) return;
+            quad2dGeometry = a->getMeshes().front()->geometry;
+            if (!quad2dGeometry) return;
+        }
+        viewShader->use();
+        renderer->enableBlending(true);
+        renderer->enableDepthTest(false);
+        renderView(interface->getRootView().get());
+        renderer->enableBlending(false);
+        renderer->enableDepthTest(true);
+    }
+
+    void Graphics::renderView(View* view)
+    {
+        if (typeid(*view) == typeid(Image) )
+        {
+            Image* image = dynamic_cast<Image*>(view);
+
+            Material* mat = image->material.get();
+            if (mat)
+            {
+                viewShader->doUniforms(view);
+                renderer->renderGeometry(quad2dGeometry.get(), mat, viewShader.get());
+            }
+        }
+        else if (typeid(*view) == typeid(Label) )
+        {
+
+        }
+
+        auto children = view->getChildren();
+        for (auto v : children)
+            renderView(v.get());
+        return;
+    }
+
     void Graphics::update(float elapsed)
     {
         camera->update(elapsed);
@@ -103,7 +176,7 @@ namespace Arya
     {
         return vec2(
                 -1.0f + 2.0f*float(x)/float(windowWidth),
-                1.0f - 2.0f*float(y)/float(windowHeight) );
+                -1.0f + 2.0f*float(y)/float(windowHeight) );
     }
 
     void Graphics::renderModel(ModelGraphicsComponent* gr, Entity* e)

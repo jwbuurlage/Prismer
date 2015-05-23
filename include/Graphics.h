@@ -11,11 +11,13 @@ namespace Arya
     using glm::vec2;
     using glm::mat4;
 
+    class View;
     class World;
     class Entity;
     class Camera;
     class Geometry;
     class Renderer;
+    class Interface;
     class ShaderProgram;
     class GraphicsComponent;
     class ModelGraphicsComponent;
@@ -41,6 +43,7 @@ namespace Arya
             //The last case seems appropriate so that Graphics does not
             //know about World, only a list of renderable things
             void render(World* world);
+            void render(Interface* interface);
 
             //! Update camera
             void update(float elapsed);
@@ -57,12 +60,15 @@ namespace Arya
             Camera*         camera;
             int windowWidth;
             int windowHeight;
+            vec2 inverseWindowSize;
 
             shared_ptr<ShaderProgram> billboardShader;
+            shared_ptr<ShaderProgram> viewShader;
             shared_ptr<Geometry> quad2dGeometry;
 
             // The Entity is temporary untill shader-uniform-setting has
             // been moved into render()
+            void renderView(View* view);
             void renderModel(ModelGraphicsComponent* gr, Entity* e);
             void renderBillboard(BillboardGraphicsComponent* gr, Entity* e);
     };

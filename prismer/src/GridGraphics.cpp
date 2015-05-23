@@ -34,8 +34,15 @@ GridEntity::GridEntity(weak_ptr<Grid> grid)
     else
     {
         myShader->enableUniform(Arya::UNIFORM_MOVEMATRIX | Arya::UNIFORM_VPMATRIX | Arya::UNIFORM_TEXTURE);
-        myShader->addUniform4fv("customUniform", [this](Arya::Entity* ent){
-                TileEntity* t = (TileEntity*)ent->getUserData();
+        myShader->addUniform4fv("customUniform", [this](Arya::ShaderUniformBase* b){
+                Arya::Entity* ent = dynamic_cast<Arya::Entity*>(b);
+                if (!ent)
+                    return vec4(1.0f, 0.0f, 0.0f, 1.0f);
+
+                TileEntity* t = dynamic_cast<TileEntity*>(ent->getUserData());
+                if (!t)
+                    return vec4(1.0f, 0.0f, 0.0f, 1.0f);
+
                 shared_ptr<Tile> tile = t->getTile().lock();
                 if (!tile)
                     return vec4(1.0f, 0.0f, 0.0f, 1.0f);

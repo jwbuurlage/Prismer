@@ -8,6 +8,7 @@
 #include "Root.h"
 #include "Shaders.h"
 #include "World.h"
+#include "Interface.h"
 
 using glm::vec2;
 using glm::vec3;

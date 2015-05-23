@@ -132,6 +132,7 @@ namespace Arya
         //if( !inputSystem->init() ) return false;
         //if( !interface->init() ) return false;
         //if( !world->init() ) return false;
+        inputSystem->resize(windowWidth, windowHeight);
 
         return true;
     }
@@ -225,17 +226,15 @@ namespace Arya
     {
         graphics->clear(getWindowWidth(), getWindowHeight());
         graphics->render(world);
-        //graphics->render(interface);
+        graphics->render(interface);
     }
 
     void Root::windowResized(int newWidth, int newHeight)
     {
 		windowWidth = newWidth;
 		windowHeight = newHeight;
-
+        inputSystem->resize(windowWidth, windowHeight);
         graphics->resize(windowWidth, windowHeight);
-
-        //TODO
-        //interface->recalculatePositions()
+        interface->resize(windowWidth, windowHeight);
     }
 }

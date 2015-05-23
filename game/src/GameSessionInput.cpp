@@ -123,16 +123,14 @@ void GameSessionInput::mouseDown(Arya::MOUSEBUTTON button, bool buttonDown, int 
             p.z += 0.02f;
             if (session && session->debugEntity)
                 session->debugEntity->setPosition(p);
-
-            // cross line through world1,world2 with z=0
-            // line = a + lambda*(b-a)
-            // line.z == 0
-            // lambda = -a.z/(b.z-a.z)
         }
     }
     else if(button == Arya::MOUSEBUTTON_RIGHT)
     {
         draggingRightMouse = (buttonDown == true);
+        
+        if (buttonDown)
+            LogDebug << "Rightclicked at (x,y) = (" << x << ',' << y << ')' << endLog;
     }
 }
 
@@ -150,9 +148,9 @@ void GameSessionInput::mouseMoved(int x, int y, int dx, int dy)
     int padding = 10;
 
     mouseLeft = (x < padding);
-    mouseTop = (y < padding);
+    mouseBot = (y < padding);
     mouseRight = (x > Arya::Locator::getRoot().getWindowWidth() - padding);
-    mouseBot = (y > Arya::Locator::getRoot().getWindowHeight() - padding);
+    mouseTop = (y > Arya::Locator::getRoot().getWindowHeight() - padding);
 
     computeForce();
     return;

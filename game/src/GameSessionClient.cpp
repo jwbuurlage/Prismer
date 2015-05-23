@@ -66,10 +66,12 @@ void GameSessionClient::update(float elapsedTime)
         entityCreated = true;
 
         UnitInfo* info = new UnitInfo(1);
+        (void)info;
 
         int idCounter = 1;
 
         using Arya::Entity;
+        using Arya::Image;
         using Arya::Model;
         using Arya::Material;
         using Arya::ShaderProgram;
@@ -82,6 +84,7 @@ void GameSessionClient::update(float elapsedTime)
         auto mat = Material::create("grass.tga");
         auto mat2 = Material::create(vec4(0.0f, 1.0f, 0.0f, 0.8f));
         auto mat3 = Material::create(vec4(1.0f, 0.0f, 0.0f, 0.8f));
+        auto mat4 = Material::create(vec4(0.9f, 0.9f, 0.9f, 0.8f));
 
         auto hexagon2 = hexagon->clone();
         hexagon2->setMaterial(mat);
@@ -96,7 +99,8 @@ void GameSessionClient::update(float elapsedTime)
         else
         {
             myShader->enableUniform(Arya::UNIFORM_MOVEMATRIX | Arya::UNIFORM_VPMATRIX | Arya::UNIFORM_TEXTURE);
-            myShader->addUniform4fv("customUniform", [this](Entity* e){
+            myShader->addUniform4fv("customUniform", [this](Arya::ShaderUniformBase* b){
+                    Entity* e = static_cast<Entity*>(b);
                     if (e->getPosition().x > 50.0f && e->getPosition().x < 150.0f
                             && e->getPosition().y > 20.0f && e->getPosition().y < 80.0f)
                     return vec4(
@@ -117,6 +121,20 @@ void GameSessionClient::update(float elapsedTime)
         debugEntity->setGraphics(triangle);
         debugEntity->getGraphics()->setScale(1.0f);
         //debugEntity->setUserData(something);
+
+        // bar at top of screen. 50px high, 10px from all sides
+        auto image = Image::create();
+        image->setMaterial(mat4);
+        image->setPosition(vec2(0.0f, 1.0f), vec2(0.0f, -0.5f*80.0f-10.0f)); //middle-top + (0, -60px)
+        image->setSize(vec2(1.0f, 0.0f), vec2(-20.0f, 80.0f)); //fullwidth + (-20px, +40px)
+
+        auto image2 = Image::create();
+        image2->setMaterial(mat2);
+        image2->setPosition(vec2(-1.0f, 0.0f), vec2(0.5f*100.0f + 10.0f, 0.0f));
+        image2->setSize(vec2(0.0f, 1.0f), vec2(100.0f , -20.0f));
+
+        image->addToRootView();
+        image->add(image2);
 
         int counter = 0;
         const float a = 0.5f * sqrt(3.0f);

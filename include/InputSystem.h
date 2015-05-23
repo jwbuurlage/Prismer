@@ -53,7 +53,11 @@ namespace Arya
             //! Called by Root
             void handleInputEvent(const SDL_Event& event);
 
+            //! Called by Root when window resizes
+            void resize(int w, int h) { windowWidth = w; windowHeight = h; }
         private:
+            int windowWidth, windowHeight;
+
             function<void(int)> bindingKeyDown;
             function<void(int)> bindingKeyUp;
             function<void(MOUSEBUTTON,bool,int,int)> bindingMouseBtn;

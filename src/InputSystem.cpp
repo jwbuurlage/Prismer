@@ -11,6 +11,7 @@ namespace Arya
 
     InputSystem::InputSystem()
     {
+        windowWidth = 0; windowHeight = 0;
         if(keyMap.empty()) {
             //Note that a-z and 0-9 are taken care of separately
             //All strings must be lowercase!
@@ -141,18 +142,18 @@ namespace Arya
             case SDL_MOUSEBUTTONDOWN:
                 if( bindingMouseBtn ) {
                     bindingMouseBtn(translateButton(event.button.button), true,
-                            event.button.x, event.button.y);
+                            event.button.x, windowHeight - event.button.y);
                 }
                 break;
             case SDL_MOUSEBUTTONUP:
                 if( bindingMouseBtn ) {
                     bindingMouseBtn(translateButton(event.button.button), false,
-                            event.button.x, event.button.y);
+                            event.button.x, windowHeight - event.button.y);
                 }
                 break;
             case SDL_MOUSEMOTION:
                 if( bindingMouseMovement ) {
-                    bindingMouseMovement(event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel);
+                    bindingMouseMovement(event.motion.x, windowHeight - event.motion.y, event.motion.xrel, -event.motion.yrel);
                 }
                 break;
             case SDL_MOUSEWHEEL:

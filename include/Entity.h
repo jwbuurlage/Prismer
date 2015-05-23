@@ -3,6 +3,7 @@
 #include <memory>
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
+#include "ShaderUniformBase.h"
 
 namespace Arya
 {
@@ -22,7 +23,7 @@ namespace Arya
     //! The user can subclass EntityUserData
     class EntityUserData {};
 
-    class Entity
+    class Entity : public ShaderUniformBase
     {
         private:
             // For details on this, see

@@ -54,12 +54,16 @@ namespace Arya
             glEnable(GL_BLEND);
         else
             glDisable(GL_BLEND);
-        ////Other possible options for billboards
-        //glDepthMask(GL_FALSE);
-        //glDisable(GL_DEPTH_TEST);
-        ////Reset
-        //glDepthMask(GL_TRUE);
-        //glEnable(GL_DEPTH_TEST);
+    }
+
+    void Renderer::enableDepthWrite(bool enable)
+    {
+        glDepthMask(enable ? GL_TRUE : GL_FALSE);
+    }
+
+    void Renderer::enableDepthTest(bool enable)
+    {
+        glDepthFunc(enable ? GL_LESS : GL_ALWAYS);
     }
 
     void Renderer::renderMesh(Mesh* mesh, ShaderProgram* shader, int frame)
