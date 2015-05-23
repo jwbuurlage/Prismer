@@ -2,7 +2,9 @@
 #include <memory>
 
 #include "GameSessionClient.h"
+#include "Grid.h"
 #include "GridGraphics.h"
+#include "GridInput.h"
 #include "GameLogger.h"
 #include "GameSessionInput.h"
 #include "GameCamera.h"
@@ -30,6 +32,12 @@ bool GameSessionClient::init()
     input->init();
 
     _grid_entity = make_shared<GridEntity>(_grid);
+    _grid_entity->init();
+
+    _grid_input = make_shared<GridInput>(_grid);
+
+    _grid->setInput(_grid_input);
+    _grid->setEntity(_grid_entity);
 
     _camera = make_shared<GameCamera>();
 

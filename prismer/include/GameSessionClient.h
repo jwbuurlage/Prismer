@@ -14,6 +14,7 @@ using std::vector;
 class GameSessionInput;
 class GameCamera;
 class GridEntity;
+class GridInput;
 class UnitInfo;
 
 class GameSessionClient : public GameSession
@@ -47,6 +48,7 @@ class GameSessionClient : public GameSession
         vector<int> clients;
 
         shared_ptr<GridEntity> _grid_entity;
+        shared_ptr<GridInput> _grid_input;
         shared_ptr<GameCamera> _camera;
 };
 
