@@ -22,7 +22,31 @@ GridEntity::GridEntity(weak_ptr<Grid> grid)
     baseTile->setMaterial(root.getMaterialManager()->createMaterial(vec4(0.25f, 0.0f, 0.5f, 0.5f)));
 
     activeTile = baseTile->clone();
-    activeTile->setMaterial(root.getMaterialManager()->createMaterial(vec4(0.5f, 0.0f, 0.0f, 0.5f)));
+
+    using Arya::ShaderProgram;
+    auto myShader = make_shared<ShaderProgram>(
+            "../prismer/shaders/custom.vert",
+            "../prismer/shaders/custom.frag");
+    if (!myShader->isValid()) {
+        myShader = nullptr;
+        LogError << "Could not load custom shader." << Arya::endLog;
+    }
+    else
+    {
+        myShader->enableUniform(Arya::UNIFORM_MOVEMATRIX | Arya::UNIFORM_VPMATRIX | Arya::UNIFORM_TEXTURE);
+        myShader->addUniform4fv("customUniform", [this](Arya::Entity* ent){
+                TileEntity* t = (TileEntity*)ent->getUserData();
+                shared_ptr<Tile> tile = t->getTile().lock();
+                if (!tile)
+                    return vec4(1.0f, 0.0f, 0.0f, 1.0f);
+                if (tile->getInfo()->isActive())
+                    return vec4(1.0f, 0.0f, 0.0f, 1.0f);
+                if (tile->getInfo()->isHovered())
+                    return vec4(0.5f, 0.5f, 0.5f, 1.0f);
+                return vec4(0.25f, 0.0f, 0.5f, 1.0f);
+                });
+        activeTile->setShaderProgram(myShader);
+    }
 }
 
 void GridEntity::init()
@@ -33,7 +57,7 @@ void GridEntity::init()
         {
             // create tile graphic
             auto t_ent = make_shared<TileEntity>(weak_ptr<Tile>(tile), 
-                        weak_ptr<GridEntity>(shared_from_this()));
+                    weak_ptr<GridEntity>(shared_from_this()));
             tile_entities.push_back(t_ent);
 
             // link tile graphic to tile
@@ -51,20 +75,14 @@ vec2 GridEntity::boardToWorld(int x, int y)
     float y_world = 0.0;
     shared_ptr<Grid> l_grid = _grid.lock();
     if (l_grid) {
-        
-        auto col_mid = -l_grid->getWidth() / 2;
+
+        auto col_mid = -l_grid->getHeight() / 2;
         auto row_mid = (l_grid->getHeight() + l_grid->getWidth()) / 2;
-
-        float offsetX = _scale * sqrt(3) * (row_mid + 0.5f * col_mid);
-        float offsetY = -_scale * 1.5f * col_mid;
-
-        x_world = -offsetX + _scale * sqrt(3) * (row + 0.5f * col);
-        y_world = -offsetY - _scale * 1.5f * col;
 
         float h = _scale * 2;
         float w = 0.5 * sqrt(3) * h;
-        x_world = (col + 0.5 * row) * w;
-        y_world = 0.75 * row * h;
+        x_world = (col - col_mid + 0.5 * (row - row_mid)) * w;
+        y_world = 0.75 * (row - row_mid) * h;
     } else {
         // FIXME: error
     }

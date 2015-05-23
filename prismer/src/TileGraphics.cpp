@@ -14,12 +14,12 @@ TileEntity::TileEntity(weak_ptr<Tile> tile,
     auto l_grid = _grid_entity.lock();
     auto l_tile = _tile.lock();
 
-    auto& root = Arya::Locator::getRoot();
-    _entity = root.getWorld()->createEntity();
+    _entity = Arya::Entity::create();
     _entity->setPosition(vec3(l_grid->boardToWorld(l_tile->getX(), l_tile->getY()), 0.0f));
     _entity->setYaw(M_PI / 6);
     _entity->setGraphics(l_grid->getBaseTile());
     _entity->getGraphics()->setScale(0.95f * l_grid->getScale());
+    _entity->setUserData(this);
 }
 
 void TileEntity::update()

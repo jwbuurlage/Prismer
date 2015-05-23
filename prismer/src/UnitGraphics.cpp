@@ -14,7 +14,7 @@ UnitEntity::UnitEntity(shared_ptr<Unit> unit,
     auto triangle = root.getModelManager()->getModel("triangle");
     triangle->setMaterial(root.getMaterialManager()->createMaterial(vec4(0.6f, 0.6f, 0.6f, 0.5f)));
 
-    auto ent = root.getWorld()->createEntity();
+    auto ent = Arya::Entity::create();
     ent->setPosition(vec3(_grid_entity->boardToWorld(unit->getX(), unit->getY()), 1.0f));
 
     ent->setGraphics(triangle);

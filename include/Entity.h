@@ -19,6 +19,9 @@ namespace Arya
     class Primitive;
     class GraphicsComponent;
 
+    //! The user can subclass EntityUserData
+    class EntityUserData {};
+
     class Entity
     {
         private:
@@ -27,6 +30,7 @@ namespace Arya
             struct this_is_private {};
             Entity(const Entity&) = delete;
             const Entity& operator =(const Entity&) = delete;
+
         public:
             explicit Entity(const this_is_private&);
             ~Entity();
@@ -62,18 +66,16 @@ namespace Arya
             //! Creates a BillboardGraphicsComponent with the specified material
             void setGraphics(shared_ptr<Material> material);
 
-            //! The user can subclass Entity::UserData
-            class UserData{};
+            void setUserData(EntityUserData* data) { userData = data; }
+            EntityUserData* getUserData() const { return userData; }
 
-            void setUserData(UserData* data) { userData = data; }
-            UserData* getUserData() const { return userData; }
         private:
             //cached movematrix version of position, pitch, yaw, scale is in GraphicsComponent
             vec3 position;
             float pitch;
             float yaw;
 
-            UserData* userData;
+            EntityUserData* userData;
             weak_ptr<Entity> parent;
 
             void updateMatrix();
