@@ -56,5 +56,8 @@ class GameSessionClient : public GameSession
         Faction* localFaction;
         vector<int> clients;
 
+        //temporary
+        vector<shared_ptr<Arya::Entity>> entities;
+
         CellList* unitCells;
 };

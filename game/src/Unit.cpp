@@ -46,11 +46,6 @@ Unit::~Unit()
     session->destroyUnit(id);
 }
 
-void Unit::setEntity(Entity* ent)
-{
-    entity = ent;
-}
-
 void Unit::setSelected(bool _sel)
 {
 //    if(!(selected == _sel))
@@ -69,7 +64,7 @@ void Unit::setSelected(bool _sel)
 void Unit::setType(int _type)
 {
     type = _type;
-    unitInfo = getUnitInfo(_type);
+    unitInfo = UnitInfo::getFromType(_type);
     if(unitInfo == 0)
         GameLogError << "UnitInfo for type " << type << " not found! This will crash" << endLog;
 }

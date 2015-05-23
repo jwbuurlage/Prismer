@@ -15,8 +15,6 @@ class Faction
 
         Faction(int id, GameSession* session);
     public:
-        //~Faction deletes all units it has
-        //and unregisters itself at factory
         ~Faction();
 
         //! Adds the unit to this faction

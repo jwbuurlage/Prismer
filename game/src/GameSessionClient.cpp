@@ -4,6 +4,7 @@
 #include "GameSessionInput.h"
 #include "Faction.h"
 #include "Unit.h"
+#include "UnitInfo.h"
 #include "Cells.h"
 
 #include <queue>
@@ -64,11 +65,16 @@ void GameSessionClient::update(float elapsedTime)
     if (!entityCreated && totalSessionTime > 0.5f) {
         entityCreated = true;
 
+        UnitInfo* info = new UnitInfo(1);
+
+        int idCounter = 1;
+
         using Arya::Entity;
         using Arya::ShaderProgram;
 
         auto root = &Arya::Locator::getRoot();
 
+        Unit* unit;
         shared_ptr<Entity> ent, ent2;
         auto model = root->getModelManager()->getModel("ogros.aryamodel");
         auto hexagon = root->getModelManager()->getModel("hexagon");
@@ -123,6 +129,7 @@ void GameSessionClient::update(float elapsedTime)
                 ent->setPosition(pos);
                 ent->setGraphics((((x+y)%2) == 0 ? hexagon : hexagon2));
                 ent->getGraphics()->setScale(14.8f);
+                entities.push_back(ent);
 
                 if ( (x + y)%3 == 0 )
                 {
@@ -133,6 +140,9 @@ void GameSessionClient::update(float elapsedTime)
                     ent->getGraphics()->setAnimation( animNames[counter%animCount] );
                     ++counter;
 
+                    unit = createUnit(idCounter++, 1);
+                    unit->setEntity(ent);
+
                     ent2 = ent;
 
                     ent = Entity::create();
@@ -141,6 +151,7 @@ void GameSessionClient::update(float elapsedTime)
                     ent->setGraphics(mat2);
                     ent->getGraphics()->setScreenSize(vec2(0.03f, 0.005f));
                     ent->getGraphics()->setScreenOffset(vec2(-0.02f, 0.0f));
+                    entities.push_back(ent);
 
                     ent = Entity::create();
                     ent->setPosition(vec3(0.0f, 15.0f, 0.0f));
@@ -148,6 +159,7 @@ void GameSessionClient::update(float elapsedTime)
                     ent->setGraphics(mat3);
                     ent->getGraphics()->setScreenSize(vec2(0.05f, 0.005f));
                     ent->getGraphics()->setScreenOffset(vec2(0.0f, 0.0f));
+                    entities.push_back(ent);
                 }
             }
         }

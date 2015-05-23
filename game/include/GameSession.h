@@ -7,6 +7,11 @@
 #pragma once
 
 #include <map>
+#include <memory>
+
+using std::weak_ptr;
+using std::shared_ptr;
+using std::make_shared;
 
 class Unit;
 class Faction;
