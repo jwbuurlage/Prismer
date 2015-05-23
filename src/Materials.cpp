@@ -6,6 +6,16 @@
 
 namespace Arya
 {
+    shared_ptr<Material> Material::create(string filename)
+    {
+        return Locator::getMaterialManager().getMaterial(filename);
+    }
+
+    shared_ptr<Material> Material::create(const vec4& color)
+    {
+        return make_shared<Material>(Locator::getTextureManager().createTexture(color));
+    }
+
     bool MaterialManager::init()
     {
         loadResource("default");
@@ -27,7 +37,7 @@ namespace Arya
 
     shared_ptr<Material> MaterialManager::createMaterial(const vec4& color)
     {
-        return make_shared<Material>(Locator::getTextureManager().createTexture(color));
+        return Material::create(color);
     }
 
     void MaterialManager::cleanup()

@@ -56,6 +56,11 @@ namespace Arya
             delete meshes[i];
     }
 
+    shared_ptr<Model> Model::create(string filename)
+    {
+        return Locator::getModelManager().getModel(filename);
+    }
+
     unique_ptr<AnimationState> Model::createAnimationState()
     {
         if(animationData == 0) return 0;
@@ -127,6 +132,8 @@ namespace Arya
             LogError << "Could not load basic shader." << endLog;
             return false;
         }
+        staticShader->enableUniform(UNIFORM_MOVEMATRIX | UNIFORM_VPMATRIX | UNIFORM_TEXTURE);
+
         animatedShader = make_shared<ShaderProgram>(
                 "../shaders/vertexanimatedmodel.vert",
                 "../shaders/vertexanimatedmodel.frag");
@@ -135,6 +142,10 @@ namespace Arya
             LogError << "Could not load vertexanimatedmodel shader." << endLog;
             return false;
         }
+        animatedShader->enableUniform(UNIFORM_MOVEMATRIX | UNIFORM_VIEWMATRIX | UNIFORM_VPMATRIX | UNIFORM_TEXTURE | UNIFORM_MATERIALPARAMS | UNIFORM_ANIM_INTERPOL);
+        // TODO - Move this out of the engine
+        animatedShader->addUniform3fv("tintColor", [](Entity*){ return vec3(0.5, 1.0, 0.5); });
+
         primitiveShader = make_shared<ShaderProgram>(
                 "../shaders/basic.vert",
                 "../shaders/basic.frag");
@@ -143,6 +154,7 @@ namespace Arya
             LogError << "Could not load primitive shader." << endLog;
             return false;
         }
+        primitiveShader->enableUniform(UNIFORM_MOVEMATRIX | UNIFORM_VPMATRIX | UNIFORM_TEXTURE);
 
         loadPrimitives();
 

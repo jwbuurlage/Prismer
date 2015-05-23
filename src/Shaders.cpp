@@ -105,6 +105,7 @@ namespace Arya
     {
         handle = 0;
         linked = false;
+        builtinUniforms = UNIFORM_NONE;
         init();
         valid = false;
     }
@@ -113,6 +114,7 @@ namespace Arya
     {
         handle = 0;
         linked = false;
+        builtinUniforms = UNIFORM_NONE;
         init();
 
         valid = false;
@@ -201,11 +203,16 @@ namespace Arya
     // Uniforms
     //---------------------------
 
-    GLuint ShaderProgram::getUniformLocation(const char* name)
+    GLint ShaderProgram::getUniformLocation(const char* name)
     {
-        map<string,GLuint>::iterator it = uniforms.find(name);
+        auto it = uniforms.find(name);
         if(it != uniforms.end()) return it->second;
-        GLuint loc = glGetUniformLocation(handle, name);
+        GLint loc = glGetUniformLocation(handle, name);
+        if (loc == -1)
+        {
+            LogWarning << "ShaderProgram::getUniformLocation : Uniform " << name << " not found." << endLog;
+            return -1;
+        }
         uniforms.insert(std::pair<string,GLuint>(name, loc));
         return loc;
     }
@@ -239,4 +246,137 @@ namespace Arya
     {
         glUniformMatrix4fv(getUniformLocation(name), 1, false, &matrix[0][0]);
     }
+
+    //---------------------------
+    // Built-in uniforms
+    //---------------------------
+
+    void ShaderProgram::enableUniform(UNIFORM_FLAG flag)
+    {
+        builtinUniforms |= flag;
+    }
+
+    bool ShaderProgram::isEnabled(UNIFORM_FLAG flag)
+    {
+        return builtinUniforms & flag;
+    }
+
+    void ShaderProgram::setMoveMatrix(const mat4& m)
+    {
+        if (builtinUniforms & UNIFORM_MOVEMATRIX)
+            setUniformMatrix4fv("mMatrix", m);
+    }
+
+    void ShaderProgram::setViewMatrix(const mat4& m)
+    {
+        if (builtinUniforms & UNIFORM_VIEWMATRIX)
+            setUniformMatrix4fv("viewMatrix", m);
+    }
+
+    void ShaderProgram::setViewProjectionMatrix(const mat4& m)
+    {
+        if (builtinUniforms & UNIFORM_VPMATRIX)
+            setUniformMatrix4fv("vpMatrix", m);
+    }
+
+    void ShaderProgram::setTexture(int t)
+    {
+        if (builtinUniforms & UNIFORM_TEXTURE)
+            setUniform1i("tex", t);
+    }
+
+    void ShaderProgram::setMaterialParams(vec4 par)
+    {
+        if (builtinUniforms & UNIFORM_MATERIALPARAMS)
+            setUniform4fv("material", par);
+    }
+
+    void ShaderProgram::setAnimInterpolation(float t)
+    {
+        if (builtinUniforms & UNIFORM_ANIM_INTERPOL)
+            setUniform1f("interpolation", t);
+    }
+
+    bool ShaderProgram::addUniform1i(const char* name, function<int(Entity*)> f)
+    {
+        GLint loc = glGetUniformLocation(handle, name);
+        if (loc == -1)
+        {
+            LogError << "ShaderProgram::addUniform : " << name << " not found." << endLog;
+            return false;
+        }
+        uniforms1i.push_back( ShaderUniform<int>{name, loc, f} );
+        return true;
+    }
+
+    bool ShaderProgram::addUniform1f(const char* name, function<float(Entity*)> f)
+    {
+        GLint loc = glGetUniformLocation(handle, name);
+        if (loc == -1)
+        {
+            LogError << "ShaderProgram::addUniform : " << name << " not found." << endLog;
+            return false;
+        }
+        uniforms1f.push_back( ShaderUniform<float>{name, loc, f} );
+        return true;
+    }
+
+    bool ShaderProgram::addUniform2fv(const char* name, function<vec2(Entity*)> f)
+    {
+        GLint loc = glGetUniformLocation(handle, name);
+        if (loc == -1)
+        {
+            LogError << "ShaderProgram::addUniform : " << name << " not found." << endLog;
+            return false;
+        }
+        uniforms2fv.push_back( ShaderUniform<vec2>{name, loc, f} );
+        return true;
+    }
+
+    bool ShaderProgram::addUniform3fv(const char* name, function<vec3(Entity*)> f)
+    {
+        GLint loc = glGetUniformLocation(handle, name);
+        if (loc == -1)
+        {
+            LogError << "ShaderProgram::addUniform : " << name << " not found." << endLog;
+            return false;
+        }
+        uniforms3fv.push_back( ShaderUniform<vec3>{name, loc, f} );
+        return true;
+    }
+
+    bool ShaderProgram::addUniform4fv(const char* name, function<vec4(Entity*)> f)
+    {
+        GLint loc = glGetUniformLocation(handle, name);
+        if (loc == -1)
+        {
+            LogError << "ShaderProgram::addUniform : " << name << " not found." << endLog;
+            return false;
+        }
+        uniforms4fv.push_back( ShaderUniform<vec4>{name, loc, f} );
+        return true;
+    }
+
+    bool ShaderProgram::addUniformMatrix4fv(const char* name, function<mat4(Entity*)> f)
+    {
+        GLint loc = glGetUniformLocation(handle, name);
+        if (loc == -1)
+        {
+            LogError << "ShaderProgram::addUniform : " << name << " not found." << endLog;
+            return false;
+        }
+        uniformsMat4fv.push_back( ShaderUniform<mat4>{name, loc, f} );
+        return true;
+    }
+
+    void ShaderProgram::doUniforms(Entity* e)
+    {
+        for (auto a : uniforms1i) glUniform1i(a.handle, a.func(e));
+        for (auto a : uniforms1f) glUniform1f(a.handle, a.func(e));
+        for (auto a : uniforms2fv) glUniform2fv(a.handle, 1, &(a.func(e))[0]);
+        for (auto a : uniforms3fv) glUniform3fv(a.handle, 1, &(a.func(e))[0]);
+        for (auto a : uniforms4fv) glUniform4fv(a.handle, 1, &(a.func(e))[0]);
+        for (auto a : uniformsMat4fv) glUniformMatrix4fv(a.handle, 1, false, &(a.func(e))[0][0]);
+    }
+
 }

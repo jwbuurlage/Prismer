@@ -1,25 +1,21 @@
-//TODO: Put this into some sort of Locator ??
 #pragma once
 #include <string>
 
 using std::string;
 
 class Unit;
-class UnitInfo;
-
-UnitInfo* getUnitInfo(int type);
-UnitInfo* getUnitInfo(const std::string& name);
-
-void registerNewUnitInfo(UnitInfo* info);
 
 //TODO: Scripting
 //This class is subclassed by LuaUnitType
 //The class instances are created in the scripts
 class UnitInfo
 {
-	public:
-		UnitInfo(int type);
+    public:
+        UnitInfo(int type);
 		virtual ~UnitInfo();
+
+        static UnitInfo* getFromType(int type);
+        static UnitInfo* getFromType(const std::string& name);
 
 		//Call these from the game
 		//They will call the appropriate script

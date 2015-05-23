@@ -3,6 +3,7 @@
 namespace Arya
 {
     Root* Locator::root = 0;
+    World* Locator::world = 0;
     FileSystem* Locator::fileSystem = 0;
     InputSystem* Locator::inputSystem = 0;
     ModelManager* Locator::modelManager = 0;

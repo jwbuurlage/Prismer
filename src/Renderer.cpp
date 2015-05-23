@@ -77,10 +77,9 @@ namespace Arya
     {
         if (frame > geom->frameCount) return;
         glActiveTexture(GL_TEXTURE0);
-        shader->setUniform1i("tex", 0);
-
+        shader->setTexture(0);
         glBindTexture(GL_TEXTURE_2D, mat->texture->handle);
-        shader->setUniform4fv("parameters", vec4(mat->specAmp,mat->specPow,mat->ambient,mat->diffuse));
+        shader->setMaterialParams(vec4(mat->specAmp,mat->specPow,mat->ambient,mat->diffuse));
 
         geom->draw(frame);
     }

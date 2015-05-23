@@ -63,8 +63,8 @@ class Unit
         void update(int gameTime); //in ms
 
         //! Attach a visible entity to the unit
-        void setEntity(Entity* obj);
-        Entity* getEntity() const { return entity; }
+        void setEntity(shared_ptr<Entity> e) { entity = e; }
+        Entity* getEntity() const { return entity.get(); }
 
         //! Add the unit to the appropriate cell
         void setCellFromList(CellList* cl);
@@ -150,8 +150,10 @@ class Unit
         //scripting functions
         //LuaScriptData* customData;
     private:
-        Entity* entity; //entity->position and entity->yaw are predicted onscreen values, not always the same as Unit::position and Unit::yaw
-        vec3 position; //The position after the last update (gameTime) is stored here
+        //entity->position and entity->yaw are predicted onscreen values, not always the same as Unit::position and Unit::yaw
+        shared_ptr<Entity> entity;
+        //The position after the last update (gameTime) is stored here
+        vec3 position; 
         float yaw;
 
         UnitInfo* unitInfo;

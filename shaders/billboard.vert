@@ -4,7 +4,6 @@
 layout (location = 0) in vec2 vertexPosition;
 
 uniform mat4 mMatrix;
-uniform mat4 viewMatrix;
 uniform mat4 vpMatrix;
 uniform vec2 screenOffset;
 uniform vec2 screenSize;

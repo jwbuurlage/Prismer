@@ -31,7 +31,8 @@ namespace Arya
             const mat4& getMoveMatrix();
             // Little hack for dirty matrix optimization
             void setEntity(Entity* e) { ent = e; }
-            inline void matrixDirty() { updateMatrix = true; }
+            inline void setDirty() { updateMatrix = true; }
+            bool isDirty() const;
 
             // Subclasses can choose which of these they actually implement
 

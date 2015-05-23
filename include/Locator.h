@@ -3,6 +3,7 @@
 namespace Arya
 {
     class Root;
+    class World;
     class FileSystem;
     class InputSystem;
     class ModelManager;
@@ -14,6 +15,7 @@ namespace Arya
     {
         public:
             static Root& getRoot() { return *root; }
+            static World& getWorld() { return *world; }
             static FileSystem& getFileSystem() { return *fileSystem; }
             static InputSystem& getInputSystem() { return *inputSystem; }
             static ModelManager& getModelManager() { return *modelManager; }
@@ -22,6 +24,7 @@ namespace Arya
             static Audio& getAudio() { return *audio; }
 
             static void provide(Root* r) { root = r; }
+            static void provide(World* r) { world = r; }
             static void provide(FileSystem* f) { fileSystem = f; }
             static void provide(InputSystem* i) { inputSystem = i; }
             static void provide(ModelManager* m) { modelManager = m; }
@@ -30,6 +33,7 @@ namespace Arya
             static void provide(Audio* a) { audio = a; }
         private:
             static Root* root;
+            static World* world;
             static FileSystem* fileSystem;
             static InputSystem* inputSystem;
             static ModelManager* modelManager;

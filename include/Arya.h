@@ -6,6 +6,7 @@
 #include "Models.h"
 #include "Materials.h"
 #include "Root.h"
+#include "Shaders.h"
 #include "World.h"
 
 using glm::vec2;

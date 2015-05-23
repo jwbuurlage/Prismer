@@ -7,6 +7,7 @@ namespace Arya
 {
     using std::list;
     using std::shared_ptr;
+    using std::weak_ptr;
     using std::make_shared;
 
     class Entity;
@@ -19,16 +20,10 @@ namespace Arya
             World();
             ~World();
 
-            typedef list< shared_ptr<Entity> > EntityList;
-
-            //! Creates an entity and stores a reference to it
-            //! in the entity list
-            shared_ptr<Entity> createEntity();
-
-            //! Removes the reference that World has to entity
-            //! Entity object gets deleted only after all other
-            //! references are gone
-            void removeEntity(shared_ptr<Entity> ent);
+            // World holds a list of weak pointers to entities
+            // The user is responsible for maintaining the shared_ptr objects
+            // The user can delete an entity by simply resetting the shared_ptr
+            typedef list< weak_ptr<Entity> > EntityList;
 
             const EntityList& getEntities() const { return entities; }
             Terrain*      getTerrain() const { return terrain; }
@@ -39,5 +34,8 @@ namespace Arya
             EntityList  entities;
             Terrain*    terrain;
             Skybox*     skybox;
+
+            friend class Entity;
+            void addEntity(weak_ptr<Entity> e);
     };
 }

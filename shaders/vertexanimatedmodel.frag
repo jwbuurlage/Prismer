@@ -2,7 +2,7 @@
 #extension GL_ARB_explicit_attrib_location : require
 
 uniform sampler2D tex;
-uniform vec4 parameters;//specAmp, specPow, ambient, diffuse
+uniform vec4 material;//specAmp, specPow, ambient, diffuse
 uniform vec3 tintColor;
 
 in vec2 texCoo;
@@ -19,8 +19,8 @@ void main()
 	fragColor = texture(tex, texCoo);
 	if(fragColor.xyz == vec3(1.0, 0.0, 1.0))
         fragColor.xyz = tintColor;
-	//fragColor.xyz *= max(lightFraction*parameters.w, parameters.z);
-	//fragColor.xyz += parameters.x*vec3(pow(spec,parameters.y));
-	//fragColor.xyz += vec3(0.10);
+	fragColor.xyz *= max(lightFraction*material.w, material.z);
+	fragColor.xyz += material.x*vec3(pow(spec,material.y));
+	fragColor.xyz += vec3(0.10);
 	fragColor.a=1.0;
 }

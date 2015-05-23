@@ -15,7 +15,7 @@ uniform mat4 mMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 vpMatrix;
 uniform float interpolation;
-uniform vec4 parameters;//specAmp, specPow, ambient, diffuse
+uniform vec4 material;//specAmp, specPow, ambient, diffuse
 
 void main()
 {
@@ -27,7 +27,7 @@ void main()
 
     vec3 pos = (1.0 - interpolation) * position + interpolation*posNext;
 
-	if(parameters[0] > 0.001) {
+	if(material[0] > 0.001) {
 		vec4 camNormal=normalize(viewMatrix*vec4(norm,0.0));
 		vec4 camLight=normalize(viewMatrix*vec4(lightDirection,0.0));
 		vec4 camReflection=2.0*camNormal*dot(camLight,camNormal)-camLight;

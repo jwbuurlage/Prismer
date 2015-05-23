@@ -112,7 +112,7 @@ namespace Arya
         if( btn == SDL_BUTTON_LEFT )   return MOUSEBUTTON_LEFT;
         if( btn == SDL_BUTTON_MIDDLE ) return MOUSEBUTTON_MIDDLE;
         if( btn == SDL_BUTTON_RIGHT )  return MOUSEBUTTON_RIGHT;
-        return MOUSEBUTTON_LEFT;
+        return MOUSEBUTTON_OTHER;
     }
 
     void InputSystem::handleInputEvent(const SDL_Event& event)

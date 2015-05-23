@@ -5,14 +5,14 @@ using std::map;
 
 map<int,UnitInfo*> unitInfoList;
 
-UnitInfo* getUnitInfo(int type)
+UnitInfo* UnitInfo::getFromType(int type)
 {
     auto iter = unitInfoList.find(type);
     if (iter == unitInfoList.end() ) return 0;
     return iter->second;
 }
 
-UnitInfo* getUnitInfo(const string& name)
+UnitInfo* UnitInfo::getFromType(const string& name)
 {
     for (auto info : unitInfoList)
         if (info.second->displayname == name || info.second->modelname == name)
@@ -20,14 +20,10 @@ UnitInfo* getUnitInfo(const string& name)
     return 0;
 }
 
-void registerNewUnitInfo(UnitInfo* info)
-{
-    unitInfoList[info->typeId] = info;
-}
-
 UnitInfo::UnitInfo(int type) : typeId(type)
 {
-    registerNewUnitInfo(this);
+    unitInfoList[typeId] = this;
+
     //default values
     animationIdle = "stand";
     animationMove = "run";
@@ -38,6 +34,7 @@ UnitInfo::UnitInfo(int type) : typeId(type)
 
 UnitInfo::~UnitInfo()
 {
-    //TODO: remove from unitInfoList
+    auto iter = unitInfoList.find(typeId);
+    if (iter != unitInfoList.end() ) unitInfoList.erase(iter);
 }
 

@@ -16,8 +16,9 @@ class Game
         
         void update(float dt);
 
+        // Total running time of the full game
+        // Note that the running time of the session is in GameSessionClient
         float totalTime;
-        bool entityCreated;
 
         GameSessionClient* session;
 };

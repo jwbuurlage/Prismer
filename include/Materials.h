@@ -25,6 +25,9 @@ namespace Arya
 
             ~Material(){}
 
+            static shared_ptr<Material> create(string filename);
+            static shared_ptr<Material> create(const vec4& color);
+
             shared_ptr<Texture> texture;
             string type;
             float specAmp;    // The "amount" of highlights
