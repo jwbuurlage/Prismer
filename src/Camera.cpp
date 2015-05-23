@@ -61,12 +61,30 @@ namespace Arya
         inverseProjectionMatrix = glm::inverse(projectionMatrix);
     }
 
-    vec3 Camera::getWorldCoordinates(vec3 screenCoords)
+    vec3 Camera::getWorldCoordinates(const vec3& screenCoords)
     {
         updateInverseMatrix();
         vec4 result = inverseVPMatrix * vec4(screenCoords, 1.0f);
         result /= result.w;
         return vec3(result);
+    }
+
+    vec3 Camera::intersectViewRay(const vec2& screenCoords, const vec4& plane)
+    {
+        vec3 a = getWorldCoordinates(vec3(screenCoords, -1.0f));
+        vec3 b = getWorldCoordinates(vec3(screenCoords,  1.0f));
+        vec3 d = b-a;
+        vec3 n(plane);
+
+        //ray through a,b :   a + labmda*(b-a)
+        //should satisfy  :   dot(a + lambda*(b-a), n) = plane.w
+        //gives:  lambda = ( plane.w - dot(a, n) ) / dot(b-a, n);
+
+        float t = glm::dot(d,n);
+        if (glm::abs(t) > 0.00001f)
+            return a + ((plane.w - glm::dot(a,n))/t) * d;
+        else
+            return vec3(0.0f);
     }
 
     void Camera::update(float elapsedTime)

@@ -2,6 +2,7 @@
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
+using glm::vec2;
 using glm::vec3;
 using glm::vec4;
 using glm::mat4;
@@ -59,8 +60,14 @@ namespace Arya
             void setProjectionMatrix(float fov, float aspect, float near, float far);
 
             //! Get world space coordinates from screen space coordinates
-            //! Screen coordinates have to be in [-1,1] range
-            vec3 getWorldCoordinates(vec3 screenCoords);
+            //! Screen coordinates have to be in [-1,1] range and include the depth
+            vec3 getWorldCoordinates(const vec3& screenCoords);
+
+            //! Intersect a ray from the camera (mouse coordinates) with a plane in world space
+            //! plane is given as a normal and a constant, meaning:
+            //! vec3 r  is in the plane iff   dot(r, plane.xyz) == plane.w
+            //! returns vec3(0) if plane is too parallel to ray
+            vec3 intersectViewRay(const vec2& screenCoords, const vec4& plane);
 
             //
             // Methods called by Graphics

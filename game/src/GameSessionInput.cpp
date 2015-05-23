@@ -118,18 +118,11 @@ void GameSessionInput::mouseDown(Arya::MOUSEBUTTON button, bool buttonDown, int 
         {
             auto gr = Arya::Locator::getRoot().getGraphics();
             auto cam = gr->getCamera();
+            vec3 p = cam->intersectViewRay(gr->normalizeMouseCoordinates(x,y), vec4(0.0f, 0.0f, 1.0f, 0.0f));
 
-            vec2 mouse = gr->normalizeMouseCoordinates(x,y);
-            vec3 world1 = cam->getWorldCoordinates(vec3(mouse, -1.0f));
-            vec3 world2 = cam->getWorldCoordinates(vec3(mouse, 1.0f));
-            vec3 diff = world2-world1;
-            if (glm::abs(diff.z) > 0.001)
-            {
-                vec3 point = world1 - (world1.z/diff.z)*diff;
-                point.z += 0.02f;
-                if (session && session->debugEntity)
-                    session->debugEntity->setPosition(point);
-            }
+            p.z += 0.02f;
+            if (session && session->debugEntity)
+                session->debugEntity->setPosition(p);
 
             // cross line through world1,world2 with z=0
             // line = a + lambda*(b-a)
