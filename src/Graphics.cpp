@@ -68,8 +68,12 @@ namespace Arya
 
     void Graphics::render(World* world)
     {
+        shared_ptr<Entity> ent;
         auto entities = world->getEntities();
-        for(auto ent : entities) {
+        for(auto weakEnt : entities) {
+            ent = weakEnt.lock();
+            if (!ent) continue;
+
             GraphicsComponent* gr = ent->getGraphics();
             if (!gr) continue;
 

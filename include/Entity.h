@@ -9,6 +9,7 @@ namespace Arya
     using std::unique_ptr;
     using std::shared_ptr;
     using std::weak_ptr;
+    using std::make_shared;
     using glm::vec2;
     using glm::vec3;
     using glm::mat4;
@@ -20,9 +21,18 @@ namespace Arya
 
     class Entity
     {
+        private:
+            // For details on this, see
+            // http://stackoverflow.com/questions/8147027/how-do-i-call-stdmake-shared-on-a-class-with-only-protected-or-private-const
+            struct this_is_private {};
+            Entity(const Entity&) = delete;
+            const Entity& operator =(const Entity&) = delete;
         public:
-            Entity();
+            explicit Entity(const this_is_private&);
             ~Entity();
+
+            //! Create an entity and add a weak reference to it in World
+            static shared_ptr<Entity> create();
 
             inline const vec3& getPosition() const { return position; }
             inline vec2 getPosition2() const { return vec2(position.x, position.y); }

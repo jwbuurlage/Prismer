@@ -40,6 +40,7 @@ namespace Arya
         modelManager = new ModelManager;
         materialManager = new MaterialManager;
         textureManager = new TextureManager;
+        Locator::provide(world);
         Locator::provide(inputSystem);
         Locator::provide(modelManager);
         Locator::provide(materialManager);
@@ -67,11 +68,13 @@ namespace Arya
         modelManager = 0;
         fileSystem = 0;
         inputSystem = 0;
+        world = 0;
         //Unset the Locator pointers
         Locator::provide(textureManager);
         Locator::provide(materialManager);
         Locator::provide(modelManager);
         Locator::provide(inputSystem);
+        Locator::provide(world);
         Locator::provide(fileSystem);
         Locator::provide((Root*)0);
 

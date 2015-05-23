@@ -106,7 +106,7 @@ void GameSessionClient::update(float elapsedTime)
         }
 
         triangle->setMaterial(mat3);
-        debugEntity = root->getWorld()->createEntity();
+        debugEntity = Entity::create();
         debugEntity->setPosition(vec3(0.0f, 0.0f, -0.02f)); //hidden
         debugEntity->setGraphics(triangle);
         debugEntity->getGraphics()->setScale(1.0f);
@@ -119,14 +119,14 @@ void GameSessionClient::update(float elapsedTime)
                 vec3 pos(a*x, y + ((x&1)?0.5f : 0.0f),0.0f);
                 pos *= 30.0f*a;
 
-                ent = root->getWorld()->createEntity();
+                ent = Entity::create();
                 ent->setPosition(pos);
                 ent->setGraphics((((x+y)%2) == 0 ? hexagon : hexagon2));
                 ent->getGraphics()->setScale(14.8f);
 
                 if ( (x + y)%3 == 0 )
                 {
-                    ent = root->getWorld()->createEntity();
+                    ent = Entity::create();
                     ent->setPosition(pos);
                     ent->setPitch(0.5f*M_PI);
                     ent->setGraphics(model);
@@ -135,14 +135,14 @@ void GameSessionClient::update(float elapsedTime)
 
                     ent2 = ent;
 
-                    ent = root->getWorld()->createEntity();
+                    ent = Entity::create();
                     ent->setPosition(vec3(0.0f, 15.0f, 0.0f));
                     ent->setParent(ent2);
                     ent->setGraphics(mat2);
                     ent->getGraphics()->setScreenSize(vec2(0.03f, 0.005f));
                     ent->getGraphics()->setScreenOffset(vec2(-0.02f, 0.0f));
 
-                    ent = root->getWorld()->createEntity();
+                    ent = Entity::create();
                     ent->setPosition(vec3(0.0f, 15.0f, 0.0f));
                     ent->setParent(ent2);
                     ent->setGraphics(mat3);
