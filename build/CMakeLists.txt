@@ -55,6 +55,7 @@ SET(
     "../src/Root.cpp"
     "../src/Shaders.cpp"
     "../src/Terrain.cpp"
+    "../src/Text.cpp"
     "../src/Textures.cpp"
     "../src/World.cpp"
     )

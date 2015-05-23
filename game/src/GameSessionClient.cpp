@@ -39,6 +39,8 @@ bool GameSessionClient::init()
     input = new GameSessionInput(this);
     input->init();
 
+    totalSessionTime = 0.0f;
+
     return true;
 }
 
@@ -61,6 +63,7 @@ void GameSessionClient::update(float elapsedTime)
     //the game first shows the window with black screen
     //instead of waiting to load all files
     //Step one towards a loading screen ;)
+
     totalSessionTime += elapsedTime;
     if (!entityCreated && totalSessionTime > 0.5f) {
         entityCreated = true;
@@ -72,6 +75,7 @@ void GameSessionClient::update(float elapsedTime)
 
         using Arya::Entity;
         using Arya::Image;
+        using Arya::Label;
         using Arya::Model;
         using Arya::Material;
         using Arya::ShaderProgram;
@@ -133,8 +137,12 @@ void GameSessionClient::update(float elapsedTime)
         image2->setPosition(vec2(-1.0f, 0.0f), vec2(0.5f*100.0f + 10.0f, 0.0f));
         image2->setSize(vec2(0.0f, 1.0f), vec2(100.0f , -20.0f));
 
+        auto label = Label::create();
+        label->setText("this is a test");
+
         image->addToRootView();
         image->add(image2);
+        image->add(label);
 
         int counter = 0;
         const float a = 0.5f * sqrt(3.0f);

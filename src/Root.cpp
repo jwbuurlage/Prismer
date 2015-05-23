@@ -130,7 +130,7 @@ namespace Arya
         if (!materialManager->init()) return false;
         if (!modelManager->init()) return false;
         //if( !inputSystem->init() ) return false;
-        //if( !interface->init() ) return false;
+        if( !interface->init() ) return false;
         //if( !world->init() ) return false;
         inputSystem->resize(windowWidth, windowHeight);
 

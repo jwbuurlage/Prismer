@@ -16,6 +16,11 @@ namespace Arya
         return make_shared<Material>(Locator::getTextureManager().createTexture(color));
     }
 
+    shared_ptr<Material> Material::createFromHandle(unsigned int handle)
+    {
+        return make_shared<Material>(Texture::createFromHandle(handle));
+    }
+
     bool MaterialManager::init()
     {
         loadResource("default");

@@ -39,6 +39,31 @@ namespace Arya
         return true;
     }
 
+    void Renderer::checkErrors()
+    {
+        GLenum err = glGetError();
+        if (err != GL_NO_ERROR)
+        {
+            LogError << "OpenGL error: ";
+            switch (err)
+            {
+                case GL_INVALID_ENUM:
+                    LogError << "invalid enum";
+                    break;
+                case GL_INVALID_VALUE:
+                    LogError << "invalid value";
+                    break;
+                case GL_INVALID_OPERATION:
+                    LogError << "invalid operation";
+                    break;
+                default:
+                    LogError << "unknown error";
+                    break;
+            }
+            LogError << endLog;
+        }
+    }
+
     void Renderer::clear(int width, int height)
     {
         //glBindFramebuffer(GL_FRAMEBUFFER, 0);

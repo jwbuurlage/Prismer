@@ -27,6 +27,7 @@ namespace Arya
 
             static shared_ptr<Material> create(string filename);
             static shared_ptr<Material> create(const vec4& color);
+            static shared_ptr<Material> createFromHandle(unsigned int handle);
 
             shared_ptr<Texture> texture;
             string type;

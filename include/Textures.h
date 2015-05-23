@@ -1,8 +1,11 @@
 #pragma once
 #include "Resources.h"
-#include <GL/glew.h>
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
+
+//Prevents having to include full OpenGL header
+typedef int	            GLint;
+typedef unsigned int	GLuint;
 
 namespace Arya
 {
@@ -12,7 +15,9 @@ namespace Arya
     {
         public:
             Texture(){ handle = 0; width = 0; height = 0; }
-            ~Texture(){ if( handle ) glDeleteTextures(1, &handle); }
+            ~Texture();
+
+            static shared_ptr<Texture> createFromHandle(GLuint handle);
 
             GLuint handle;
             GLuint width;

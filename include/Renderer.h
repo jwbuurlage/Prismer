@@ -16,6 +16,8 @@ namespace Arya
             //! Initialize GLEW
             bool init();
 
+            void checkErrors();
+
             //! Clear the screen
             void clear(int width, int height);
 

@@ -38,6 +38,7 @@ namespace Arya
         geometry->createVAOs(1);
         geometry->bindVAO(0);
         geometry->setVAOdata(0, 3, 3 * sizeof(GLfloat), 0);
+        geometry->setVAOdata(1, 2, 3 * sizeof(GLfloat), 0); //xy are also st
 
         model = make_shared<Model>(ModelTypeStatic);
         model->shaderProgram = primitiveShader;
@@ -64,6 +65,7 @@ namespace Arya
         geometry->createVAOs(1);
         geometry->bindVAO(0);
         geometry->setVAOdata(0, 3, 3 * sizeof(GLfloat), 0);
+        geometry->setVAOdata(1, 2, 3 * sizeof(GLfloat), 0);
 
         model = make_shared<Model>(ModelTypeStatic);
         model->shaderProgram = primitiveShader;
@@ -110,6 +112,7 @@ namespace Arya
         geometry->createVAOs(1);
         geometry->bindVAO(0);
         geometry->setVAOdata(0, 3, 3 * sizeof(GLfloat), 0);
+        geometry->setVAOdata(1, 2, 3 * sizeof(GLfloat), 0);
 
         model = make_shared<Model>(ModelTypeStatic);
         model->shaderProgram = primitiveShader;
@@ -117,11 +120,12 @@ namespace Arya
         mesh->geometry = geometry;
         addResource("hexagon", model);
 
+        //x,y,s,t
         GLfloat quad2dVertices[] = {
-            1.0f, -1.0f,
-            1.0f, 1.0f,
-            -1.0f, -1.0f,
-            -1.0f, 1.0f
+            1.0f, -1.0f, 1.0f, 1.0f,
+            1.0f,  1.0f, 1.0f, 0.0f,
+            -1.0f,-1.0f, 0.0f, 1.0f,
+            -1.0f, 1.0f, 0.0f, 0.0f
         };
 
         geometry = make_shared<Geometry>();
@@ -135,10 +139,11 @@ namespace Arya
         geometry->setVertexBufferData(sizeof(quad2dVertices), quad2dVertices);
         geometry->createVAOs(1);
         geometry->bindVAO(0);
-        geometry->setVAOdata(0, 2, 2 * sizeof(GLfloat), 0);
+        geometry->setVAOdata(0, 2, 4 * sizeof(GLfloat), 0);
+        geometry->setVAOdata(1, 2, 4 * sizeof(GLfloat), 8);
 
         model = make_shared<Model>(ModelTypeStatic);
-        model->shaderProgram = primitiveShader;
+        model->shaderProgram = staticShader;
         mesh = model->createMesh();
         mesh->geometry = geometry;
         addResource("quad2d", model);

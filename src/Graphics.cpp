@@ -13,6 +13,7 @@
 #include "Textures.h"
 #include "World.h"
 #include "Interface.h"
+#include "Text.h"
 #include "Locator.h"
 #include <typeinfo>
 
@@ -33,6 +34,7 @@ namespace Arya
     bool Graphics::init(int width, int height)
     {
         if (!renderer->init()) return false;
+        renderer->checkErrors();
 
         resize(width, height);
 
@@ -78,7 +80,14 @@ namespace Arya
                 View* v = dynamic_cast<View*>(b);
                 return v->getScreenSize(inverseWindowSize);
                 } );
+        viewShader->addUniform1i("isFont",
+                [this](ShaderUniformBase* b) {
+                Label* lbl = dynamic_cast<Label*>(b);
+                if (lbl) return 1;
+                else return 0;
+                } );
 
+        renderer->checkErrors();
         return true;
     }
 
@@ -94,6 +103,7 @@ namespace Arya
 
     void Graphics::clear(int width, int height)
     {
+        renderer->checkErrors();
         renderer->clear(width, height);
     }
 
@@ -138,9 +148,11 @@ namespace Arya
         viewShader->use();
         renderer->enableBlending(true);
         renderer->enableDepthTest(false);
+        renderer->enableDepthWrite(false);
         renderView(interface->getRootView().get());
         renderer->enableBlending(false);
         renderer->enableDepthTest(true);
+        renderer->enableDepthWrite(true);
     }
 
     void Graphics::renderView(View* view)
@@ -158,7 +170,14 @@ namespace Arya
         }
         else if (typeid(*view) == typeid(Label) )
         {
+            Label* lbl = dynamic_cast<Label*>(view);
 
+            auto geom = lbl->getGeometry();
+            if (geom)
+            {
+                viewShader->doUniforms(view);
+                renderer->renderGeometry(geom, lbl->getFont()->getFontMaterial().get(), viewShader.get());
+            }
         }
 
         auto children = view->getChildren();

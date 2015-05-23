@@ -1,6 +1,8 @@
 #include "Interface.h"
 #include "Root.h"
+#include "Text.h"
 #include "Locator.h"
+#include "common/Logger.h"
 
 namespace Arya
 {
@@ -23,6 +25,10 @@ namespace Arya
 
     void View::add(shared_ptr<View> child)
     {
+        // if it already had a parent
+        if (auto p = child->parent.lock())
+            p->remove(child);
+
         childViews.push_back(child);
         child->parent = shared_from_this();
     }
@@ -92,6 +98,30 @@ namespace Arya
         return a;
     }
 
+    Label::Label(const this_is_private& a) : View(a)
+    {
+    }
+
+    Label::~Label()
+    {
+    }
+
+    shared_ptr<Label> Label::create()
+    {
+        return make_shared<Label>(this_is_private{});
+    }
+
+    void Label::setText(string t, shared_ptr<Font> f)
+    {
+        text = t;
+        font = f ? f : Locator::getRoot().getInterface()->getDefaultFont();
+
+        if (font)
+            geometry = font->createTextGeometry(text);
+
+        setSize(vec2(0.0f), vec2(1.0f));
+    }
+
     Interface::Interface()
     {
         root = View::create();
@@ -102,6 +132,15 @@ namespace Arya
 
     Interface::~Interface()
     {
+    }
+
+    bool Interface::init()
+    {
+        defaultFont = make_shared<Font>();
+        //defaultFont->loadFromFile("DejaVuSans.ttf");
+        defaultFont->loadFromFile("courier.ttf");
+        // do not exit if font not found
+        return true;
     }
 
     void Interface::resize(int windowWidth, int windowHeight)

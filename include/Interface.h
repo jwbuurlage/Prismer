@@ -38,6 +38,7 @@ namespace Arya
     using std::make_shared;
     using glm::vec2;
 
+    class Font;
     class Renderer;
     class Material;
 
@@ -94,6 +95,8 @@ namespace Arya
             shared_ptr<Material> material;
     };
 
+    // TODO: replace by material when Font - to - material is finished
+    class Geometry;
     class Label : public View
     {
         public:
@@ -102,14 +105,25 @@ namespace Arya
 
             static shared_ptr<Label> create();
 
-            string text;
-    };
+            //! If no font is given, a default font will be used
+            void setText(string text, shared_ptr<Font> f = 0);
 
+            Font* getFont() { return font.get(); }
+            Geometry* getGeometry() { return geometry.get(); }
+        private:
+            string text;
+
+            shared_ptr<Font> font;
+            shared_ptr<Geometry> geometry;
+    };
+    
     class Interface
     {
         public:
             Interface();
             ~Interface();
+
+            bool init();
 
             void add(shared_ptr<View> child) { root->add(child); }
             void remove(shared_ptr<View> child) { root->remove(child); }
@@ -117,8 +131,10 @@ namespace Arya
             void resize(int windowWidth, int windowHeight);
 
             shared_ptr<View> getRootView() { return root; }
+            shared_ptr<Font> getDefaultFont() { return defaultFont; }
         private:
             shared_ptr<View> root;
+            shared_ptr<Font> defaultFont;
     };
 }
 

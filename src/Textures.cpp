@@ -3,14 +3,31 @@
 #include "Files.h"
 #include "Locator.h"
 #include <sstream>
+#include <GL/glew.h>
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
-#include "stb_image.c"
-#pragma GCC diagnostic pop
+#define STB_IMAGE_IMPLEMENTATION
+#include "common/stb_image.h"
 
 namespace Arya
 {
+
+    Texture::~Texture()
+    {
+        if( handle )
+            glDeleteTextures(1, &handle);
+    }
+
+    shared_ptr<Texture> Texture::createFromHandle(GLuint handle)
+    {
+        shared_ptr<Texture> texture = make_shared<Texture>();
+        texture->handle = handle;
+        //Get width and height
+        glBindTexture(GL_TEXTURE_2D, texture->handle);
+        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, (GLint*)&texture->width);
+        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, (GLint*)&texture->width);
+        return texture;
+    }
+
     TextureManager::TextureManager(){
     }
 
@@ -66,20 +83,6 @@ namespace Arya
 
         //OpenGL has the image data now
         Locator::getFileSystem().releaseFile(imagefile);
-        return texture;
-    }
-
-    shared_ptr<Texture> TextureManager::createTextureFromHandle(string name, GLuint handle)
-    {
-        if(resourceLoaded(name)) return getTexture(name);
-
-        shared_ptr<Texture> texture = make_shared<Texture>();
-        addResource(name, texture);
-        texture->handle = handle;
-        //Get width and height
-        glBindTexture(GL_TEXTURE_2D, texture->handle);
-        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, (GLint*)&texture->width);
-        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, (GLint*)&texture->width);
         return texture;
     }
 
