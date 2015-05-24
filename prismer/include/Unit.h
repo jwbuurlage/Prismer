@@ -63,7 +63,7 @@ class Unit
             return _mp;
         }
 
-        void activate();
+        void activate(shared_ptr<GridInput> grid_input);
         void deactivate();
 
         void setTile(shared_ptr<Tile> tile);
@@ -71,9 +71,6 @@ class Unit
         weak_ptr<Tile> getTile() {
             return _tile;
         }
-
-        // pass on to ability
-        void hover(shared_ptr<Tile> tile);
 
     private:
         int _id;

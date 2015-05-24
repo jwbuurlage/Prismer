@@ -5,7 +5,7 @@
 namespace Prismer {
 
 class Unit;
-class Tile;
+class GridInput;
 
 using std::shared_ptr;
 
@@ -28,18 +28,20 @@ class Ability
     public:
         Ability() { } 
         
-        virtual void perform(shared_ptr<Unit> actor) = 0;
-        virtual bool isValid(shared_ptr<Unit> actor) = 0;
+        virtual void perform() = 0;
+        virtual bool isValid() = 0;
 
-        virtual void activate(shared_ptr<Unit> actor) = 0;
+        virtual void activate(shared_ptr<Unit> actor,
+                shared_ptr<GridInput> grid_input) {
+            _actor = actor;    
+            _grid_input = grid_input;
+        };
+
         virtual void deactivate() = 0;
         
-        virtual void hover(shared_ptr<Tile> hover) {
-            _hover = hover;
-        }
-
     protected:
-        shared_ptr<Tile> _hover;
+        shared_ptr<GridInput> _grid_input;
+        shared_ptr<Unit> _actor;
 };
 
 } // namespace Prismer

@@ -32,33 +32,23 @@ void Unit::setTile(shared_ptr<Tile> tile)
 
     _tile = tile;
 
-    GameLogInfo << "setting to tile" << endLog;
     tile->getInfo()->setUnit(shared_from_this());
 
     if (_entity) 
         _entity->update();
 }
 
-void Unit::activate()
+void Unit::activate(shared_ptr<GridInput> grid_input)
 {
-    GameLogInfo << "Unit::activate()" << endLog;
     for (auto& ability : _info.shape.getAbilities()) {
-        ability->activate(shared_from_this());
+        ability->activate(shared_from_this(), grid_input);
     }
 }
 
 void Unit::deactivate()
 {
-    GameLogInfo << "Unit::deactivate()" << endLog;
     for (auto& ability : _info.shape.getAbilities()) {
         ability->deactivate();
-    }
-}
-
-void Unit::hover(shared_ptr<Tile> tile)
-{
-    for (auto& ability : _info.shape.getAbilities()) {
-        ability->hover(tile);
     }
 }
 

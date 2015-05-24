@@ -15,14 +15,6 @@ Tile::Tile(int x, int y, weak_ptr<Grid> grid)
 void Tile::setActive(bool active) {
     _info->_active = active;
 
-    // if info has unit, we want to activate it
-    if (_info->_unit) {
-        if(active)
-            _info->_unit->activate();
-        else
-            _info->_unit->deactivate();
-    }
-
     _entity->update();
 }
 

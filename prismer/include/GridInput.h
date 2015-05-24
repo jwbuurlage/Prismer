@@ -13,7 +13,8 @@ using std::shared_ptr;
 class Grid;
 class Tile;
 
-class GridInput {
+class GridInput 
+    : public std::enable_shared_from_this<GridInput> {
     public:
         GridInput(weak_ptr<Grid> grid);
         ~GridInput();
@@ -21,18 +22,25 @@ class GridInput {
         void activate();
         void deactivate();
 
+        shared_ptr<Tile> getActive() const {
+            return _active;
+        }
+
+        shared_ptr<Tile> getHovered() const {
+            return _hovered;
+        }
         
+        void setActive(shared_ptr<Tile> tile);
+
     private:
         weak_ptr<Grid> _grid;
         
-        void setActive(shared_ptr<Tile> tile);
         void setHovered(shared_ptr<Tile> tile);
-        void setActive(TileDirection dir);
         void setHovered(TileDirection dir);
 
 
-        shared_ptr<Tile> active = nullptr;
-        shared_ptr<Tile> hovered = nullptr;
+        shared_ptr<Tile> _active = nullptr;
+        shared_ptr<Tile> _hovered = nullptr;
 };
 
 } // namespace Prismer

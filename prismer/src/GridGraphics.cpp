@@ -43,7 +43,7 @@ GridEntity::GridEntity(weak_ptr<Grid> grid)
 
                 auto ans = vec4(0.0);
                 if (tile->getInfo()->isActive())
-                    ans += vec4(1.0f, 0.0f, 0.0f, 1.0f);
+                    ans += vec4(0.0f, 1.0f, 0.0f, 1.0f);
                 if (tile->getInfo()->isHovered())
                     ans += vec4(0.5f, 0.5f, 0.5f, 1.0f);
 

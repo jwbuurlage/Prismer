@@ -7,11 +7,12 @@ class AGather : public Ability
     public:
         AGather() { }
 
-        virtual void perform(shared_ptr<Unit> actor);
-        virtual bool isValid(shared_ptr<Unit> actor);
+        virtual void perform() override;
+        virtual bool isValid() override;
 
-        virtual void activate(shared_ptr<Unit> actor);
-        virtual void deactivate();
+        virtual void activate(shared_ptr<Unit> actor,
+                shared_ptr<GridInput> grid_input) override;
+        virtual void deactivate() override;
 };
 
 } // namespace Prismer
