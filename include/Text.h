@@ -20,7 +20,11 @@ namespace Arya
             Font();
             ~Font();
 
-            bool loadFromFile(string filename);
+            //! Load a font from a ttf file
+            //! @param fontHeight The height of the glyphs in pixels
+            //! fontHeigt can not be larger than 50 because the glyphs
+            //! will not fit on the bitmap
+            bool loadFromFile(string filename, int fontHeight);
 
             // generates a grayscale material with the text on it
             shared_ptr<Material> renderText(string text);
@@ -37,7 +41,6 @@ namespace Arya
 
             static const int BitmapWidth = 512;
             static const int BitmapHeight = 512;
-            static const int fontHeight = 48; //all 256 glyphs must fit on bitmap
     };
 
 }

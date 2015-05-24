@@ -12,6 +12,7 @@ namespace Arya
         posAbs = vec2(0.0f);
         sizeRel = vec2(0.0f);
         sizeAbs = vec2(0.0f);
+        visible = true;
     }
 
     View::~View()
@@ -78,22 +79,22 @@ namespace Arya
         return pos + 2.0f * posAbs * pixelScaling;
     }
 
-    Image::Image(const this_is_private& a) : View(a)
+    ImageView::ImageView(const this_is_private& a) : View(a)
     {
     }
 
-    Image::~Image()
+    ImageView::~ImageView()
     {
     }
 
-    shared_ptr<Image> Image::create()
+    shared_ptr<ImageView> ImageView::create()
     {
-        return make_shared<Image>(this_is_private{});
+        return make_shared<ImageView>(this_is_private{});
     }
 
-    shared_ptr<Image> Image::create(shared_ptr<Material> mat)
+    shared_ptr<ImageView> ImageView::create(shared_ptr<Material> mat)
     {
-        auto a = Image::create();
+        auto a = ImageView::create();
         a->material = mat;
         return a;
     }
@@ -111,13 +112,21 @@ namespace Arya
         return make_shared<Label>(this_is_private{});
     }
 
-    void Label::setText(string t, shared_ptr<Font> f)
+    void Label::setText(const string& t, shared_ptr<Font> f)
     {
         text = t;
-        font = f ? f : Locator::getRoot().getInterface()->getDefaultFont();
+        auto font = f ? f : Locator::getRoot().getInterface()->getDefaultFont();
 
-        if (font)
+        if (!text.empty() && font)
+        {
             geometry = font->createTextGeometry(text);
+            material = font->getFontMaterial();
+        }
+        else
+        {
+            geometry = nullptr;
+            material = nullptr;
+        }
 
         setSize(vec2(0.0f), vec2(1.0f));
     }
@@ -138,7 +147,7 @@ namespace Arya
     {
         defaultFont = make_shared<Font>();
         //defaultFont->loadFromFile("DejaVuSans.ttf");
-        defaultFont->loadFromFile("courier.ttf");
+        defaultFont->loadFromFile("courier.ttf", 28);
         // do not exit if font not found
         return true;
     }

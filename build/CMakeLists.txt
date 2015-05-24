@@ -39,6 +39,7 @@ SET(
     "../src/common/Logger.cpp"
     "../src/AnimationVertex.cpp"
     "../src/Camera.cpp"
+    "../src/Console.cpp"
     "../src/Entity.cpp"
     "../src/Files.cpp"
     "../src/Geometry.cpp"

@@ -74,7 +74,7 @@ void GameSessionClient::update(float elapsedTime)
         int idCounter = 1;
 
         using Arya::Entity;
-        using Arya::Image;
+        using Arya::ImageView;
         using Arya::Label;
         using Arya::Model;
         using Arya::Material;
@@ -127,12 +127,12 @@ void GameSessionClient::update(float elapsedTime)
         //debugEntity->setUserData(something);
 
         // bar at top of screen. 50px high, 10px from all sides
-        auto image = Image::create();
+        auto image = ImageView::create();
         image->setMaterial(mat4);
-        image->setPosition(vec2(0.0f, 1.0f), vec2(0.0f, -0.5f*80.0f-10.0f)); //middle-top + (0, -60px)
-        image->setSize(vec2(1.0f, 0.0f), vec2(-20.0f, 80.0f)); //fullwidth + (-20px, +40px)
+        image->setPosition(vec2(0.5f, -0.5f), vec2(0.0f, -0.5f*80.0f-10.0f)); //middle-top + (0, -60px)
+        image->setSize(vec2(0.5f, 0.0f), vec2(-20.0f, 80.0f)); //fullwidth + (-20px, +40px)
 
-        auto image2 = Image::create();
+        auto image2 = ImageView::create();
         image2->setMaterial(mat2);
         image2->setPosition(vec2(-1.0f, 0.0f), vec2(0.5f*100.0f + 10.0f, 0.0f));
         image2->setSize(vec2(0.0f, 1.0f), vec2(100.0f , -20.0f));

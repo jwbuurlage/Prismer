@@ -157,9 +157,11 @@ namespace Arya
 
     void Graphics::renderView(View* view)
     {
-        if (typeid(*view) == typeid(Image) )
+        if (!view->isVisible()) return;
+
+        if (typeid(*view) == typeid(ImageView) )
         {
-            Image* image = dynamic_cast<Image*>(view);
+            ImageView* image = dynamic_cast<ImageView*>(view);
 
             Material* mat = image->material.get();
             if (mat)
@@ -173,10 +175,11 @@ namespace Arya
             Label* lbl = dynamic_cast<Label*>(view);
 
             auto geom = lbl->getGeometry();
-            if (geom)
+            auto mat = lbl->getMaterial();
+            if (geom && mat)
             {
                 viewShader->doUniforms(view);
-                renderer->renderGeometry(geom, lbl->getFont()->getFontMaterial().get(), viewShader.get());
+                renderer->renderGeometry(geom, mat, viewShader.get());
             }
         }
 

@@ -12,6 +12,10 @@
 // - Relative position is relative to MIDDLE of PARENT window
 // - Full size means 1.0f
 //
+// - Labels are an exception:
+//   - Label position is bottom-left of label
+//   - Label horizontal size is computed automatically based on string
+//
 // Example:
 // To create a bar at the right side of the screen of 20 px wide, as high as the screen
 // - posRel = (1.0, 0.0)   right-middle
@@ -56,6 +60,10 @@ namespace Arya
             void add(shared_ptr<View> child);
             void remove(shared_ptr<View> child);
 
+            // Visibility also affects child Views
+            void setVisible(bool v) { visible = v; }
+            bool isVisible() const { return visible; }
+
             // Simply uses Locator to add to Interface
             void addToRootView();
 
@@ -70,9 +78,10 @@ namespace Arya
             vec2 getScreenSize(const vec2& pixelScaling);
             vec2 getScreenOffset(const vec2& pixelScaling);
 
-        private:
+        protected:
             weak_ptr<View> parent;
             vector<shared_ptr<View>> childViews;
+            bool visible;
 
             friend class Graphics;
             vec2 posRel;
@@ -81,21 +90,22 @@ namespace Arya
             vec2 sizeAbs;
     };
 
-    class Image : public View
+    class ImageView : public View
     {
         public:
-            Image(const this_is_private&);
-            ~Image();
+            ImageView(const this_is_private&);
+            ~ImageView();
 
-            static shared_ptr<Image> create();
-            static shared_ptr<Image> create(shared_ptr<Material> mat);
+            static shared_ptr<ImageView> create();
+            static shared_ptr<ImageView> create(shared_ptr<Material> mat);
 
             void setMaterial(shared_ptr<Material> mat) { material = mat; }
 
             shared_ptr<Material> material;
     };
 
-    // TODO: replace by material when Font - to - material is finished
+    // TODO: replace geometry by material when Font - to - material is finished
+    class Material;
     class Geometry;
     class Label : public View
     {
@@ -106,14 +116,14 @@ namespace Arya
             static shared_ptr<Label> create();
 
             //! If no font is given, a default font will be used
-            void setText(string text, shared_ptr<Font> f = 0);
+            void setText(const string& text, shared_ptr<Font> f = 0);
 
-            Font* getFont() { return font.get(); }
+            Material* getMaterial() { return material.get(); }
             Geometry* getGeometry() { return geometry.get(); }
         private:
             string text;
 
-            shared_ptr<Font> font;
+            shared_ptr<Material> material;
             shared_ptr<Geometry> geometry;
     };
     

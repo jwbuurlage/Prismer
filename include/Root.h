@@ -7,6 +7,7 @@ namespace Arya
     class World;
     class InputSystem;
     class Graphics;
+    class Console;
     class Interface;
     class FileSystem;
     class ModelManager;
@@ -47,6 +48,7 @@ namespace Arya
             World*       world;
             Interface*   interface;
             Graphics*    graphics;
+            Console*     console;
             InputSystem* inputSystem;
             FileSystem*  fileSystem;
             ModelManager* modelManager;

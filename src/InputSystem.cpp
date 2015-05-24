@@ -29,6 +29,7 @@ namespace Arya
             keyMap["period"] = SDLK_PERIOD;
             keyMap["."] = SDLK_PERIOD;
             keyMap["tab"] = SDLK_TAB;
+            keyMap["tilde"] = SDLK_BACKQUOTE;
         }
     }
 

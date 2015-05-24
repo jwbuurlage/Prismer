@@ -15,6 +15,7 @@ namespace Arya
     struct Font::FontInfo
     {
         bool valid;
+        int fontHeight;
         shared_ptr<Material> material;
         stbtt_bakedchar charInfo[256];
     };
@@ -35,7 +36,7 @@ namespace Arya
         return nullptr;
     }
 
-    bool Font::loadFromFile(string filename)
+    bool Font::loadFromFile(string filename, int fontHeight)
     {
         File* fontfile = Locator::getFileSystem().getFile(string("fonts/") + filename);
         if (!fontfile)
@@ -43,6 +44,7 @@ namespace Arya
             LogWarning << "Font not found: " << filename << endLog;
             return false;
         }
+        info->fontHeight = fontHeight;
 
         const int characterCount = 256;
 
@@ -158,7 +160,7 @@ namespace Arya
         auto geometry = make_shared<Geometry>();
 
         geometry->primitiveType = GL_TRIANGLES;
-        geometry->vertexCount = text.length() * 6;
+        geometry->vertexCount = index/4;
         geometry->indexCount = 0;
         geometry->frameCount = 1;
 

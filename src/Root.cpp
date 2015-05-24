@@ -1,6 +1,7 @@
 #include "common/Logger.h"
 #include "Files.h"
 #include "Graphics.h"
+#include "Console.h"
 #include "InputSystem.h"
 #include "Interface.h"
 #include "Locator.h"
@@ -14,7 +15,7 @@
 
 namespace Arya
 {
-    //Little container that holds the SDL variables
+    //Little pimpl container that holds the SDL variables
     struct SDLValues
     {
         SDL_Window* window;
@@ -36,11 +37,13 @@ namespace Arya
         world = new World;
         interface = new Interface;
         graphics = new Graphics;
+        console = new Console;
         inputSystem = new InputSystem;
         modelManager = new ModelManager;
         materialManager = new MaterialManager;
         textureManager = new TextureManager;
         Locator::provide(world);
+        Locator::provide(console);
         Locator::provide(inputSystem);
         Locator::provide(modelManager);
         Locator::provide(materialManager);
@@ -59,6 +62,7 @@ namespace Arya
         delete materialManager;
         delete modelManager;
         delete inputSystem;
+        delete console;
         delete graphics;
         delete interface;
         delete world;
@@ -68,12 +72,14 @@ namespace Arya
         modelManager = 0;
         fileSystem = 0;
         inputSystem = 0;
+        console = 0;
         world = 0;
         //Unset the Locator pointers
         Locator::provide(textureManager);
         Locator::provide(materialManager);
         Locator::provide(modelManager);
         Locator::provide(inputSystem);
+        Locator::provide(console);
         Locator::provide(world);
         Locator::provide(fileSystem);
         Locator::provide((Root*)0);
@@ -129,10 +135,9 @@ namespace Arya
         if (!textureManager->init()) return false;
         if (!materialManager->init()) return false;
         if (!modelManager->init()) return false;
-        //if( !inputSystem->init() ) return false;
-        if( !interface->init() ) return false;
-        //if( !world->init() ) return false;
+        if (!interface->init()) return false;
         inputSystem->resize(windowWidth, windowHeight);
+        if (!console->init()) return false; //console must be after interface and inputsystem
 
         return true;
     }

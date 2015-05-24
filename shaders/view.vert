@@ -6,6 +6,7 @@ layout (location = 1) in vec2 texturePosition;
 
 uniform vec2 screenOffset; //offset to MIDDLE of quad
 uniform vec2 screenSize;   //size of quad in [0,1] range
+uniform int isFont;
 
 out vec2 texCoo;
 
