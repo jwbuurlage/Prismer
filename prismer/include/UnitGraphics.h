@@ -1,8 +1,6 @@
 #include <memory>
 
-namespace Arya {
-    class Entity;
-}
+#include <Arya.h>
 
 namespace Prismer {
 
@@ -20,12 +18,15 @@ class UnitEntity
                 shared_ptr<GridEntity> grid_entity);
 
          // unit state changed; update appearance
-        void update();
+        void updateState();
+        void update(float dt, float t);
 
     private:
         shared_ptr<Unit> _unit;
         shared_ptr<GridEntity> _grid_entity;
         shared_ptr<Arya::Entity> _entity;
+
+        vec3 _current_position;
 };
 
 } // namespace Prismer

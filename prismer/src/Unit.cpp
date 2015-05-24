@@ -13,8 +13,9 @@ Unit::Unit(int id,
     // FIXME: create entity from unitInfo
 }
 
-void Unit::update(int gameTimer) const
+void Unit::update(float dt, float t)
 {
+    _entity->update(dt, t);
 }
 
 void Unit::addColor(ColorID color)
@@ -35,7 +36,7 @@ void Unit::setTile(shared_ptr<Tile> tile)
     tile->getInfo()->setUnit(shared_from_this());
 
     if (_entity) 
-        _entity->update();
+        _entity->updateState();
 }
 
 void Unit::activate(shared_ptr<GridInput> grid_input)

@@ -46,23 +46,24 @@ bool GameSessionClient::init()
 
 void GameSessionClient::update(float elapsedTime)
 {
+    total_time += elapsedTime;
+
     if (input)
         input->update(elapsedTime);
 
     _camera->update(elapsedTime);
+
+    for(auto unitIter : getUnitMap())
+    {
+        auto unit = unitIter.second;
+        unit->update(elapsedTime, total_time);
+    }
 }
 
 void GameSessionClient::updateGameLogic(int elapsedTime)
 {
-    gameTimer += elapsedTime;
-
-    //Update all units
-    //mat4 vpMatrix = Arya::Locator::getRoot().getGraphics()->getCamera()->getVPMatrix();
-    for(auto unitIter : getUnitMap())
-    {
-        auto unit = unitIter.second;
-        unit->update(gameTimer);
-    }
+    //FIXME what to do with this function
+    return;
 }
 
 shared_ptr<Unit> GameSessionClient::createUnit(UnitInfo info, int x, int y)

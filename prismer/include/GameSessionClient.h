@@ -50,6 +50,8 @@ class GameSessionClient : public GameSession
         shared_ptr<GridEntity> _grid_entity;
         shared_ptr<GridInput> _grid_input;
         shared_ptr<GameCamera> _camera;
+
+        float total_time = 0.0f;
 };
 
 } // namespace Prismer

@@ -39,7 +39,7 @@ class Unit
             return _id;
         }
 
-        void update(int gameTimer) const;
+        void update(float dt, float t);
 
         void addColor(ColorID color);
 
@@ -61,6 +61,10 @@ class Unit
 
         int getMovePoints() const {
             return _mp;
+        }
+
+        float getSpeed() const {
+            return (float)_mp;
         }
 
         void activate(shared_ptr<GridInput> grid_input);
