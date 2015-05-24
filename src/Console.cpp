@@ -59,7 +59,9 @@ namespace Arya
 
         consoleVisible = false;
         background->setVisible(false);
-        Locator::getInputSystem().bind("tilde", [this](bool down){ if (down) toggleConsole(); });
+        auto bindFunc = [this](bool down){ if (down) toggleConsole(); };
+        Locator::getInputSystem().bind("tilde", bindFunc);
+        Locator::getInputSystem().bind("shift+tilde", bindFunc);
 
         graphicsInitialized = true;
         return true;

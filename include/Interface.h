@@ -126,6 +126,26 @@ namespace Arya
             shared_ptr<Material> material;
             shared_ptr<Geometry> geometry;
     };
+
+    class TextBox : public View
+    {
+        public:
+            TextBox(const this_is_private&);
+            ~TextBox();
+
+            static shared_ptr<TextBox> create();
+
+            void setFont(shared_ptr<Font> f);
+
+        private:
+            string text;
+
+            shared_ptr<Font> font;
+            shared_ptr<Material> material;
+            shared_ptr<Geometry> geometry;
+
+            bool onClick(bool down, int x, int y);
+    };
     
     class Interface
     {

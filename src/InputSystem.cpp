@@ -162,6 +162,13 @@ namespace Arya
                     bindingMouseWheel(event.wheel.y);
                 }
                 break;
+            case SDL_TEXTINPUT:
+                //TODO
+                //If the key pressed is a letter or any other
+                //text based input, SDL gives this event
+                //which can be used for properly using textboxes
+                //so that keys like ^ ' ~ work as expected
+                break;
             default:
                 LogWarning << "Unkown event received in InputSystem" << endLog;
                 break;

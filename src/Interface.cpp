@@ -2,6 +2,7 @@
 #include "Root.h"
 #include "Text.h"
 #include "Locator.h"
+#include "InputSystem.h"
 #include "common/Logger.h"
 
 namespace Arya
@@ -129,6 +130,34 @@ namespace Arya
         }
 
         setSize(vec2(0.0f), vec2(1.0f));
+    }
+
+    TextBox::TextBox(const this_is_private& a) : View(a)
+    {
+        Locator::getInputSystem().bindMouseButton([this](MOUSEBUTTON btn, bool down, int x, int y)
+                {
+                    if (btn == MOUSEBUTTON_LEFT && down)
+                        onClick(down, x, y);
+                });
+    }
+
+    TextBox::~TextBox()
+    {
+    }
+
+    shared_ptr<TextBox> TextBox::create()
+    {
+        return make_shared<TextBox>(this_is_private{});
+    }
+
+    void TextBox::setFont(shared_ptr<Font> f)
+    {
+        font = f ? f : Locator::getRoot().getInterface()->getDefaultFont();
+    }
+
+    bool TextBox::onClick(bool down, int x, int y)
+    {
+        return false;
     }
 
     Interface::Interface()

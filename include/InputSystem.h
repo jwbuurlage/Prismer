@@ -26,6 +26,16 @@ namespace Arya
         MOUSEBUTTON_OTHER
     };
 
+    struct MousePos
+    {
+        //x from left to right, 0 to windowWidth in pixels
+        //y from BOTTOM to TOP, 0 to windowHeigt in pixels
+        //normalizedX from -1 to 1 left to right
+        //normalizedY from -1 to 1 left to right
+        int x, y;
+        int normalizedX, normalizedY;
+    };
+
     class InputSystem
     {
         public:
