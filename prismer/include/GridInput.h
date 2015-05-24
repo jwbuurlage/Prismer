@@ -1,5 +1,7 @@
 #pragma once
 
+#include <AryaBinding.h>
+#include <vector>
 #include <memory>
 
 // FIXME: move TileDireftion to separate file
@@ -7,6 +9,7 @@
 
 namespace Prismer {
 
+using std::vector;
 using std::weak_ptr;
 using std::shared_ptr;
 
@@ -41,6 +44,8 @@ class GridInput
 
         shared_ptr<Tile> _active = nullptr;
         shared_ptr<Tile> _hovered = nullptr;
+
+        vector<Arya::InputBinding> keyBindings;
 };
 
 } // namespace Prismer

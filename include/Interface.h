@@ -32,6 +32,7 @@
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include "ShaderUniformBase.h"
+#include "AryaBinding.h"
 
 namespace Arya
 {
@@ -39,12 +40,14 @@ namespace Arya
     using std::vector;
     using std::weak_ptr;
     using std::shared_ptr;
+    using std::unique_ptr;
     using std::make_shared;
     using glm::vec2;
 
     class Font;
     class Renderer;
     class Material;
+    struct MousePos;
 
     //! Base class for all window,button,textbox etc
     class View : public std::enable_shared_from_this<View> , public ShaderUniformBase
@@ -140,11 +143,13 @@ namespace Arya
         private:
             string text;
 
+            InputBinding clickBinding;
+
             shared_ptr<Font> font;
             shared_ptr<Material> material;
             shared_ptr<Geometry> geometry;
 
-            bool onClick(bool down, int x, int y);
+            bool onClick(const MousePos& pos);
     };
     
     class Interface

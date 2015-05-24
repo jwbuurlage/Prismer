@@ -27,41 +27,26 @@ GameCamera::GameCamera()
 
     Arya::InputSystem* input = Arya::Locator::getRoot().getInputSystem();
 
-    input->bind(Arya::INPUT_MOUSEWHEEL,
-            [this](int delta) { mouseWheelMoved(delta); });
-    input->bindMouseMove(
-            [this](int x, int y, int dx, int dy) { mouseMoved(x,y,dx,dy); });
-    input->bindMouseButton(
-            [this](Arya::MOUSEBUTTON btn, bool down, int x, int y)
-            { mouseDown(btn,down,x,y); });
+    bindings.push_back(input->bind(Arya::INPUT_MOUSEWHEEL,
+            [this](int delta, const MousePos&) { mouseWheelMoved(delta); return true; }, CHAIN_LAST));
+    bindings.push_back(input->bindMouseMove(
+            [this](const MousePos& pos, int dx, int dy) { mouseMoved(pos.x, pos.y,dx,dy); return true; }, CHAIN_LAST));
+    bindings.push_back(input->bindMouseButton(
+            [this](Arya::MOUSEBUTTON btn, bool down, const MousePos& pos)
+            { return mouseDown(btn,down,pos); }, CHAIN_LAST));
 
-    input->bind("W", [this](bool down) { goingForward   = down; computeForce(); });
-    input->bind("A", [this](bool down) { goingLeft      = down; computeForce(); });
-    input->bind("S", [this](bool down) { goingBackward  = down; computeForce(); });
-    input->bind("D", [this](bool down) { goingRight     = down; computeForce(); });
-    input->bind("Q", [this](bool down) { goingDown      = down; computeForce(); });
-    input->bind("E", [this](bool down) { goingUp        = down; computeForce(); });
-    input->bind("Z", [this](bool down) { rotatingLeft   = down; computeForce(); });
-    input->bind("X", [this](bool down) { rotatingRight  = down; computeForce(); });
-    input->bind("R", [this](bool down) { /* sendEvent(EVENT_GAME_FULLSTATE_REQUEST); */ (void)down; });
-
+    bindings.push_back(input->bind("W", [this](bool down, const MousePos&) { goingForward   = down; computeForce(); return true; }, CHAIN_LAST));
+    bindings.push_back(input->bind("A", [this](bool down, const MousePos&) { goingLeft      = down; computeForce(); return true; }, CHAIN_LAST));
+    bindings.push_back(input->bind("S", [this](bool down, const MousePos&) { goingBackward  = down; computeForce(); return true; }, CHAIN_LAST));
+    bindings.push_back(input->bind("D", [this](bool down, const MousePos&) { goingRight     = down; computeForce(); return true; }, CHAIN_LAST));
+    bindings.push_back(input->bind("Q", [this](bool down, const MousePos&) { goingDown      = down; computeForce(); return true; }, CHAIN_LAST));
+    bindings.push_back(input->bind("E", [this](bool down, const MousePos&) { goingUp        = down; computeForce(); return true; }, CHAIN_LAST));
+    bindings.push_back(input->bind("Z", [this](bool down, const MousePos&) { rotatingLeft   = down; computeForce(); return true; }, CHAIN_LAST));
+    bindings.push_back(input->bind("X", [this](bool down, const MousePos&) { rotatingRight  = down; computeForce(); return true; }, CHAIN_LAST));
 }
 
 GameCamera::~GameCamera()
 {
-    Arya::InputSystem* input = Arya::Locator::getRoot().getInputSystem();
-    input->unbind("W");
-    input->unbind("A");
-    input->unbind("S");
-    input->unbind("D");
-    input->unbind("Q");
-    input->unbind("E");
-    input->unbind("Z");
-    input->unbind("X");
-    input->unbind("R");
-    input->unbind(Arya::INPUT_MOUSEBUTTON);
-    input->unbind(Arya::INPUT_MOUSEWHEEL);
-    input->unbind(Arya::INPUT_MOUSEMOVEMENT);
 }
 
 void GameCamera::update(float elapsedTime)
@@ -105,13 +90,13 @@ void GameCamera::computeForce()
         forceDirection = glm::normalize(forceDirection);
 }
 
-void GameCamera::mouseDown(Arya::MOUSEBUTTON button, bool buttonDown, int x, int y)
+bool GameCamera::mouseDown(Arya::MOUSEBUTTON button, bool buttonDown, const MousePos&)
 {
-    (void)x; (void)y;
     if(button == Arya::MOUSEBUTTON_LEFT)
         draggingLeftMouse = (buttonDown == true);
     else if(button == Arya::MOUSEBUTTON_RIGHT)
         draggingRightMouse = (buttonDown == true);
+    return false;
 }
 
 void GameCamera::mouseWheelMoved(int delta)

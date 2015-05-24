@@ -16,6 +16,7 @@ namespace Prismer {
 using std::make_shared;
 using std::vector;
 using Arya::Camera;
+using Arya::MousePos;
 
 GameSessionInput::GameSessionInput(shared_ptr<GameSession> session)
 {
@@ -26,7 +27,7 @@ void GameSessionInput::init()
 {
     auto input = Arya::Locator::getRoot().getInputSystem();
 
-    input->bind("c", [this](bool down) {
+    bindingC = input->bind("c", [this](bool down, const MousePos&) {
             // create unit?
             if(down) {
                 auto colors = vector<ColorID> { ColorID::red, ColorID::red };
@@ -42,13 +43,16 @@ void GameSessionInput::init()
                 } else {
                     GameLogInfo << "create unit " << x << " " << y << endLog;
                 }
+                return true;
             }
+            return false;
         });
 
-    input->bind("l", [this](bool down) {
+    bindingL = input->bind("l", [this](bool down, const MousePos&) {
             // create unit?
             if (down)
                 _session->_listUnits();
+            return down;
         });
 }
 

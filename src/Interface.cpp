@@ -134,10 +134,11 @@ namespace Arya
 
     TextBox::TextBox(const this_is_private& a) : View(a)
     {
-        Locator::getInputSystem().bindMouseButton([this](MOUSEBUTTON btn, bool down, int x, int y)
+        clickBinding = Locator::getInputSystem().bindMouseButton([this](MOUSEBUTTON btn, bool down, const MousePos& pos)
                 {
                     if (btn == MOUSEBUTTON_LEFT && down)
-                        onClick(down, x, y);
+                        return onClick(pos);
+                    return false;
                 });
     }
 
@@ -155,8 +156,9 @@ namespace Arya
         font = f ? f : Locator::getRoot().getInterface()->getDefaultFont();
     }
 
-    bool TextBox::onClick(bool down, int x, int y)
+    bool TextBox::onClick(const MousePos& pos)
     {
+        (void)pos;
         return false;
     }
 

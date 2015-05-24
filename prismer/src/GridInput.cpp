@@ -34,25 +34,25 @@ void GridInput::activate()
 {
     // bind keys
     auto input = Arya::Locator::getRoot().getInputSystem();
-    input->bind("h", [this](bool down) {
-            if (down) setHovered(TileDirection::left); });
-    input->bind("u", [this](bool down) {
-            if (down) setHovered(TileDirection::top_left); });
-    input->bind("i", [this](bool down) {
-            if (down) setHovered(TileDirection::top_right); });
-    input->bind("k", [this](bool down) {
-            if (down) setHovered(TileDirection::right); });
-    input->bind("m", [this](bool down) {
-            if (down) setHovered(TileDirection::bottom_right); });
-    input->bind("n", [this](bool down) {
-            if (down) setHovered(TileDirection::bottom_left); });
-    input->bind("enter", [this](bool down) {
-            if (down) setActive(_hovered); });
+    keyBindings.push_back(input->bind("h", [this](bool down, const Arya::MousePos&) {
+            if (down) setHovered(TileDirection::left); return down; }));
+    keyBindings.push_back(input->bind("u", [this](bool down, const Arya::MousePos&) {
+            if (down) setHovered(TileDirection::top_left); return down; }));
+    keyBindings.push_back(input->bind("i", [this](bool down, const Arya::MousePos&) {
+            if (down) setHovered(TileDirection::top_right); return down; }));
+    keyBindings.push_back(input->bind("k", [this](bool down, const Arya::MousePos&) {
+            if (down) setHovered(TileDirection::right); return down; }));
+    keyBindings.push_back(input->bind("m", [this](bool down, const Arya::MousePos&) {
+            if (down) setHovered(TileDirection::bottom_right); return down; }));
+    keyBindings.push_back(input->bind("n", [this](bool down, const Arya::MousePos&) {
+            if (down) setHovered(TileDirection::bottom_left); return down; }));
+    keyBindings.push_back(input->bind("enter", [this](bool down, const Arya::MousePos&) {
+            if (down) setActive(_hovered); return down; }));
 }
 
 void GridInput::deactivate()
 {
-    // unbind keys
+    keyBindings.clear();
 }
 
 void GridInput::setActive(shared_ptr<Tile> tile) {

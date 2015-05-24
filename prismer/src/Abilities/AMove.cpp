@@ -46,17 +46,18 @@ void AMove::activate(shared_ptr<Unit> actor,
 
     auto input = Arya::Locator::getRoot().getInputSystem();
 
-    input->bind("g", [this](bool down) {
+    keyBinding = input->bind("g", [this](bool down, const Arya::MousePos&) {
             if (down && this->isValid()) {
                 this->perform();
+                return true;
             }
+            return false;
         });
 }
 
 void AMove::deactivate()
 {
-    auto input = Arya::Locator::getRoot().getInputSystem();
-    input->unbind("g");
+    keyBinding = nullptr;
 }
 
 } // namespace Prismer

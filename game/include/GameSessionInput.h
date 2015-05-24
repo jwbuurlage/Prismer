@@ -1,6 +1,10 @@
 #include <glm/glm.hpp>
 #include "Arya.h"
+#include <vector>
 
+using std::vector;
+using Arya::InputBinding;
+using Arya::MousePos;
 class GameSessionClient;
 
 class GameSessionInput
@@ -16,9 +20,11 @@ class GameSessionInput
     private: 
         GameSessionClient* session;
 
-        void mouseDown(Arya::MOUSEBUTTON button, bool buttonDown, int x, int y);
+        vector<InputBinding> bindings;
+
+        bool mouseDown(Arya::MOUSEBUTTON button, bool buttonDown, const MousePos& pos);
         void mouseWheelMoved(int delta);
-        void mouseMoved(int x, int y, int dx, int dy);
+        void mouseMoved(const MousePos& pos, int dx, int dy);
 
         //For key movement
         bool goingForward, goingBackward, goingLeft, goingRight, goingUp, goingDown, rotatingLeft, rotatingRight;

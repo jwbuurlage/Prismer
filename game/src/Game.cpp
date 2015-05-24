@@ -21,12 +21,11 @@ bool Game::init()
         return false;
     }
 
-    auto quitFunc = [this](bool down) { if (down) root->stopGameLoop(); };
+    auto quitFunc = [this](bool down, const Arya::MousePos&) { if (down) root->stopGameLoop(); return down; };
     Arya::InputSystem* input = root->getInputSystem();
-    input->bind("CTRL+Q", quitFunc);
-    input->bind("escape", quitFunc);
-    input->bind("ctrl+shift+f", [](bool down) { if(down) GameLogDebug << "ctrl+shift+f" << endLog; });
-    input->bind("shift+space", [](bool down) { if(down) GameLogDebug << "You pressed shift+space" << endLog; });
+    bindQ = input->bind("CTRL+Q", quitFunc, Arya::CHAIN_LAST);
+    bindW = input->bind("CTRL+W", quitFunc, Arya::CHAIN_LAST);
+    bindEscape = input->bind("escape", quitFunc, Arya::CHAIN_LAST);
 
     if (session) delete session;
     session = new GameSessionClient;

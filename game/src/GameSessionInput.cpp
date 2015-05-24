@@ -27,43 +27,40 @@ GameSessionInput::GameSessionInput(GameSessionClient* s)
 
 GameSessionInput::~GameSessionInput()
 {
-    Arya::InputSystem* input = Arya::Locator::getRoot().getInputSystem();
-    input->unbind("W");
-    input->unbind("A");
-    input->unbind("S");
-    input->unbind("D");
-    input->unbind("Q");
-    input->unbind("E");
-    input->unbind("Z");
-    input->unbind("X");
-    input->unbind("R");
-    input->unbind(Arya::INPUT_MOUSEBUTTON);
-    input->unbind(Arya::INPUT_MOUSEWHEEL);
-    input->unbind(Arya::INPUT_MOUSEMOVEMENT);
 }
 
 void GameSessionInput::init()
 {
     Arya::InputSystem* input = Arya::Locator::getRoot().getInputSystem();
 
-    input->bind(Arya::INPUT_MOUSEWHEEL,
-            [this](int delta) { mouseWheelMoved(delta); });
-    input->bindMouseMove(
-            [this](int x, int y, int dx, int dy) { mouseMoved(x,y,dx,dy); });
-    input->bindMouseButton(
-            [this](Arya::MOUSEBUTTON btn, bool down, int x, int y)
-            { mouseDown(btn,down,x,y); });
+    bindings.push_back(input->bind(Arya::INPUT_MOUSEWHEEL,
+            [this](int delta, const MousePos&)
+            {
+            mouseWheelMoved(delta);
+            return true;
+            }, Arya::CHAIN_LAST));
+    bindings.push_back(input->bindMouseMove(
+            [this](const MousePos& pos, int dx, int dy)
+            {
+            mouseMoved(pos,dx,dy);
+            return true;
+            }, Arya::CHAIN_LAST));
+    bindings.push_back(input->bindMouseButton(
+            [this](Arya::MOUSEBUTTON btn, bool down, const MousePos& pos)
+            {
+            return mouseDown(btn,down,pos);
+            }, Arya::CHAIN_LAST));
 
     //TODO: Get keys from config
-    input->bind("W", [this](bool down) { goingForward   = down; computeForce(); });
-    input->bind("A", [this](bool down) { goingLeft      = down; computeForce(); });
-    input->bind("S", [this](bool down) { goingBackward  = down; computeForce(); });
-    input->bind("D", [this](bool down) { goingRight     = down; computeForce(); });
-    input->bind("Q", [this](bool down) { goingDown      = down; computeForce(); });
-    input->bind("E", [this](bool down) { goingUp        = down; computeForce(); });
-    input->bind("Z", [this](bool down) { rotatingLeft   = down; computeForce(); });
-    input->bind("X", [this](bool down) { rotatingRight  = down; computeForce(); });
-    input->bind("R", [this](bool down) { /* sendEvent(EVENT_GAME_FULLSTATE_REQUEST); */ (void)down; });
+    bindings.push_back(input->bind("W", [this](bool down, const MousePos&) { goingForward   = down; computeForce(); return true; }));
+    bindings.push_back(input->bind("A", [this](bool down, const MousePos&) { goingLeft      = down; computeForce(); return true; }));
+    bindings.push_back(input->bind("S", [this](bool down, const MousePos&) { goingBackward  = down; computeForce(); return true; }));
+    bindings.push_back(input->bind("D", [this](bool down, const MousePos&) { goingRight     = down; computeForce(); return true; }));
+    bindings.push_back(input->bind("Q", [this](bool down, const MousePos&) { goingDown      = down; computeForce(); return true; }));
+    bindings.push_back(input->bind("E", [this](bool down, const MousePos&) { goingUp        = down; computeForce(); return true; }));
+    bindings.push_back(input->bind("Z", [this](bool down, const MousePos&) { rotatingLeft   = down; computeForce(); return true; }));
+    bindings.push_back(input->bind("X", [this](bool down, const MousePos&) { rotatingRight  = down; computeForce(); return true; }));
+    //bindings.push_back(input->bind("R", [this](bool down, const MousePos&) { /* sendEvent(EVENT_GAME_FULLSTATE_REQUEST); */ (void)down; }));
 }
 
 void GameSessionInput::update(float elapsedTime)
@@ -107,9 +104,9 @@ void GameSessionInput::computeForce()
         forceDirection = glm::normalize(forceDirection);
 }
 
-void GameSessionInput::mouseDown(Arya::MOUSEBUTTON button, bool buttonDown, int x, int y)
+bool GameSessionInput::mouseDown(Arya::MOUSEBUTTON button, bool buttonDown, const MousePos& pos)
 {
-    (void)x; (void)y;
+    int x = pos.x, y = pos.y;
     if(button == Arya::MOUSEBUTTON_LEFT)
     {
         draggingLeftMouse = (buttonDown == true);
@@ -123,6 +120,8 @@ void GameSessionInput::mouseDown(Arya::MOUSEBUTTON button, bool buttonDown, int 
             p.z += 0.02f;
             if (session && session->debugEntity)
                 session->debugEntity->setPosition(p);
+
+            return true;
         }
     }
     else if(button == Arya::MOUSEBUTTON_RIGHT)
@@ -132,6 +131,7 @@ void GameSessionInput::mouseDown(Arya::MOUSEBUTTON button, bool buttonDown, int 
         if (buttonDown)
             LogDebug << "Rightclicked at (x,y) = (" << x << ',' << y << ')' << endLog;
     }
+    return false;
 }
 
 void GameSessionInput::mouseWheelMoved(int delta)
@@ -142,15 +142,15 @@ void GameSessionInput::mouseWheelMoved(int delta)
     return;
 }
 
-void GameSessionInput::mouseMoved(int x, int y, int dx, int dy)
+void GameSessionInput::mouseMoved(const MousePos& pos, int dx, int dy)
 {
     (void)dx; (void)dy;
     int padding = 10;
 
-    mouseLeft = (x < padding);
-    mouseBot = (y < padding);
-    mouseRight = (x > Arya::Locator::getRoot().getWindowWidth() - padding);
-    mouseTop = (y > Arya::Locator::getRoot().getWindowHeight() - padding);
+    mouseLeft = (pos.x < padding);
+    mouseBot = (pos.y < padding);
+    mouseRight = (pos.x > Arya::Locator::getRoot().getWindowWidth() - padding);
+    mouseTop = (pos.y > Arya::Locator::getRoot().getWindowHeight() - padding);
 
     computeForce();
     return;

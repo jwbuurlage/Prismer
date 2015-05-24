@@ -6,12 +6,14 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "AryaBinding.h"
 
 namespace Arya
 {
     using std::deque;
     using std::function;
     using std::map;
+    using std::unique_ptr;
     using std::shared_ptr;
     using std::string;
     using std::vector;
@@ -37,6 +39,10 @@ namespace Arya
             // Console output history
             deque<string> history;
             void addOutputLine(const string& line);
+
+            // Console key binding
+            InputBinding bindTilde;
+            InputBinding bindShiftTilde;
 
             // Command bindings
             map<string, function<void()>> bindings;
