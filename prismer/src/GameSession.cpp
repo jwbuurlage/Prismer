@@ -25,16 +25,18 @@ GameSession::~GameSession()
 
 void GameSession::init()
 {
-    _grid = make_unique<Grid>(10, 10);
+    _grid = make_shared<Grid>(10, 10);
     _grid->init();
 }
 
 shared_ptr<Unit> GameSession::createUnit(UnitInfo info, int x, int y)
 {
+    if (_grid->getTile(x, y)->getInfo()->hasUnit())
+        return nullptr;
+
     auto id = generateId();
     auto unit = make_shared<Unit>(id, info, shared_from_this());
-    unit->setX(x);
-    unit->setY(y);
+    unit->setTile(_grid->getTile(x, y));
     unitMap.insert(std::pair<int, shared_ptr<Unit>>(unit->getId(), unit));
     return unit;
 }

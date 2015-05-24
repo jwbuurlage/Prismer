@@ -44,13 +44,18 @@ GridEntity::GridEntity(weak_ptr<Grid> grid)
                     return vec4(1.0f, 0.0f, 0.0f, 1.0f);
 
                 shared_ptr<Tile> tile = t->getTile().lock();
+
                 if (!tile)
                     return vec4(1.0f, 0.0f, 0.0f, 1.0f);
+
+                auto ans = vec4(0.0);
                 if (tile->getInfo()->isActive())
-                    return vec4(1.0f, 0.0f, 0.0f, 1.0f);
+                    ans += vec4(0.0f, 1.0f, 0.0f, 1.0f);
                 if (tile->getInfo()->isHovered())
-                    return vec4(0.5f, 0.5f, 0.5f, 1.0f);
-                return vec4(0.25f, 0.0f, 0.5f, 1.0f);
+                    ans += vec4(0.5f, 0.5f, 0.5f, 1.0f);
+
+                return ans;
+
                 });
         activeTile->setShaderProgram(myShader);
     }

@@ -2,10 +2,10 @@
 
 namespace Prismer {
 
-class AGather : public Ability
+class AMove : public Ability
 {
     public:
-        AGather() { }
+        AMove() { }
 
         virtual void perform() override;
         virtual bool isValid() override;

@@ -1,7 +1,9 @@
-#include "Tile.h"
-#include "Grid.h"
 #include "GridInput.h"
+
+#include "Grid.h"
 #include "GameLogger.h"
+#include "Tile.h"
+#include "Unit.h"
 
 namespace Prismer {
 
@@ -16,7 +18,7 @@ GridInput::GridInput(weak_ptr<Grid> grid)
     else {
         auto first_tile = l_grid->getTile(l_grid->getWidth() / 2, l_grid->getHeight() / 2);
 
-        setActive(first_tile);
+        //setActive(first_tile);
         setHovered(first_tile);
     }
 
@@ -45,7 +47,7 @@ void GridInput::activate()
     input->bind("n", [this](bool down) {
             if (down) setHovered(TileDirection::bottom_left); });
     input->bind("enter", [this](bool down) {
-            if (down) setActive(hovered); });
+            if (down) setActive(_hovered); });
 }
 
 void GridInput::deactivate()
@@ -54,41 +56,40 @@ void GridInput::deactivate()
 }
 
 void GridInput::setActive(shared_ptr<Tile> tile) {
-    if (!tile)
+    if (_active) {
+        _active->setActive(false);
+        if (_active->getInfo()->hasUnit()) {
+            _active->getInfo()->getUnit()->deactivate();
+        }
+    }
+
+    _active = tile;
+
+    if (!_active)
         return;
 
-    if (active)
-        active->setActive(false);
+    _active->setActive(true);
 
-    active = tile;
-    active->setActive(true);
+    if (_active->getInfo()->hasUnit())
+        _active->getInfo()->getUnit()->activate(shared_from_this());
 }
 
 void GridInput::setHovered(shared_ptr<Tile> tile) {
     if (!tile)
         return;
 
-    if (hovered)
-        hovered->setHovered(false);
+    if (_hovered)
+        _hovered->setHovered(false);
 
-    hovered = tile;
-    hovered->setHovered(true);
+    _hovered = tile;
+    _hovered->setHovered(true);
 }
 
 void GridInput::setHovered(TileDirection dir) {
-    if (!hovered)
+    if (!_hovered)
         return;
 
-    auto nb = hovered->getNeighbor(dir);
-    if (nb)
-        setHovered(nb);
-}
-
-void GridInput::setActive(TileDirection dir) {
-    if (!hovered)
-        return;
-
-    auto nb = hovered->getNeighbor(dir);
+    auto nb = _hovered->getNeighbor(dir);
     if (nb)
         setHovered(nb);
 }

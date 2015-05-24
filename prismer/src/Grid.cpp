@@ -65,7 +65,9 @@ shared_ptr<Tile> Grid::getNeighbor(int x, int y, TileDirection dir)
             return getTile(x - 1, y);
             break;
 
-        default: return nullptr; break;
+        default:
+            return nullptr;
+            break;
     }
 }
 
