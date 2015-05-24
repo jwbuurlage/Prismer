@@ -27,7 +27,7 @@ void Grid::init() {
 
 shared_ptr<Tile> Grid::getTile(int x, int y)
 {
-    if (x < 0 || y < 0)
+    if (x < 0 || y < 0 || x >= _width || y >= _height)
         return nullptr;
 
     auto index = x * _height + y;
