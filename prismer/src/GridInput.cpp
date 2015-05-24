@@ -1,6 +1,7 @@
 #include "GridInput.h"
 
 #include "Grid.h"
+#include "GridGraphics.h"
 #include "GameLogger.h"
 #include "Tile.h"
 #include "Unit.h"
@@ -48,6 +49,27 @@ void GridInput::activate()
             if (down) setHovered(TileDirection::bottom_left); });
     input->bind("enter", [this](bool down) {
             if (down) setActive(_hovered); });
+
+    // mouse movement
+    input->bindMouseMove(
+            [this](int x, int y, int dx, int dy) { 
+                if(auto l_grid = _grid.lock()) {
+                    // which tile is hovered over:
+                    // world_x, world_y
+                    auto gr = Arya::Locator::getRoot().getGraphics();
+                    auto cam = gr->getCamera();
+                    vec3 worldpos = cam->intersectViewRay(gr->normalizeMouseCoordinates(x,y), vec4(0.0f, 0.0f, 1.0f, 0.0f));
+
+                    setHovered(l_grid->getEntity()->worldToBoard(worldpos.x, worldpos.y));
+                }
+            });
+
+    input->bindMouseButton(
+            [this](Arya::MOUSEBUTTON btn, bool down, int, int)
+            {
+                if (down && btn == Arya::MOUSEBUTTON_LEFT)
+                    setActive(_hovered);
+            });
 }
 
 void GridInput::deactivate()

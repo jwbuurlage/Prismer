@@ -29,11 +29,11 @@ GameCamera::GameCamera()
 
     input->bind(Arya::INPUT_MOUSEWHEEL,
             [this](int delta) { mouseWheelMoved(delta); });
-    input->bindMouseMove(
-            [this](int x, int y, int dx, int dy) { mouseMoved(x,y,dx,dy); });
-    input->bindMouseButton(
-            [this](Arya::MOUSEBUTTON btn, bool down, int x, int y)
-            { mouseDown(btn,down,x,y); });
+///    input->bindMouseMove(
+///            [this](int x, int y, int dx, int dy) { mouseMoved(x,y,dx,dy); });
+///    input->bindMouseButton(
+///            [this](Arya::MOUSEBUTTON btn, bool down, int x, int y)
+///            { mouseDown(btn,down,x,y); });
 
     input->bind("W", [this](bool down) { goingForward   = down; computeForce(); });
     input->bind("A", [this](bool down) { goingLeft      = down; computeForce(); });

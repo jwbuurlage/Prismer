@@ -45,6 +45,10 @@ class Grid
             _entity = entity;
         }
 
+        shared_ptr<GridEntity> getEntity() const {
+            return _entity;
+        }
+
         void setInput(shared_ptr<GridInput> input) {
             _input = input;
         }

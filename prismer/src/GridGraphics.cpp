@@ -78,6 +78,27 @@ void GridEntity::init()
     }
 }
 
+shared_ptr<Tile> GridEntity::worldToBoard(float x, float y)
+{
+    shared_ptr<Grid> l_grid = _grid.lock();
+    if (l_grid) {
+        float col_mid = -l_grid->getHeight() / 2;
+        float row_mid = (l_grid->getHeight() + l_grid->getWidth()) / 2;
+
+        float h = _scale * 2;
+        float w = 0.5 * sqrt(3) * h;
+
+        float row = y / h * 1.333 + row_mid;
+        float col = x / w - 0.5 * (row - row_mid) + col_mid;
+
+        float yt = -col;
+        float xt = row - yt;
+
+        return l_grid->getTile((int)(xt + 0.5), (int)(yt + 0.5));
+    }
+    return nullptr;
+}
+
 vec2 GridEntity::boardToWorld(int x, int y)
 {
     int col = -y;
@@ -93,6 +114,7 @@ vec2 GridEntity::boardToWorld(int x, int y)
 
         float h = _scale * 2;
         float w = 0.5 * sqrt(3) * h;
+
         x_world = (col - col_mid + 0.5 * (row - row_mid)) * w;
         y_world = 0.75 * (row - row_mid) * h;
     } else {

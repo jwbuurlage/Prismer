@@ -13,15 +13,17 @@ using std::weak_ptr;
 using std::shared_ptr;
 
 class Grid;
+class Tile;
 class TileEntity;
 
-class GridEntity :
-    public std::enable_shared_from_this<GridEntity>
+class GridEntity
+    : public std::enable_shared_from_this<GridEntity>
     {
     public:
         GridEntity(weak_ptr<Grid> grid);
         
         vec2 boardToWorld(int row, int col);
+        shared_ptr<Tile> worldToBoard(float x, float y);
 
         void update();
 
