@@ -131,8 +131,7 @@ namespace Arya
             const string& getText() const { return text; }
 
             //width of the line in pixels
-            //TODO
-            float getLineWidth() { return 8.0f * text.size(); }
+            float getLineWidth() const;
 
             // The text geometry is in pixels starting from bottom-left
             // instead of a [-1,1] quad

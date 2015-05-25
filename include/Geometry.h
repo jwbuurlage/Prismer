@@ -35,6 +35,10 @@ namespace Arya
             GLsizei vertexCount; //PER FRAME
             GLsizei indexCount;
             GLenum primitiveType;
+
+            float minX, minY, minZ;
+            float maxX, maxY, maxZ;
+
         private:
             GLuint* vaoHandles; //a list of framecount handles
             GLuint vertexBuffer;

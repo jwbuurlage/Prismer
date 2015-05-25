@@ -3,6 +3,7 @@
 #include "Text.h"
 #include "Locator.h"
 #include "InputSystem.h"
+#include "Geometry.h"
 #include "common/Logger.h"
 
 namespace Arya
@@ -163,6 +164,12 @@ namespace Arya
         //move the text 3 pixels upwards
         offsetMiddle.y += 3.0f*2.0f*pixelScaling.y;
         return offsetMiddle - size;
+    }
+
+    float Label::getLineWidth() const
+    {
+        if (geometry) return geometry->maxX - geometry->minX;
+        else return 0.0f;
     }
 
     TextBox::TextBox(const this_is_private& a) : View(a)

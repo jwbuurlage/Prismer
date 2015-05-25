@@ -63,8 +63,8 @@ namespace Arya
         GLuint handle;
         glGenTextures(1, &handle);
         glBindTexture(GL_TEXTURE_2D, handle);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
         glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, pixeldata ); 
 
         info->material = Material::createFromHandle(handle);
@@ -101,6 +101,8 @@ namespace Arya
 
         int index = 0;
         float xpos = 0.0f, ypos = 0.0f;
+        float minY =  10000.0f;
+        float maxY = -10000.0f;
         stbtt_aligned_quad q;
         for (auto character : text)
 		{
@@ -118,7 +120,7 @@ namespace Arya
             //
             // q.?0 is top-left
             // q.?1 is bottom-right
-            // stbtt has y downwards
+            // stbtt has y downwards, hence the sign
 
             //first triangle: a-b-c
             //a
@@ -155,6 +157,9 @@ namespace Arya
             vertexData[index++] = q.t0;
 
             xpos = q.x1;
+
+            if (-q.y0 > maxY) maxY = -q.y0;
+            if (-q.y1 < minY) minY = -q.y1;
 		}
 
         auto geometry = make_shared<Geometry>();
@@ -163,6 +168,13 @@ namespace Arya
         geometry->vertexCount = index/4;
         geometry->indexCount = 0;
         geometry->frameCount = 1;
+
+        geometry->minX = vertexData[0];
+        geometry->minY = minY;
+        geometry->minZ = 0.0f;
+        geometry->maxX = xpos;
+        geometry->maxY = maxY;
+        geometry->maxZ = 0.0f;
 
         geometry->createVertexBuffer();
         geometry->setVertexBufferData(index * sizeof(GLfloat), vertexData);
