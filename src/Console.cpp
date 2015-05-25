@@ -2,6 +2,7 @@
 #include "Interface.h"
 #include "Materials.h"
 #include "Locator.h"
+#include "Text.h"
 #include "InputSystem.h"
 #include "common/Logger.h"
 
@@ -37,7 +38,11 @@ namespace Arya
         background->setSize(vec2(1.0f, 0.0f), vec2(-20.0f, backgroundHeight)); //fullwidth + (-20px, +300px)
         background->addToRootView();
 
+        auto font = make_shared<Font>();
+        font->loadFromFile("DejaVuSansMono.ttf", 14);
+
         textBox = TextBox::create();
+        if (font) textBox->setFont(font);
         textBox->setBackground(matGrayDark);
         textBox->setCursor(matGrayDark2);
         textBox->setPosition(vec2(0.0f, -1.0f), vec2(0.0f, 0.5f*boxHeight + 10.0f));
@@ -56,6 +61,7 @@ namespace Arya
             auto lbl = Label::create();
             lbl->setPosition(vec2(0.0f, 1.0f), vec2(0.0f, -10.0f - lineHeight*(1 + i)));
             lbl->setSize(vec2(1.0f, 0.0f), vec2(-20.0f, lineHeight)); //10 px from left and right side
+            if (font) lbl->setFont(font);
             background->add(lbl);
             lines.push_back(lbl);
         }
