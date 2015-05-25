@@ -24,6 +24,7 @@ namespace Arya
 
         auto matGray = Material::create(vec4(0.8f, 0.8f, 0.8f, 0.8f));
         auto matGrayDark = Material::create(vec4(0.5f, 0.5f, 0.5f, 0.8f));
+        auto matGrayDark2 = Material::create(vec4(0.3f, 0.3f, 0.3f, 0.8f));
 
         const float lineHeight = 16.0f; //pixels
         const int lineCount = 20;
@@ -36,10 +37,12 @@ namespace Arya
         background->setSize(vec2(1.0f, 0.0f), vec2(-20.0f, backgroundHeight)); //fullwidth + (-20px, +300px)
         background->addToRootView();
 
-        textBox = ImageView::create();
-        textBox->setMaterial(matGrayDark);
+        textBox = TextBox::create();
+        textBox->setBackground(matGrayDark);
+        textBox->setCursor(matGrayDark2);
         textBox->setPosition(vec2(0.0f, -1.0f), vec2(0.0f, 0.5f*boxHeight + 10.0f));
         textBox->setSize(vec2(1.0f, 0.0f), vec2(-20.0f , boxHeight));
+        textBox->setEnabled(false);
         background->add(textBox);
 
         for (int i = 0; i < lineCount; i++)
@@ -51,8 +54,8 @@ namespace Arya
             //background->add(img);
 
             auto lbl = Label::create();
-            lbl->setPosition(vec2(-1.0f, 1.0f), vec2(10.0f, -10.0f - lineHeight*(1 + i)));
-            lbl->setSize(vec2(1.0f, 0.0f), vec2(0.0f, lineHeight));
+            lbl->setPosition(vec2(0.0f, 1.0f), vec2(0.0f, -10.0f - lineHeight*(1 + i)));
+            lbl->setSize(vec2(1.0f, 0.0f), vec2(-20.0f, lineHeight)); //10 px from left and right side
             background->add(lbl);
             lines.push_back(lbl);
         }
@@ -72,6 +75,8 @@ namespace Arya
         consoleVisible = !consoleVisible;
         if (consoleVisible) updateLabels();
         background->setVisible(consoleVisible);
+        textBox->setEnabled(consoleVisible);
+        textBox->setFocus(consoleVisible);
     }
 
     void Console::addOutputLine(const string& line)
@@ -83,9 +88,9 @@ namespace Arya
 
     void Console::updateLabels()
     {
-        // if anything logs while in this function it will crash
-        // therefore, disable the graphicsflag during this function
-        // it will still keep the log messages
+        // If anything logs while in this function it will crash
+        // therefore, disable the graphicsflag during this function.
+        // It will still keep the log messages
         graphicsInitialized = false;
         for (unsigned int i = 0; i < lines.size(); i++)
         {

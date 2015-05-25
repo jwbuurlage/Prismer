@@ -12,9 +12,7 @@
 // - Relative position is relative to MIDDLE of PARENT window
 // - Full size means 1.0f
 //
-// - Labels are an exception:
-//   - Label position is bottom-left of label
-//   - Label horizontal size is computed automatically based on string
+// - Label text is aligned to left side of label and clipped to size of label
 //
 // Example:
 // To create a bar at the right side of the screen of 20 px wide, as high as the screen
@@ -75,11 +73,16 @@ namespace Arya
             void setPosition(const vec2& rel, const vec2& abs);
             void setSize(const vec2& rel, const vec2& abs);
 
+            //! Check if a point is inside the view. Used for mouse clicks.
+            //! pos is normalized [-1,1] screen coordinates
+            //! pixelScaling is 1/windowsize
+            bool isInside(const vec2& pos, const vec2& pixelScaling);
+
             // Called by Graphics
             // This should include parent and properly compute absolute/relative stuff
             // screenOffset is offset to MIDDLE of quad
-            vec2 getScreenSize(const vec2& pixelScaling);
-            vec2 getScreenOffset(const vec2& pixelScaling);
+            virtual vec2 getScreenSize(const vec2& pixelScaling);
+            virtual vec2 getScreenOffset(const vec2& pixelScaling);
 
         protected:
             weak_ptr<View> parent;
@@ -118,14 +121,29 @@ namespace Arya
 
             static shared_ptr<Label> create();
 
-            //! If no font is given, a default font will be used
-            void setText(const string& text, shared_ptr<Font> f = 0);
+            //! Setting font to zero causes no text to be rendered
+            //! Initially a default font is chosen
+            void setFont(shared_ptr<Font> font);
 
-            Material* getMaterial() { return material.get(); }
-            Geometry* getGeometry() { return geometry.get(); }
+            void setText(const string& text);
+            const string& getText() const { return text; }
+
+            //width of the line in pixels
+            //TODO
+            float getLineWidth() { return 8.0f * text.size(); }
+
+            // The text geometry is in pixels starting from bottom-left
+            // instead of a [-1,1] quad
+            // This offset points to the bottom-left point of the label
+            vec2 getScreenSize(const vec2& pixelScaling) override;
+            vec2 getScreenOffset(const vec2& pixelScaling) override;
+
+            Material* getFontMaterial() { return material.get(); }
+            Geometry* getTextGeometry() { return geometry.get(); }
         private:
             string text;
 
+            shared_ptr<Font> font;
             shared_ptr<Material> material;
             shared_ptr<Geometry> geometry;
     };
@@ -138,18 +156,41 @@ namespace Arya
 
             static shared_ptr<TextBox> create();
 
-            void setFont(shared_ptr<Font> f);
+            void setFont(shared_ptr<Font> font) { label->setFont(font); }
 
+            void setText(const string& text) { label->setText(text); }
+            const string& getText() const { return label->getText(); }
+
+            void setBackground(shared_ptr<Material> mat) { background->setMaterial(mat); }
+            shared_ptr<Material> getBackground() const { return background->material; }
+
+            // no cursor by default
+            void setCursor(shared_ptr<Material> mat) { cursor->setMaterial(mat); }
+
+            //! Whether it can capture focus (default true)
+            void setEnabled(bool enabled = true);
+
+            //! Focus is only possible if also enabled
+            //! Default is false, user can click to give focus
+            void setFocus(bool focus = true);
+
+            //! Called by Graphics
+            Label* getTextLabel() { return label.get(); }
         private:
-            string text;
+            bool isEnabled;
+            bool hasFocus;
 
             InputBinding clickBinding;
+            InputBinding textBinding;
 
-            shared_ptr<Font> font;
-            shared_ptr<Material> material;
-            shared_ptr<Geometry> geometry;
+            shared_ptr<ImageView> background;
+            shared_ptr<ImageView> cursor;
+            shared_ptr<Label> label; // holds current text
 
             bool onClick(const MousePos& pos);
+            bool onCharacter(char character);
+
+            void updateCursorPos();
     };
     
     class Interface
@@ -167,9 +208,14 @@ namespace Arya
 
             shared_ptr<View> getRootView() { return root; }
             shared_ptr<Font> getDefaultFont() { return defaultFont; }
+
+            //helper function for Views
+            const vec2& getPixelScaling() const { return pixelScaling; }
         private:
             shared_ptr<View> root;
             shared_ptr<Font> defaultFont;
+
+            vec2 pixelScaling;
     };
 }
 

@@ -20,6 +20,7 @@ namespace Arya
 
     class ImageView;
     class Label;
+    class TextBox;
 
     class Console
     {
@@ -51,7 +52,7 @@ namespace Arya
             bool graphicsInitialized;
             bool consoleVisible;
             shared_ptr<ImageView> background;
-            shared_ptr<ImageView> textBox;
+            shared_ptr<TextBox> textBox;
             vector<shared_ptr<Label>> lines;
 
             void updateLabels();

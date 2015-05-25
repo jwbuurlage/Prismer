@@ -136,7 +136,9 @@ namespace Arya
         if (!materialManager->init()) return false;
         if (!modelManager->init()) return false;
         if (!interface->init()) return false;
+        interface->resize(windowWidth, windowHeight);
         inputSystem->resize(windowWidth, windowHeight);
+
         if (!console->init()) return false; //console must be after interface and inputsystem
 
         return true;

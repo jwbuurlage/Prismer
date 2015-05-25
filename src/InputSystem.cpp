@@ -144,7 +144,6 @@ namespace Arya
 
     void InputSystem::handleInputEvent(const SDL_Event& event)
     {
-        //TODO
         MousePos mousePos;
         switch (event.type) {
             case SDL_MOUSEBUTTONUP:
@@ -157,13 +156,11 @@ namespace Arya
                 mousePos.y = windowHeight - event.motion.y;
                 break;
             default:
-                //TODO
-                mousePos.x = 0;
-                mousePos.y = 0;
+                SDL_GetMouseState(&mousePos.x, &mousePos.y);
                 break;
         }
-        mousePos.normalizedX = -1.0f + (2.0f * mousePos.x) / float(windowWidth);
-        mousePos.normalizedY = -1.0f + (2.0f * mousePos.y) / float(windowHeight);
+        mousePos.nX = -1.0f + (2.0f * mousePos.x) / float(windowWidth);
+        mousePos.nY = -1.0f + (2.0f * mousePos.y) / float(windowHeight);
 
         switch(event.type) {
             case SDL_KEYDOWN:

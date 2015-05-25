@@ -11,7 +11,7 @@ namespace Arya
     {
         posRel = vec2(0.0f);
         posAbs = vec2(0.0f);
-        sizeRel = vec2(0.0f);
+        sizeRel = vec2(1.0f);
         sizeAbs = vec2(0.0f);
         visible = true;
     }
@@ -64,11 +64,22 @@ namespace Arya
         sizeAbs = abs;
     }
 
+    bool View::isInside(const vec2& pos, const vec2& pixelScaling)
+    {
+        auto offset = getScreenOffset(pixelScaling);
+        auto size = getScreenSize(pixelScaling);
+        if (pos.x < offset.x - size.x) return false;
+        if (pos.x > offset.x + size.x) return false;
+        if (pos.y < offset.y - size.y) return false;
+        if (pos.y > offset.y + size.y) return false;
+        return true;
+    }
+
     vec2 View::getScreenSize(const vec2& pixelScaling)
     {
         vec2 rel = sizeRel;
         if (auto p = parent.lock())
-            rel *= p->getScreenSize(pixelScaling);
+            rel *= p->View::getScreenSize(pixelScaling);
         return rel + sizeAbs * pixelScaling;
     }
 
@@ -76,7 +87,7 @@ namespace Arya
     {
         vec2 pos = posRel;
         if (auto p = parent.lock())
-            pos = p->getScreenOffset(pixelScaling) + pos * p->getScreenSize(pixelScaling);
+            pos = p->View::getScreenOffset(pixelScaling) + pos * p->View::getScreenSize(pixelScaling);
         return pos + 2.0f * posAbs * pixelScaling;
     }
 
@@ -102,6 +113,7 @@ namespace Arya
 
     Label::Label(const this_is_private& a) : View(a)
     {
+        setFont(Locator::getRoot().getInterface()->getDefaultFont());
     }
 
     Label::~Label()
@@ -113,10 +125,18 @@ namespace Arya
         return make_shared<Label>(this_is_private{});
     }
 
-    void Label::setText(const string& t, shared_ptr<Font> f)
+    void Label::setFont(shared_ptr<Font> f)
+    {
+        if (font != f)
+        {
+            font = f;
+            setText(text);
+        }
+    }
+
+    void Label::setText(const string& t)
     {
         text = t;
-        auto font = f ? f : Locator::getRoot().getInterface()->getDefaultFont();
 
         if (!text.empty() && font)
         {
@@ -128,38 +148,128 @@ namespace Arya
             geometry = nullptr;
             material = nullptr;
         }
+    }
 
-        setSize(vec2(0.0f), vec2(1.0f));
+    vec2 Label::getScreenSize(const vec2& pixelScaling)
+    {
+        return 2.0f * pixelScaling;
+    }
+
+    vec2 Label::getScreenOffset(const vec2& pixelScaling)
+    {
+        vec2 offsetMiddle = View::getScreenOffset(pixelScaling);
+        vec2 size = View::getScreenSize(pixelScaling);
+        //basline fix to have all text inside label
+        //move the text 3 pixels upwards
+        offsetMiddle.y += 3.0f*2.0f*pixelScaling.y;
+        return offsetMiddle - size;
     }
 
     TextBox::TextBox(const this_is_private& a) : View(a)
     {
-        clickBinding = Locator::getInputSystem().bindMouseButton([this](MOUSEBUTTON btn, bool down, const MousePos& pos)
-                {
-                    if (btn == MOUSEBUTTON_LEFT && down)
-                        return onClick(pos);
-                    return false;
-                });
+        isEnabled = true;
+        hasFocus = false;
+        background = ImageView::create();
+        cursor = ImageView::create();
+        label = Label::create();
+
+        background->setSize(vec2(1.0f), vec2(0.0f));
+        cursor->setVisible(false);
+        cursor->setSize(vec2(0.0f), vec2(8.0f, 18.0f));
+        label->setSize(vec2(1.0f), vec2(-10.0f, -18.0f)); //text is 5 px from the side of the textbox
     }
 
     TextBox::~TextBox()
     {
+        //children will automatically be deleted by smart pointer semantics
     }
 
     shared_ptr<TextBox> TextBox::create()
     {
-        return make_shared<TextBox>(this_is_private{});
+        auto t = make_shared<TextBox>(this_is_private{});
+        // This can not be done in the constructor because
+        // shared_from_this will not work there
+        t->add(t->background);
+        t->add(t->cursor);
+        t->add(t->label);
+        return t;
     }
 
-    void TextBox::setFont(shared_ptr<Font> f)
+    void TextBox::setEnabled(bool enabled)
     {
-        font = f ? f : Locator::getRoot().getInterface()->getDefaultFont();
+        if (enabled && !isEnabled)
+            clickBinding = Locator::getInputSystem().bindMouseButton(
+                    [this](MOUSEBUTTON btn, bool down, const MousePos& pos)
+                    {
+                        if (btn == MOUSEBUTTON_LEFT && down)
+                            return onClick(pos);
+                        return false;
+                    });
+        else if (!enabled && isEnabled)
+        {
+            clickBinding = nullptr;
+            setFocus(false);
+        }
+
+        isEnabled = enabled;
+    }
+
+    void TextBox::setFocus(bool focus)
+    {
+        if (!isEnabled) return;
+        if (focus && !hasFocus)
+        {
+            hasFocus = true;
+            cursor->setVisible(true);
+            updateCursorPos();
+            textBinding = Locator::getInputSystem().bind("a",[this](bool down,const MousePos&) {
+                    if (down) return onCharacter('a'); return false;
+                    }, CHAIN_FIRST);
+            //textBinding = Locator::getInputSystem().bindTextInput([this](char character) {
+            //        return onCharacter(character);
+            //        }, CHAIN_FIRST);
+        }
+        else if (!focus && hasFocus)
+        {
+            hasFocus = false;
+            cursor->setVisible(false);
+            textBinding = nullptr;
+        }
     }
 
     bool TextBox::onClick(const MousePos& pos)
     {
-        (void)pos;
-        return false;
+        if (isInside(vec2(pos.nX, pos.nY),
+                    Locator::getRoot().getInterface()->getPixelScaling()))
+        {
+            setFocus(true);
+            LogDebug << "clicked inside" << endLog;
+            //clicked inside, so handled
+            return true;
+        }
+        else
+        {
+            LogDebug << "clicked outside" << endLog;
+            bool handled = hasFocus;
+            setFocus(false);
+            // we only handled it if text WAS focussed before user clicked outside
+            return handled;
+        }
+    }
+
+    bool TextBox::onCharacter(char character)
+    {
+        string cur = getText();
+        cur.append(1, character);
+        setText(cur);
+        updateCursorPos();
+        return true;
+    }
+
+    void TextBox::updateCursorPos()
+    {
+        cursor->setPosition(vec2(-1.0f, 0.0f),
+                vec2(5.0f + 0.5f*8.0f + label->getLineWidth(), 0.0f));
     }
 
     Interface::Interface()
@@ -178,15 +288,15 @@ namespace Arya
     {
         defaultFont = make_shared<Font>();
         //defaultFont->loadFromFile("DejaVuSans.ttf");
-        defaultFont->loadFromFile("courier.ttf", 28);
+        defaultFont->loadFromFile("courier.ttf", 14);
         // do not exit if font not found
         return true;
     }
 
     void Interface::resize(int windowWidth, int windowHeight)
     {
-        (void)windowWidth;
-        (void)windowHeight;
+        pixelScaling.x = 1.0f/(float)windowWidth;
+        pixelScaling.y = 1.0f/(float)windowHeight;
     }
 }
 

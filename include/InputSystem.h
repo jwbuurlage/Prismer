@@ -41,10 +41,10 @@ namespace Arya
     {
         //x from left to right, 0 to windowWidth in pixels
         //y from BOTTOM to TOP, 0 to windowHeigt in pixels
-        //normalizedX from -1 to 1 left to right
-        //normalizedY from -1 to 1 left to right
+        //nX from -1 to 1 left to right
+        //nY from -1 to 1 bottom to top
         int x, y;
-        int normalizedX, normalizedY;
+        float nX, nY;
     };
 
     class InputSystem
