@@ -46,6 +46,7 @@ namespace Arya
             InputBinding bindShiftTilde;
 
             // Command bindings
+            void handleConsoleInput(string line);
             map<string, function<void()>> bindings;
 
             // Graphics

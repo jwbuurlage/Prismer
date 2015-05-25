@@ -198,6 +198,7 @@ namespace Arya
                 case SDL_MOUSEMOTION:
                 case SDL_MOUSEWHEEL:
                 case SDL_TEXTINPUT:
+                case SDL_TEXTEDITING:
                     inputSystem->handleInputEvent(event);
                     break;
                 case SDL_QUIT:

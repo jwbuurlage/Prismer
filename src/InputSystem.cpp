@@ -65,6 +65,7 @@ namespace Arya
         CallbackChainElement<bool(MOUSEBUTTON,bool,const MousePos&)> mouseButton;
         CallbackChainElement<bool(const MousePos&,int, int)> mouseMove;
         CallbackChainElement<bool(int,const MousePos&)> mouseWheel;
+        CallbackChainElement<bool(const char*)> textInput;
 
         map<InputKey,CallbackChainElement<bool(bool,const MousePos&)> > keys;
     };
@@ -90,8 +91,11 @@ namespace Arya
             keyMap["/"] = SDLK_SLASH;
             keyMap["period"] = SDLK_PERIOD;
             keyMap["."] = SDLK_PERIOD;
+            keyMap["comma"] = SDLK_COMMA;
+            keyMap[","] = SDLK_COMMA;
             keyMap["tab"] = SDLK_TAB;
             keyMap["tilde"] = SDLK_BACKQUOTE;
+            keyMap["backspace"] = SDLK_BACKSPACE;
         }
     }
 
@@ -134,6 +138,14 @@ namespace Arya
         return bindings->keys[k].addNew(f, pos);
     }
 
+    InputBinding InputSystem::bindTextInput(function<bool(const char*)> f, CHAIN_POS pos)
+    {
+        auto x = bindings->textInput.addNew(f,pos);
+        SDL_StartTextInput();
+        //TODO: call SDL_StopTextInput() when last textInput handler is deleted
+        return x;
+    }
+
     MOUSEBUTTON translateButton(Uint8 btn)
     {
         if( btn == SDL_BUTTON_LEFT )   return MOUSEBUTTON_LEFT;
@@ -165,31 +177,57 @@ namespace Arya
         switch(event.type) {
             case SDL_KEYDOWN:
                 {
-                    //Do not count repeated keys, only for text-capture mode
-                    if(event.key.repeat) break;
                     InputKey k(event.key.keysym);
-                    auto elem = bindings->keyDown.next;
-                    while (elem)
+
+                    //first handle textinput if enabled
+                    if (bindings->textInput.next)
                     {
-                        if (elem->f(k.keysym, mousePos))
-                            break;
-                        elem = elem->next;
-                    }
-                    auto a = bindings->keys.find(k);
-                    if( a != bindings->keys.end() )
-                    {
-                        auto elem = a->second.next;
+                        char text[2] = {0};
+                        if (k.keysym == SDLK_BACKSPACE)
+                            text[0] = '\x08';
+                        else if (k.keysym == SDLK_RETURN)
+                            text[0] = '\r';
+                        else if (k.keysym == SDLK_ESCAPE)
+                            text[0] = '\x1B';
+                        else
+                            break; //do not handle other keys
+                        auto elem = bindings->textInput.next;
                         while (elem)
                         {
-                            if (elem->f(true, mousePos))
+                            if (elem->f(text))
                                 break;
                             elem = elem->next;
+                        }
+                    }
+                    else
+                    {
+                        //Do not count repeated keys, only for text-capture mode
+                        if(event.key.repeat) break;
+                        auto elem = bindings->keyDown.next;
+                        while (elem)
+                        {
+                            if (elem->f(k.keysym, mousePos))
+                                break;
+                            elem = elem->next;
+                        }
+                        auto a = bindings->keys.find(k);
+                        if( a != bindings->keys.end() )
+                        {
+                            auto elem = a->second.next;
+                            while (elem)
+                            {
+                                if (elem->f(true, mousePos))
+                                    break;
+                                elem = elem->next;
+                            }
                         }
                     }
                 }
                 break;
             case SDL_KEYUP:
                 {
+                    //Check if text input active
+                    if (bindings->textInput.next) break;
                     //Do not count repeated keys, only for text-capture mode
                     if(event.key.repeat) break;
                     InputKey k(event.key.keysym);
@@ -257,12 +295,20 @@ namespace Arya
                     }
                 }
                 break;
+            case SDL_TEXTEDITING:
+                //See online SDL info.
+                //We currently do not support it
+                break;
             case SDL_TEXTINPUT:
-                //TODO
-                //If the key pressed is a letter or any other
-                //text based input, SDL gives this event
-                //which can be used for properly using textboxes
-                //so that keys like ^ ' ~ work as expected
+                {
+                    auto elem = bindings->textInput.next;
+                    while (elem)
+                    {
+                        if (elem->f(event.text.text))
+                            break;
+                        elem = elem->next;
+                    }
+                }
                 break;
             default:
                 LogWarning << "Unkown event received in InputSystem" << endLog;

@@ -66,6 +66,15 @@ namespace Arya
         bindTilde = Locator::getInputSystem().bind("tilde", bindFunc, CHAIN_LAST);
         bindShiftTilde = Locator::getInputSystem().bind("shift+tilde", bindFunc, CHAIN_LAST);
 
+        textBox->setCallback([this](bool isEnter) {
+                    //either enter or escape
+                    if (isEnter)
+                        handleConsoleInput(textBox->getText());
+                    else
+                        toggleConsole();
+                    textBox->setText("");
+                });
+
         graphicsInitialized = true;
         return true;
     }
@@ -106,5 +115,11 @@ namespace Arya
             }
         }
         graphicsInitialized = true;
+    }
+
+    void Console::handleConsoleInput(string line)
+    {
+        LogWarning << "Unknown console command: " << line << endLog;
+        return;
     }
 }

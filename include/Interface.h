@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <functional>
 #include <string>
 #include <vector>
 #include <memory>
@@ -34,6 +35,7 @@
 
 namespace Arya
 {
+    using std::function;
     using std::string;
     using std::vector;
     using std::weak_ptr;
@@ -156,10 +158,14 @@ namespace Arya
 
             static shared_ptr<TextBox> create();
 
-            void setFont(shared_ptr<Font> font) { label->setFont(font); }
+            // Callback when Enter or Escape was pressed
+            // bool is true if enter, bool is false if escape
+            void setCallback(function<void(bool)> f) { callback = f; }
 
-            void setText(const string& text) { label->setText(text); }
+            void setText(const string& text) { label->setText(text); updateCursorPos(); }
             const string& getText() const { return label->getText(); }
+
+            void setFont(shared_ptr<Font> font) { label->setFont(font); }
 
             void setBackground(shared_ptr<Material> mat) { background->setMaterial(mat); }
             shared_ptr<Material> getBackground() const { return background->material; }
@@ -182,13 +188,14 @@ namespace Arya
 
             InputBinding clickBinding;
             InputBinding textBinding;
+            function<void(bool)> callback;
 
             shared_ptr<ImageView> background;
             shared_ptr<ImageView> cursor;
             shared_ptr<Label> label; // holds current text
 
             bool onClick(const MousePos& pos);
-            bool onCharacter(char character);
+            bool onText(const char* text);
 
             void updateCursorPos();
     };

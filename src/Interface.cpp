@@ -222,12 +222,9 @@ namespace Arya
             hasFocus = true;
             cursor->setVisible(true);
             updateCursorPos();
-            textBinding = Locator::getInputSystem().bind("a",[this](bool down,const MousePos&) {
-                    if (down) return onCharacter('a'); return false;
+            textBinding = Locator::getInputSystem().bindTextInput([this](const char* text) {
+                    return onText(text);
                     }, CHAIN_FIRST);
-            //textBinding = Locator::getInputSystem().bindTextInput([this](char character) {
-            //        return onCharacter(character);
-            //        }, CHAIN_FIRST);
         }
         else if (!focus && hasFocus)
         {
@@ -257,12 +254,31 @@ namespace Arya
         }
     }
 
-    bool TextBox::onCharacter(char character)
+    bool TextBox::onText(const char* text)
     {
-        string cur = getText();
-        cur.append(1, character);
-        setText(cur);
-        updateCursorPos();
+        if (text[0] == '\x08') //backspace
+        {
+            string cur = getText();
+            if (!cur.empty())
+            {
+                cur.pop_back();
+                setText(cur);
+            }
+        }
+        else if (text[0] == '\r') //enter
+        {
+            if (callback) callback(true);
+        }
+        else if (text[0] == '\x1B') //escape
+        {
+            if (callback) callback(false);
+        }
+        else
+        {
+            string cur = getText();
+            cur.append(text);
+            setText(cur);
+        }
         return true;
     }
 
