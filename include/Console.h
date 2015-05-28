@@ -54,8 +54,10 @@ namespace Arya
             bool consoleVisible;
             shared_ptr<ImageView> background;
             shared_ptr<TextBox> textBox;
-            vector<shared_ptr<Label>> lines;
+            shared_ptr<Label> consoleOutputLabel;
 
             void updateLabels();
+
+            static const int lineCount = 20;
     };
 }

@@ -138,13 +138,13 @@ void GameSessionClient::update(float elapsedTime)
         image2->setSize(vec2(0.0f, 1.0f), vec2(100.0f , -20.0f));
 
         auto label = Label::create();
-        label->setPosition(vec2(0.0f), vec2(0.0f));
+        label->setPosition(vec2(0.0f, 0.0f), vec2(0.0f));
         label->setSize(vec2(1.0f), vec2(0.0f));
-        label->setText("this is a test");
+        label->setText("This is a font test. iijjAABB Newline check\nThis is the new line.");
 
         image->addToRootView();
-        image->add(image2);
-        //image->add(label);
+        //image->add(image2);
+        image->add(label);
 
         int counter = 0;
         const float a = 0.5f * sqrt(3.0f);

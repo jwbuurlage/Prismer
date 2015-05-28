@@ -30,10 +30,16 @@ namespace Arya
             shared_ptr<Material> renderText(string text);
 
             // generates a Geometry that has the text on it
+            // geometry quads is in pixel coordinates
+            // The point 0,0 is the top-left point of the text
+            // The text starts BELOW 0,0
             shared_ptr<Geometry> createTextGeometry(string text);
 
             shared_ptr<Material> getFontMaterial();
 
+            // Get the line height in pixels
+            // i.e. distance between baselines of two lines
+            float getLineAdvance();
         private:
             //pimpl idiom to avoid including stb truetype here
             struct FontInfo;

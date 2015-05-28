@@ -158,12 +158,17 @@ namespace Arya
 
     vec2 Label::getScreenOffset(const vec2& pixelScaling)
     {
+        // The geometry has all text below and to the right of (0,0)
+        // So our offset should be the left-upper point of the label
         vec2 offsetMiddle = View::getScreenOffset(pixelScaling);
         vec2 size = View::getScreenSize(pixelScaling);
         //basline fix to have all text inside label
         //move the text 3 pixels upwards
         offsetMiddle.y += 3.0f*2.0f*pixelScaling.y;
-        return offsetMiddle - size;
+
+        offsetMiddle.x -= size.x; //left of label
+        offsetMiddle.y += size.y; //top of label
+        return offsetMiddle;
     }
 
     float Label::getLineWidth() const
@@ -293,7 +298,7 @@ namespace Arya
     void TextBox::updateCursorPos()
     {
         cursor->setPosition(vec2(-1.0f, 0.0f),
-                vec2(5.0f + 0.5f*8.0f + label->getLineWidth(), 0.0f));
+                vec2(5.0f + 0.5f*8.0f + label->getLineWidth() + 2.0f, 0.0f));
     }
 
     void TextBox::update(float elapsedTime)
@@ -324,8 +329,7 @@ namespace Arya
     bool Interface::init()
     {
         defaultFont = make_shared<Font>();
-        //defaultFont->loadFromFile("DejaVuSans.ttf");
-        defaultFont->loadFromFile("courier.ttf", 14);
+        defaultFont->loadFromFile("DejaVuSans.ttf", 20);
         // do not exit if font not found
         return true;
     }

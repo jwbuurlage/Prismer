@@ -27,19 +27,19 @@ namespace Arya
         auto matGrayDark = Material::create(vec4(0.5f, 0.5f, 0.5f, 0.8f));
         auto matGrayDark2 = Material::create(vec4(0.3f, 0.3f, 0.3f, 0.8f));
 
-        const float lineHeight = 16.0f; //pixels
-        const int lineCount = 20;
+        auto font = make_shared<Font>();
+        font->loadFromFile("DejaVuSansMono.ttf", 14);
+
         const float boxHeight = 30.0f;
-        const float backgroundHeight = 10.0f + lineCount * lineHeight + 10.0f + boxHeight + 10.0f;
+        float lineHeight = (font ? font->getLineAdvance() : 18.0f);
+        float labelHeight = lineHeight * lineCount;
+        float backgroundHeight = 10.0f + labelHeight + 10.0f + boxHeight + 10.0f;
 
         background = ImageView::create();
         background->setMaterial(matGray);
         background->setPosition(vec2(0.0f, 1.0f), vec2(0.0f, -(0.5f*backgroundHeight+10.0f))); //middle-top + (0, -10px)
         background->setSize(vec2(1.0f, 0.0f), vec2(-20.0f, backgroundHeight)); //fullwidth + (-20px, +300px)
         background->addToRootView();
-
-        auto font = make_shared<Font>();
-        font->loadFromFile("DejaVuSansMono.ttf", 14);
 
         textBox = TextBox::create();
         if (font) textBox->setFont(font);
@@ -50,21 +50,11 @@ namespace Arya
         textBox->setEnabled(false);
         background->add(textBox);
 
-        for (int i = 0; i < lineCount; i++)
-        {
-            //auto img = ImageView::create();
-            //img->setMaterial(matGrayDark);
-            //img->setPosition(vec2(0.0f, 1.0f), vec2(0.0f, -10.0f - lineHeight*i - 1.0f - 0.5f*(lineHeight-1.0f) ));
-            //img->setSize(vec2(1.0f, 0.0f), vec2(-20.0f, lineHeight-1.0f));
-            //background->add(img);
-
-            auto lbl = Label::create();
-            lbl->setPosition(vec2(0.0f, 1.0f), vec2(0.0f, -10.0f - lineHeight*(1 + i)));
-            lbl->setSize(vec2(1.0f, 0.0f), vec2(-20.0f, lineHeight)); //10 px from left and right side
-            if (font) lbl->setFont(font);
-            background->add(lbl);
-            lines.push_back(lbl);
-        }
+        consoleOutputLabel = Label::create();
+        consoleOutputLabel->setPosition(vec2(0.0f, 1.0f), vec2(0.0f, -10.0f -0.5f*labelHeight));
+        consoleOutputLabel->setSize(vec2(1.0f, 0.0f), vec2(-20.0f, labelHeight));
+        if (font) consoleOutputLabel->setFont(font);
+        background->add(consoleOutputLabel);
 
         consoleVisible = false;
         background->setVisible(false);
@@ -74,6 +64,7 @@ namespace Arya
 
         textBox->setCallback([this](bool isEnter) {
                     //either enter or escape
+                    //was pressed in console textbox
                     if (isEnter)
                         handleConsoleInput(textBox->getText());
                     else
@@ -107,19 +98,24 @@ namespace Arya
         // therefore, disable the graphicsflag during this function.
         // It will still keep the log messages
         graphicsInitialized = false;
-        for (unsigned int i = 0; i < lines.size(); i++)
+
+        int firstLine = 0;
+        if (history.size() > lineCount)
+            firstLine = history.size() - lineCount;
+
+        bool flag = false;
+        string visibleText;
+        for (unsigned int i = firstLine; i < history.size(); i++)
         {
-            int j = history.size() - (lines.size()-i);
-            if (j >= 0)
-            {
-                lines[i]->setText(history[j]);
-                lines[i]->setVisible(true);
-            }
-            else
-            {
-                lines[i]->setVisible(false);
-            }
+            if (flag) visibleText.append(1, '\n');
+            else flag = true;
+            //TODO: if line length too long, then
+            //split the line
+            visibleText.append(history[i]);
         }
+
+        consoleOutputLabel->setText(visibleText);
+
         graphicsInitialized = true;
     }
 
