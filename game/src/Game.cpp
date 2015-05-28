@@ -35,8 +35,12 @@ bool Game::init()
     return true;
 }
 
+float fpstimer;
+int fpscounter;
 void Game::run()
 {
+    fpstimer = 0.0f;
+    fpscounter = 0;
     root->gameLoop( std::bind(&Game::update, this, std::placeholders::_1) );
 }
 
@@ -44,5 +48,15 @@ void Game::update(float dt)
 {
     totalTime += dt;
     session->update(dt);
+
+    fpstimer += dt;
+    fpscounter++;
+
+    if (fpstimer >= 5.0f)
+    {
+        LogInfo << "FPS: " << float(fpscounter) / fpstimer << endLog;
+        fpstimer = 0.0f;
+        fpscounter = 0;
+    }
 }
 

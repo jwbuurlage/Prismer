@@ -162,6 +162,7 @@ namespace Arya
 
             callback(elapsed);
             world->update(elapsed);
+            interface->update(elapsed);
             graphics->update(elapsed);
 
             handleEvents();

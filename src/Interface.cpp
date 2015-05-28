@@ -228,6 +228,7 @@ namespace Arya
         {
             hasFocus = true;
             cursor->setVisible(true);
+            blinkTime = 0.0f;
             updateCursorPos();
             textBinding = Locator::getInputSystem().bindTextInput([this](const char* text) {
                     return onText(text);
@@ -293,6 +294,19 @@ namespace Arya
     {
         cursor->setPosition(vec2(-1.0f, 0.0f),
                 vec2(5.0f + 0.5f*8.0f + label->getLineWidth(), 0.0f));
+    }
+
+    void TextBox::update(float elapsedTime)
+    {
+        if (!hasFocus) return;
+        blinkTime += elapsedTime;
+        while (blinkTime >= 0.5f)
+        {
+            cursor->setVisible(!cursor->isVisible());
+            blinkTime -= 0.5f;
+        }
+
+        View::update(elapsedTime);
     }
 
     Interface::Interface()
