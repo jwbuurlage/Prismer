@@ -25,6 +25,8 @@ class Game
         float totalTime;
 
         shared_ptr<GameSessionClient> session;
+
+        Arya::InputBinding keyBinding;
 };
 
 } // namespace Prismer

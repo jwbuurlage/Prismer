@@ -129,7 +129,7 @@ void GameSessionClient::update(float elapsedTime)
         // bar at top of screen. 50px high, 10px from all sides
         auto image = ImageView::create();
         image->setMaterial(mat4);
-        image->setPosition(vec2(0.5f, -0.5f), vec2(0.0f, -0.5f*80.0f-10.0f)); //middle-top + (0, -60px)
+        image->setPosition(vec2(0.5f, -1.0f), vec2(0.0f, 0.5f*80.0f + 10.0f)); //middle-top + (0,0)
         image->setSize(vec2(0.5f, 0.0f), vec2(-20.0f, 80.0f)); //fullwidth + (-20px, +40px)
 
         auto image2 = ImageView::create();
@@ -138,10 +138,12 @@ void GameSessionClient::update(float elapsedTime)
         image2->setSize(vec2(0.0f, 1.0f), vec2(100.0f , -20.0f));
 
         auto label = Label::create();
-        label->setText("this is a test");
+        label->setPosition(vec2(0.0f, 0.0f), vec2(0.0f));
+        label->setSize(vec2(1.0f), vec2(0.0f));
+        label->setText("This is a font test. iijjAABB Newline check\nThis is the new line.");
 
         image->addToRootView();
-        image->add(image2);
+        //image->add(image2);
         image->add(label);
 
         int counter = 0;

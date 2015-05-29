@@ -13,6 +13,9 @@ class Game
 
     private:
         Arya::Root* root;
+        Arya::InputBinding bindQ;
+        Arya::InputBinding bindW;
+        Arya::InputBinding bindEscape;
         
         void update(float dt);
 

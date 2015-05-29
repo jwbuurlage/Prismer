@@ -21,6 +21,8 @@ class GameSessionInput
 
     private: 
         shared_ptr<GameSession> _session;
+
+        Arya::InputBinding bindingC, bindingL;
 };
 
 } // namespace Prismer

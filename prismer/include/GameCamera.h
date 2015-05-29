@@ -1,6 +1,11 @@
 #pragma once
+#include <AryaBinding.h>
 
 namespace Prismer {
+
+    using Arya::InputBinding;
+    using Arya::MousePos;
+    using Arya::CHAIN_LAST;
 
 class GameCamera
 {
@@ -11,9 +16,11 @@ class GameCamera
         void update(float elapsedTime);
 
     private:
-        void mouseDown(Arya::MOUSEBUTTON button, bool buttonDown, int x, int y);
+        bool mouseDown(Arya::MOUSEBUTTON button, bool buttonDown, const MousePos&);
         void mouseWheelMoved(int delta);
         void mouseMoved(int x, int y, int dx, int dy);
+
+        vector<InputBinding> bindings;
 
         //For key movement
         bool goingForward, goingBackward, goingLeft, goingRight, goingUp, goingDown, rotatingLeft, rotatingRight;

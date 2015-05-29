@@ -3,6 +3,7 @@
 #include "Text.h"
 #include "Locator.h"
 #include "InputSystem.h"
+#include "Geometry.h"
 #include "common/Logger.h"
 
 namespace Arya
@@ -11,7 +12,7 @@ namespace Arya
     {
         posRel = vec2(0.0f);
         posAbs = vec2(0.0f);
-        sizeRel = vec2(0.0f);
+        sizeRel = vec2(1.0f);
         sizeAbs = vec2(0.0f);
         visible = true;
     }
@@ -64,11 +65,22 @@ namespace Arya
         sizeAbs = abs;
     }
 
+    bool View::isInside(const vec2& pos, const vec2& pixelScaling)
+    {
+        auto offset = getScreenOffset(pixelScaling);
+        auto size = getScreenSize(pixelScaling);
+        if (pos.x < offset.x - size.x) return false;
+        if (pos.x > offset.x + size.x) return false;
+        if (pos.y < offset.y - size.y) return false;
+        if (pos.y > offset.y + size.y) return false;
+        return true;
+    }
+
     vec2 View::getScreenSize(const vec2& pixelScaling)
     {
         vec2 rel = sizeRel;
         if (auto p = parent.lock())
-            rel *= p->getScreenSize(pixelScaling);
+            rel *= p->View::getScreenSize(pixelScaling);
         return rel + sizeAbs * pixelScaling;
     }
 
@@ -76,7 +88,7 @@ namespace Arya
     {
         vec2 pos = posRel;
         if (auto p = parent.lock())
-            pos = p->getScreenOffset(pixelScaling) + pos * p->getScreenSize(pixelScaling);
+            pos = p->View::getScreenOffset(pixelScaling) + pos * p->View::getScreenSize(pixelScaling);
         return pos + 2.0f * posAbs * pixelScaling;
     }
 
@@ -102,6 +114,7 @@ namespace Arya
 
     Label::Label(const this_is_private& a) : View(a)
     {
+        setFont(Locator::getRoot().getInterface()->getDefaultFont());
     }
 
     Label::~Label()
@@ -113,10 +126,18 @@ namespace Arya
         return make_shared<Label>(this_is_private{});
     }
 
-    void Label::setText(const string& t, shared_ptr<Font> f)
+    void Label::setFont(shared_ptr<Font> f)
+    {
+        if (font != f)
+        {
+            font = f;
+            setText(text);
+        }
+    }
+
+    void Label::setText(const string& t)
     {
         text = t;
-        auto font = f ? f : Locator::getRoot().getInterface()->getDefaultFont();
 
         if (!text.empty() && font)
         {
@@ -128,36 +149,169 @@ namespace Arya
             geometry = nullptr;
             material = nullptr;
         }
+    }
 
-        setSize(vec2(0.0f), vec2(1.0f));
+    vec2 Label::getScreenSize(const vec2& pixelScaling)
+    {
+        return 2.0f * pixelScaling;
+    }
+
+    vec2 Label::getScreenOffset(const vec2& pixelScaling)
+    {
+        // The geometry has all text below and to the right of (0,0)
+        // So our offset should be the left-upper point of the label
+        vec2 offsetMiddle = View::getScreenOffset(pixelScaling);
+        vec2 size = View::getScreenSize(pixelScaling);
+        //basline fix to have all text inside label
+        //move the text 3 pixels upwards
+        offsetMiddle.y += 3.0f*2.0f*pixelScaling.y;
+
+        offsetMiddle.x -= size.x; //left of label
+        offsetMiddle.y += size.y; //top of label
+        return offsetMiddle;
+    }
+
+    float Label::getLineWidth() const
+    {
+        if (geometry) return geometry->maxX - geometry->minX;
+        else return 0.0f;
     }
 
     TextBox::TextBox(const this_is_private& a) : View(a)
     {
-        Locator::getInputSystem().bindMouseButton([this](MOUSEBUTTON btn, bool down, int x, int y)
-                {
-                    if (btn == MOUSEBUTTON_LEFT && down)
-                        onClick(down, x, y);
-                });
+        isEnabled = true;
+        hasFocus = false;
+        background = ImageView::create();
+        cursor = ImageView::create();
+        label = Label::create();
+
+        background->setSize(vec2(1.0f), vec2(0.0f));
+        cursor->setVisible(false);
+        cursor->setSize(vec2(0.0f), vec2(8.0f, 18.0f));
+        label->setSize(vec2(1.0f), vec2(-10.0f, -18.0f)); //text is 5 px from the side of the textbox
     }
 
     TextBox::~TextBox()
     {
+        //children will automatically be deleted by smart pointer semantics
     }
 
     shared_ptr<TextBox> TextBox::create()
     {
-        return make_shared<TextBox>(this_is_private{});
+        auto t = make_shared<TextBox>(this_is_private{});
+        // This can not be done in the constructor because
+        // shared_from_this will not work there
+        t->add(t->background);
+        t->add(t->cursor);
+        t->add(t->label);
+        return t;
     }
 
-    void TextBox::setFont(shared_ptr<Font> f)
+    void TextBox::setEnabled(bool enabled)
     {
-        font = f ? f : Locator::getRoot().getInterface()->getDefaultFont();
+        if (enabled && !isEnabled)
+            clickBinding = Locator::getInputSystem().bindMouseButton(
+                    [this](MOUSEBUTTON btn, bool down, const MousePos& pos)
+                    {
+                        if (btn == MOUSEBUTTON_LEFT && down)
+                            return onClick(pos);
+                        return false;
+                    });
+        else if (!enabled && isEnabled)
+        {
+            clickBinding = nullptr;
+            setFocus(false);
+        }
+
+        isEnabled = enabled;
     }
 
-    bool TextBox::onClick(bool down, int x, int y)
+    void TextBox::setFocus(bool focus)
     {
-        return false;
+        if (!isEnabled) return;
+        if (focus && !hasFocus)
+        {
+            hasFocus = true;
+            cursor->setVisible(true);
+            blinkTime = 0.0f;
+            updateCursorPos();
+            textBinding = Locator::getInputSystem().bindTextInput([this](const char* text) {
+                    return onText(text);
+                    }, CHAIN_FIRST);
+        }
+        else if (!focus && hasFocus)
+        {
+            hasFocus = false;
+            cursor->setVisible(false);
+            textBinding = nullptr;
+        }
+    }
+
+    bool TextBox::onClick(const MousePos& pos)
+    {
+        if (isInside(vec2(pos.nX, pos.nY),
+                    Locator::getRoot().getInterface()->getPixelScaling()))
+        {
+            setFocus(true);
+            LogDebug << "clicked inside" << endLog;
+            //clicked inside, so handled
+            return true;
+        }
+        else
+        {
+            LogDebug << "clicked outside" << endLog;
+            bool handled = hasFocus;
+            setFocus(false);
+            // we only handled it if text WAS focussed before user clicked outside
+            return handled;
+        }
+    }
+
+    bool TextBox::onText(const char* text)
+    {
+        if (text[0] == '\x08') //backspace
+        {
+            string cur = getText();
+            if (!cur.empty())
+            {
+                cur.pop_back();
+                setText(cur);
+            }
+        }
+        else if (text[0] == '\r') //enter
+        {
+            if (callback) callback(true);
+        }
+        else if (text[0] == '\x1B') //escape
+        {
+            if (callback) callback(false);
+        }
+        else
+        {
+            string cur = getText();
+            cur.append(text);
+            setText(cur);
+        }
+        return true;
+    }
+
+    void TextBox::updateCursorPos()
+    {
+        cursor->setPosition(vec2(-1.0f, 0.0f),
+                vec2(5.0f + 0.5f*8.0f + label->getLineWidth() + 2.0f, 0.0f));
+    }
+
+    void TextBox::update(float elapsedTime)
+    {
+        if (!hasFocus) return;
+        blinkTime += elapsedTime;
+        while (blinkTime >= 0.5f)
+        {
+            cursor->setVisible(!cursor->isVisible());
+            blinkTime -= 0.5f;
+        }
+
+        View::update(elapsedTime);
     }
 
     Interface::Interface()
@@ -175,16 +329,15 @@ namespace Arya
     bool Interface::init()
     {
         defaultFont = make_shared<Font>();
-        //defaultFont->loadFromFile("DejaVuSans.ttf");
-        defaultFont->loadFromFile("courier.ttf", 28);
+        defaultFont->loadFromFile("DejaVuSans.ttf", 20);
         // do not exit if font not found
         return true;
     }
 
     void Interface::resize(int windowWidth, int windowHeight)
     {
-        (void)windowWidth;
-        (void)windowHeight;
+        pixelScaling.x = 1.0f/(float)windowWidth;
+        pixelScaling.y = 1.0f/(float)windowHeight;
     }
 }
 

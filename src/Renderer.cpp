@@ -21,15 +21,20 @@ namespace Arya
 
     bool Renderer::init()
     {
+        checkErrors();
+
         glewExperimental = GL_TRUE; 
         GLenum err = glewInit();
         if (err != GLEW_OK) {
             LogError << "Failed to initialize Glew. Errormessage: " << glewGetErrorString(err) << endLog;
             return false;
         }
+        // A known bug of GLEW / OpenGL is that glewInit causes an GL_INVALID_ENUM
+        // even though everything is fine so we reset that error message here
+        glGetError();
 
-        if (!GLEW_VERSION_3_1)
-            LogWarning << "No OpenGL 3.1 support! Continuing" << endLog;
+        if (!GLEW_VERSION_3_2)
+            LogWarning << "No OpenGL 3.2 support! Continuing" << endLog;
 
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);

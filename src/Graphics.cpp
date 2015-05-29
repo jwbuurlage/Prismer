@@ -163,8 +163,7 @@ namespace Arya
         {
             ImageView* image = dynamic_cast<ImageView*>(view);
 
-            Material* mat = image->material.get();
-            if (mat)
+            if (Material* mat = image->material.get())
             {
                 viewShader->doUniforms(view);
                 renderer->renderGeometry(quad2dGeometry.get(), mat, viewShader.get());
@@ -174,8 +173,8 @@ namespace Arya
         {
             Label* lbl = dynamic_cast<Label*>(view);
 
-            auto geom = lbl->getGeometry();
-            auto mat = lbl->getMaterial();
+            auto geom = lbl->getTextGeometry();
+            auto mat = lbl->getFontMaterial();
             if (geom && mat)
             {
                 viewShader->doUniforms(view);

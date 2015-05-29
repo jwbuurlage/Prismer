@@ -27,15 +27,20 @@ bool Game::init()
 
     Arya::InputSystem* input = root->getInputSystem();
 
-    input->bind("shift+q", [this](bool down) {
+    keyBinding = input->bind("shift+q", [this](bool down, const MousePos&) {
         if (down)
             root->stopGameLoop();
-        });
+        return down;
+        }, Arya::CHAIN_LAST);
+    Arya::Locator::getCommandHandler().bind("quit",[this](string)
+            {
+            root->stopGameLoop();
+            });
+    Arya::Locator::getCommandHandler().bind("exit",[this](string)
+            {
+            root->stopGameLoop();
+            });
 
-    input->bind("shift+space", [](bool down) {
-            if(down)
-                GameLogDebug << "You pressed shift+space" << endLog;
-        });
 
     session = make_shared<GameSessionClient>();
 

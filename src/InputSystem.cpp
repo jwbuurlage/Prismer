@@ -7,10 +7,73 @@ using std::string;
 
 namespace Arya
 {
+    // sdl keymap
     map <string,SDL_Keycode> keyMap;
+
+    // directions are:
+    // InputSystem::Bindings::xx is called first
+    // InputSystem::Bindings::xx->next is called second
+    // last one in line has next==0
+    // if prev==0 then that chain element is the first (root) element
+
+    template<typename T>
+    class  CallbackChainElement : public BindingBase
+    {
+        public:
+            CallbackChainElement()
+            {
+                prev = 0;
+                next = 0;
+                f = nullptr;
+            }
+
+            ~CallbackChainElement()
+            {
+                if (next) { next->prev = prev; }
+                if (prev) { prev->next = next; }
+            }
+
+            InputBinding addNew(const function<T>& f, CHAIN_POS pos)
+            {
+                auto cur = this;
+                if (pos == CHAIN_LAST)
+                    while (cur->next) cur = cur->next;
+
+                CallbackChainElement<T>* elem = new CallbackChainElement<T>;
+                elem->f = f;
+
+                //link it into the list, after cur
+                elem->prev = cur;
+                elem->next = cur->next;
+                if (cur->next) cur->next->prev = elem;
+                cur->next = elem;
+                return unique_ptr<BindingBase>(elem);
+            }
+
+            function<T> f;
+            CallbackChainElement<T>* prev;
+            CallbackChainElement<T>* next;
+    };
+
+    struct InputSystem::Bindings{
+        // These are not pointers!!!
+        // The 'next' pointers of these are the first callbacks
+        // This ensures that when the user deletes the 'root' callback
+        // then this object is not invalidated
+        CallbackChainElement<bool(int,const MousePos&)> keyDown;
+        CallbackChainElement<bool(int,const MousePos&)> keyUp;
+        CallbackChainElement<bool(MOUSEBUTTON,bool,const MousePos&)> mouseButton;
+        CallbackChainElement<bool(const MousePos&,int, int)> mouseMove;
+        CallbackChainElement<bool(int,const MousePos&)> mouseWheel;
+        CallbackChainElement<bool(const char*)> textInput;
+
+        map<InputKey,CallbackChainElement<bool(bool,const MousePos&)> > keys;
+    };
 
     InputSystem::InputSystem()
     {
+        bindings = make_unique<Bindings>();
+        
         windowWidth = 0; windowHeight = 0;
         if(keyMap.empty()) {
             //Note that a-z and 0-9 are taken care of separately
@@ -28,85 +91,59 @@ namespace Arya
             keyMap["/"] = SDLK_SLASH;
             keyMap["period"] = SDLK_PERIOD;
             keyMap["."] = SDLK_PERIOD;
+            keyMap["comma"] = SDLK_COMMA;
+            keyMap[","] = SDLK_COMMA;
             keyMap["tab"] = SDLK_TAB;
             keyMap["tilde"] = SDLK_BACKQUOTE;
+            keyMap["backspace"] = SDLK_BACKSPACE;
         }
     }
 
     InputSystem::~InputSystem()
     {
+        //all bindings are taken care of using the smart-pointers
     }
 
-    void InputSystem::bind(INPUTEVENT event, function<void(int)> f)
+    InputBinding InputSystem::bind(INPUTEVENT event, function<bool(int,const MousePos&)> f, CHAIN_POS pos)
     {
         if( event == INPUT_KEYDOWN )
-            bindingKeyDown = f;
+            return bindings->keyDown.addNew(f, pos);
         else if( event == INPUT_KEYUP )
-            bindingKeyUp = f;
+            return bindings->keyUp.addNew(f, pos);
         else if( event == INPUT_MOUSEWHEEL )
-            bindingMouseWheel = f;
+            return bindings->mouseWheel.addNew(f, pos);
         else
             LogWarning << "Trying to bind event with invalid function signature or invalid event type" << endLog;
+        return nullptr;
     }
 
-    void InputSystem::bindMouseButton(function<void(MOUSEBUTTON,bool,int,int)> f)
+    InputBinding InputSystem::bindMouseButton(function<bool(MOUSEBUTTON,bool,const MousePos&)> f, CHAIN_POS pos)
     {
-        bindingMouseBtn = f;
+        return bindings->mouseButton.addNew(f, pos);
     }
 
-    void InputSystem::bindMouseMove(function<void(int,int,int,int)> f)
+    InputBinding InputSystem::bindMouseMove(function<bool(const MousePos&,int,int)> f, CHAIN_POS pos)
     {
-        bindingMouseMovement = f;
+        return bindings->mouseMove.addNew(f, pos);
     }
 
-    void InputSystem::bind(const char* key, function<void(bool)> f)
+    InputBinding InputSystem::bind(const char* key, function<bool(bool,const MousePos&)> f, CHAIN_POS pos)
     {
         InputKey k;
         if (!k.parseKey(key)) {
             LogWarning << "Unable to bind key. Could not parse: " << key << endLog;
-            return;
+            return nullptr;
         }
-        if (bindingKey.find(k) != bindingKey.end()) LogInfo << "Rebinding key '" << key << "' (old binding removed)" << endLog;
-        bindingKey[k] = f;
-        return;
+        // will add a new one if non-existent
+        return bindings->keys[k].addNew(f, pos);
     }
 
-    void InputSystem::unbind(INPUTEVENT event)
+    InputBinding InputSystem::bindTextInput(function<bool(const char*)> f, CHAIN_POS pos)
     {
-        switch(event) {
-            case INPUT_KEYDOWN:
-                bindingKeyDown = nullptr;
-                break;
-            case INPUT_KEYUP:
-                bindingKeyUp = nullptr;
-                break;
-            case INPUT_MOUSEBUTTON:
-                bindingMouseBtn = nullptr;
-                break;
-            case INPUT_MOUSEMOVEMENT:
-                bindingMouseMovement = nullptr;
-                break;
-            case INPUT_MOUSEWHEEL:
-                bindingMouseWheel = nullptr;
-                break;
-            default:
-                break;
-        }
-    }
-
-    void InputSystem::unbind(const char* key)
-    {
-        InputKey k;
-        if (!k.parseKey(key)) {
-            LogWarning << "Cannot unbind key. Unable to parse: " << key << endLog;
-            return;
-        }
-        auto f = bindingKey.find(k);
-        if (f == bindingKey.end()) {
-            LogInfo << "Trying to unbind '" << key << "' but the binding did not exist." << endLog;
-            return;
-        }
-        bindingKey.erase(f);
+        auto x = bindings->textInput.addNew(f,pos);
+        SDL_StartTextInput();
+        //TODO: call SDL_StopTextInput() when last textInput handler is deleted
+        return x;
     }
 
     MOUSEBUTTON translateButton(Uint8 btn)
@@ -119,55 +156,163 @@ namespace Arya
 
     void InputSystem::handleInputEvent(const SDL_Event& event)
     {
+        MousePos mousePos;
+        switch (event.type) {
+            case SDL_MOUSEBUTTONUP:
+            case SDL_MOUSEBUTTONDOWN:
+                mousePos.x = event.button.x;
+                mousePos.y = windowHeight - event.button.y;
+                break;
+            case SDL_MOUSEMOTION:
+                mousePos.x = event.motion.x;
+                mousePos.y = windowHeight - event.motion.y;
+                break;
+            default:
+                SDL_GetMouseState(&mousePos.x, &mousePos.y);
+                break;
+        }
+        mousePos.nX = -1.0f + (2.0f * mousePos.x) / float(windowWidth);
+        mousePos.nY = -1.0f + (2.0f * mousePos.y) / float(windowHeight);
+
         switch(event.type) {
             case SDL_KEYDOWN:
                 {
-                    //Do not count repeated keys, only for text-capture mode
-                    if(event.key.repeat) break;
                     InputKey k(event.key.keysym);
-                    if( bindingKeyDown ) bindingKeyDown(k.keysym);
-                    auto f = bindingKey.find(k);
-                    if( f != bindingKey.end() ) f->second(true);
+
+                    //first handle textinput if enabled
+                    if (bindings->textInput.next)
+                    {
+                        char text[2] = {0};
+                        if (k.keysym == SDLK_BACKSPACE)
+                            text[0] = '\x08';
+                        else if (k.keysym == SDLK_RETURN)
+                            text[0] = '\r';
+                        else if (k.keysym == SDLK_ESCAPE)
+                            text[0] = '\x1B';
+                        else
+                            break; //do not handle other keys
+                        auto elem = bindings->textInput.next;
+                        while (elem)
+                        {
+                            if (elem->f(text))
+                                break;
+                            elem = elem->next;
+                        }
+                    }
+                    else
+                    {
+                        //Do not count repeated keys, that for text-capture mode
+                        if(event.key.repeat) break;
+                        auto elem = bindings->keyDown.next;
+                        while (elem)
+                        {
+                            if (elem->f(k.keysym, mousePos))
+                                break;
+                            elem = elem->next;
+                        }
+                        auto a = bindings->keys.find(k);
+                        if( a != bindings->keys.end() )
+                        {
+                            auto elem = a->second.next;
+                            while (elem)
+                            {
+                                if (elem->f(true, mousePos))
+                                {
+                                    lastHandledTimeStamp = event.key.timestamp;
+                                    break;
+                                }
+                                elem = elem->next;
+                            }
+                        }
+                    }
                 }
                 break;
             case SDL_KEYUP:
                 {
+                    //Check if text input active
+                    if (bindings->textInput.next) break;
                     //Do not count repeated keys, only for text-capture mode
                     if(event.key.repeat) break;
                     InputKey k(event.key.keysym);
-                    if( bindingKeyUp ) bindingKeyUp(k.keysym);
-                    auto f = bindingKey.find(k);
-                    if( f != bindingKey.end() ) f->second(false);
+                    auto elem = bindings->keyUp.next;
+                    while (elem)
+                    {
+                        if (elem->f(k.keysym, mousePos))
+                            break;
+                        elem = elem->next;
+                    }
+                    auto a = bindings->keys.find(k);
+                    if( a != bindings->keys.end() )
+                    {
+                        auto elem = a->second.next;
+                        while (elem)
+                        {
+                            if (elem->f(false, mousePos))
+                                break;
+                            elem = elem->next;
+                        }
+                    }
                 }
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                if( bindingMouseBtn ) {
-                    bindingMouseBtn(translateButton(event.button.button), true,
-                            event.button.x, windowHeight - event.button.y);
+                {
+                    auto elem = bindings->mouseButton.next;
+                    while (elem)
+                    {
+                        if (elem->f(translateButton(event.button.button), true, mousePos))
+                            break;
+                        elem = elem->next;
+                    }
                 }
                 break;
             case SDL_MOUSEBUTTONUP:
-                if( bindingMouseBtn ) {
-                    bindingMouseBtn(translateButton(event.button.button), false,
-                            event.button.x, windowHeight - event.button.y);
+                {
+                    auto elem = bindings->mouseButton.next;
+                    while (elem)
+                    {
+                        if (elem->f(translateButton(event.button.button), false, mousePos))
+                            break;
+                        elem = elem->next;
+                    }
                 }
                 break;
             case SDL_MOUSEMOTION:
-                if( bindingMouseMovement ) {
-                    bindingMouseMovement(event.motion.x, windowHeight - event.motion.y, event.motion.xrel, -event.motion.yrel);
+                {
+                    auto elem = bindings->mouseMove.next;
+                    while (elem)
+                    {
+                        if (elem->f(mousePos, event.motion.xrel, -event.motion.yrel))
+                            break;
+                        elem = elem->next;
+                    }
                 }
                 break;
             case SDL_MOUSEWHEEL:
-                if( bindingMouseWheel ) {
-                    bindingMouseWheel(event.wheel.y);
+                {
+                    auto elem = bindings->mouseWheel.next;
+                    while (elem)
+                    {
+                        if (elem->f(event.wheel.y, mousePos))
+                            break;
+                        elem = elem->next;
+                    }
                 }
                 break;
+            case SDL_TEXTEDITING:
+                //See online SDL info.
+                //We currently do not support it
+                break;
             case SDL_TEXTINPUT:
-                //TODO
-                //If the key pressed is a letter or any other
-                //text based input, SDL gives this event
-                //which can be used for properly using textboxes
-                //so that keys like ^ ' ~ work as expected
+                {
+                    if (lastHandledTimeStamp == event.text.timestamp) break;
+                    auto elem = bindings->textInput.next;
+                    while (elem)
+                    {
+                        if (elem->f(event.text.text))
+                            break;
+                        elem = elem->next;
+                    }
+                }
                 break;
             default:
                 LogWarning << "Unkown event received in InputSystem" << endLog;

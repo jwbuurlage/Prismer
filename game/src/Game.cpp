@@ -21,12 +21,14 @@ bool Game::init()
         return false;
     }
 
-    auto quitFunc = [this](bool down) { if (down) root->stopGameLoop(); };
+    auto quitFunc = [this](bool down, const Arya::MousePos&) { if (down) root->stopGameLoop(); return down; };
     Arya::InputSystem* input = root->getInputSystem();
-    input->bind("CTRL+Q", quitFunc);
-    input->bind("escape", quitFunc);
-    input->bind("ctrl+shift+f", [](bool down) { if(down) GameLogDebug << "ctrl+shift+f" << endLog; });
-    input->bind("shift+space", [](bool down) { if(down) GameLogDebug << "You pressed shift+space" << endLog; });
+    bindQ = input->bind("CTRL+Q", quitFunc, Arya::CHAIN_LAST);
+    bindW = input->bind("CTRL+W", quitFunc, Arya::CHAIN_LAST);
+    bindEscape = input->bind("escape", quitFunc, Arya::CHAIN_LAST);
+
+    Arya::Locator::getCommandHandler().bind("quit", [this](string) { root->stopGameLoop(); } );
+    Arya::Locator::getCommandHandler().bind("exit", [this](string) { root->stopGameLoop(); } );
 
     if (session) delete session;
     session = new GameSessionClient;
@@ -36,8 +38,12 @@ bool Game::init()
     return true;
 }
 
+float fpstimer;
+int fpscounter;
 void Game::run()
 {
+    fpstimer = 0.0f;
+    fpscounter = 0;
     root->gameLoop( std::bind(&Game::update, this, std::placeholders::_1) );
 }
 
@@ -45,5 +51,15 @@ void Game::update(float dt)
 {
     totalTime += dt;
     session->update(dt);
+
+    fpstimer += dt;
+    fpscounter++;
+
+    if (fpstimer >= 5.0f)
+    {
+        LogInfo << "FPS: " << float(fpscounter) / fpstimer << endLog;
+        fpstimer = 0.0f;
+        fpscounter = 0;
+    }
 }
 

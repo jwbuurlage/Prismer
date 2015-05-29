@@ -2,7 +2,9 @@
 #include "Interface.h"
 #include "Materials.h"
 #include "Locator.h"
+#include "Text.h"
 #include "InputSystem.h"
+#include "CommandHandler.h"
 #include "common/Logger.h"
 
 namespace Arya
@@ -24,11 +26,15 @@ namespace Arya
 
         auto matGray = Material::create(vec4(0.8f, 0.8f, 0.8f, 0.8f));
         auto matGrayDark = Material::create(vec4(0.5f, 0.5f, 0.5f, 0.8f));
+        auto matGrayDark2 = Material::create(vec4(0.3f, 0.3f, 0.3f, 0.8f));
 
-        const float lineHeight = 16.0f; //pixels
-        const int lineCount = 20;
+        auto font = make_shared<Font>();
+        font->loadFromFile("DejaVuSansMono.ttf", 14);
+
         const float boxHeight = 30.0f;
-        const float backgroundHeight = 10.0f + lineCount * lineHeight + 10.0f + boxHeight + 10.0f;
+        float lineHeight = (font ? font->getLineAdvance() : 18.0f);
+        float labelHeight = lineHeight * lineCount;
+        float backgroundHeight = 10.0f + labelHeight + 10.0f + boxHeight + 10.0f;
 
         background = ImageView::create();
         background->setMaterial(matGray);
@@ -36,32 +42,41 @@ namespace Arya
         background->setSize(vec2(1.0f, 0.0f), vec2(-20.0f, backgroundHeight)); //fullwidth + (-20px, +300px)
         background->addToRootView();
 
-        textBox = ImageView::create();
-        textBox->setMaterial(matGrayDark);
+        textBox = TextBox::create();
+        if (font) textBox->setFont(font);
+        textBox->setBackground(matGrayDark);
+        textBox->setCursor(matGrayDark2);
         textBox->setPosition(vec2(0.0f, -1.0f), vec2(0.0f, 0.5f*boxHeight + 10.0f));
         textBox->setSize(vec2(1.0f, 0.0f), vec2(-20.0f , boxHeight));
+        textBox->setEnabled(false);
         background->add(textBox);
 
-        for (int i = 0; i < lineCount; i++)
-        {
-            //auto img = ImageView::create();
-            //img->setMaterial(matGrayDark);
-            //img->setPosition(vec2(0.0f, 1.0f), vec2(0.0f, -10.0f - lineHeight*i - 1.0f - 0.5f*(lineHeight-1.0f) ));
-            //img->setSize(vec2(1.0f, 0.0f), vec2(-20.0f, lineHeight-1.0f));
-            //background->add(img);
-
-            auto lbl = Label::create();
-            lbl->setPosition(vec2(-1.0f, 1.0f), vec2(10.0f, -10.0f - lineHeight*(1 + i)));
-            lbl->setSize(vec2(1.0f, 0.0f), vec2(0.0f, lineHeight));
-            background->add(lbl);
-            lines.push_back(lbl);
-        }
+        consoleOutputLabel = Label::create();
+        consoleOutputLabel->setPosition(vec2(0.0f, 1.0f), vec2(0.0f, -10.0f -0.5f*labelHeight));
+        consoleOutputLabel->setSize(vec2(1.0f, 0.0f), vec2(-20.0f, labelHeight));
+        if (font) consoleOutputLabel->setFont(font);
+        background->add(consoleOutputLabel);
 
         consoleVisible = false;
         background->setVisible(false);
-        auto bindFunc = [this](bool down){ if (down) toggleConsole(); };
-        Locator::getInputSystem().bind("tilde", bindFunc);
-        Locator::getInputSystem().bind("shift+tilde", bindFunc);
+        auto bindFunc = [this](bool down,const MousePos&){ if (down) toggleConsole(); return down; };
+        bindTilde = Locator::getInputSystem().bind("tilde", bindFunc, CHAIN_LAST);
+        bindShiftTilde = Locator::getInputSystem().bind("shift+tilde", bindFunc, CHAIN_LAST);
+
+        textBox->setCallback([this](bool isEnter) {
+                    //either enter or escape
+                    //was pressed in console textbox
+                    if (isEnter)
+                    {
+                        if (&Arya::Locator::getCommandHandler())
+                            Arya::Locator::getCommandHandler().executeCommand(textBox->getText());
+                    }
+                    else
+                    {
+                        toggleConsole(); //on escape
+                    }
+                    textBox->setText("");
+                });
 
         graphicsInitialized = true;
         return true;
@@ -72,6 +87,8 @@ namespace Arya
         consoleVisible = !consoleVisible;
         if (consoleVisible) updateLabels();
         background->setVisible(consoleVisible);
+        textBox->setEnabled(consoleVisible);
+        textBox->setFocus(consoleVisible);
     }
 
     void Console::addOutputLine(const string& line)
@@ -83,23 +100,28 @@ namespace Arya
 
     void Console::updateLabels()
     {
-        // if anything logs while in this function it will crash
-        // therefore, disable the graphicsflag during this function
-        // it will still keep the log messages
+        // If anything logs while in this function it will crash
+        // therefore, disable the graphicsflag during this function.
+        // It will still keep the log messages
         graphicsInitialized = false;
-        for (unsigned int i = 0; i < lines.size(); i++)
+
+        int firstLine = 0;
+        if (history.size() > lineCount)
+            firstLine = history.size() - lineCount;
+
+        bool flag = false;
+        string visibleText;
+        for (unsigned int i = firstLine; i < history.size(); i++)
         {
-            int j = history.size() - (lines.size()-i);
-            if (j >= 0)
-            {
-                lines[i]->setText(history[j]);
-                lines[i]->setVisible(true);
-            }
-            else
-            {
-                lines[i]->setVisible(false);
-            }
+            if (flag) visibleText.append(1, '\n');
+            else flag = true;
+            //TODO: if line length too long, then
+            //split the line
+            visibleText.append(history[i]);
         }
+
+        consoleOutputLabel->setText(visibleText);
+
         graphicsInitialized = true;
     }
 }
