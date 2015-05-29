@@ -4,7 +4,7 @@
 
 namespace Arya
 {
-    void CommandHandler::bind(const string& command, function<void(string)> f)
+    void CommandHandler::bind(const string& command, function<void(const string&)> f)
     {
         //make lowercase
         string cmd(command);
@@ -34,7 +34,7 @@ namespace Arya
             bindings.erase(x);
     }
 
-    int CommandHandler::executeCommand(string line)
+    int CommandHandler::executeCommand(const string& line)
     {
         string cmd(line);
         std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);

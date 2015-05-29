@@ -27,8 +27,8 @@ bool Game::init()
     bindW = input->bind("CTRL+W", quitFunc, Arya::CHAIN_LAST);
     bindEscape = input->bind("escape", quitFunc, Arya::CHAIN_LAST);
 
-    Arya::Locator::getCommandHandler().bind("quit", [this](string) { root->stopGameLoop(); } );
-    Arya::Locator::getCommandHandler().bind("exit", [this](string) { root->stopGameLoop(); } );
+    Arya::Locator::getCommandHandler().bind("quit", [this](const string&) { root->stopGameLoop(); } );
+    Arya::Locator::getCommandHandler().bind("exit", [this](const string&) { root->stopGameLoop(); } );
 
     if (session) delete session;
     session = new GameSessionClient;
