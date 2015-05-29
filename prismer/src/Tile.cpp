@@ -23,6 +23,11 @@ void Tile::setHovered(bool hovered) {
     _entity->update();
 }
 
+void Tile::setVisible(bool visible) {
+    _info->_visible = visible;
+    _entity->update();
+}
+
 shared_ptr<Tile> Tile::getNeighbor(TileDirection dir)
 {
     if (_grid.expired())

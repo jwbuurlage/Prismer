@@ -49,6 +49,26 @@ void GridInput::activate()
             if (down) setHovered(TileDirection::bottom_left); });
     input->bind("enter", [this](bool down) {
             if (down) setActive(_hovered); });
+    input->bind("v", [this](bool down) {
+            if (down) toggleVisible(_hovered); });
+
+    //DEBUG---
+    input->bind("j", [this](bool down) {
+            // create unit?
+            if (down && _hovered!=nullptr)
+            {
+                auto l_grid = _grid.lock();
+                GameLogInfo << "Vision:" << endLog;
+                auto visionlist = l_grid->getVision(_hovered);
+                GameLogDebug << "The list has " << visionlist.size() << " elements." << endLog;
+                for(auto t:visionlist)
+                {
+                    GameLogInfo << "Tile x:" << t->getX() << " Tile y:" << t->getY() << endLog;
+                }
+                GameLogInfo << endLog;
+            }
+        });
+
 
     // mouse movement
     input->bindMouseMove(
@@ -94,6 +114,15 @@ void GridInput::setActive(shared_ptr<Tile> tile) {
 
     if (_active->getInfo()->hasUnit())
         _active->getInfo()->getUnit()->activate(shared_from_this());
+}
+
+void GridInput::toggleVisible(shared_ptr<Tile> tile)
+{
+    if (!tile)
+    {
+        return;
+    }
+    tile->setVisible(!tile->getInfo()->isVisible());
 }
 
 void GridInput::setHovered(shared_ptr<Tile> tile) {

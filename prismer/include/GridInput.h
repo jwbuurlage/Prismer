@@ -31,6 +31,7 @@ class GridInput
         }
         
         void setActive(shared_ptr<Tile> tile);
+        void toggleVisible(shared_ptr<Tile> tile);
 
     private:
         weak_ptr<Grid> _grid;

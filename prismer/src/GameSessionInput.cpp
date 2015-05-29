@@ -50,13 +50,6 @@ void GameSessionInput::init()
             if (down)
                 _session->_listUnits();
         });
-    //DEBUG---
-    input->bind("j", [this](bool down) {
-            // create unit?
-            if (down)
-                _session->_getVision();
-        });
-
 }
 
 void GameSessionInput::update(float elapsedTime)

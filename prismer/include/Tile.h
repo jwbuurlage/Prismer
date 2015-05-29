@@ -120,6 +120,7 @@ class Tile {
         // not sure which is better
         void setActive(bool active);
         void setHovered(bool hovered);
+        void setVisible(bool visible);
 
     private:
         int _x;
