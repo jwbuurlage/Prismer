@@ -201,7 +201,7 @@ namespace Arya
                     }
                     else
                     {
-                        //Do not count repeated keys, only for text-capture mode
+                        //Do not count repeated keys, that for text-capture mode
                         if(event.key.repeat) break;
                         auto elem = bindings->keyDown.next;
                         while (elem)
@@ -217,7 +217,10 @@ namespace Arya
                             while (elem)
                             {
                                 if (elem->f(true, mousePos))
+                                {
+                                    lastHandledTimeStamp = event.key.timestamp;
                                     break;
+                                }
                                 elem = elem->next;
                             }
                         }
@@ -301,6 +304,7 @@ namespace Arya
                 break;
             case SDL_TEXTINPUT:
                 {
+                    if (lastHandledTimeStamp == event.text.timestamp) break;
                     auto elem = bindings->textInput.next;
                     while (elem)
                     {

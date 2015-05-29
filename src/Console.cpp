@@ -4,6 +4,7 @@
 #include "Locator.h"
 #include "Text.h"
 #include "InputSystem.h"
+#include "CommandHandler.h"
 #include "common/Logger.h"
 
 namespace Arya
@@ -66,9 +67,14 @@ namespace Arya
                     //either enter or escape
                     //was pressed in console textbox
                     if (isEnter)
-                        handleConsoleInput(textBox->getText());
+                    {
+                        if (&Arya::Locator::getCommandHandler())
+                            Arya::Locator::getCommandHandler().executeCommand(textBox->getText());
+                    }
                     else
-                        toggleConsole();
+                    {
+                        toggleConsole(); //on escape
+                    }
                     textBox->setText("");
                 });
 
@@ -117,11 +123,5 @@ namespace Arya
         consoleOutputLabel->setText(visibleText);
 
         graphicsInitialized = true;
-    }
-
-    void Console::handleConsoleInput(string line)
-    {
-        LogWarning << "Unknown console command: " << line << endLog;
-        return;
     }
 }

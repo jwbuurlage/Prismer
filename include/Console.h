@@ -2,9 +2,7 @@
 
 #include <deque>
 #include <functional>
-#include <map>
 #include <memory>
-#include <string>
 #include <vector>
 #include "AryaBinding.h"
 
@@ -12,7 +10,6 @@ namespace Arya
 {
     using std::deque;
     using std::function;
-    using std::map;
     using std::unique_ptr;
     using std::shared_ptr;
     using std::string;
@@ -30,11 +27,9 @@ namespace Arya
 
             bool init();
 
-            void bind(const string& command, function<void()> f);
-            void unbind(const string& command);
-
             // Toggle visiblity of console
-            // is also bound to tilde but can be done manually as well
+            // Tilde is automatically bound to this,
+            // but this function allows manual opening/closing of the console
             void toggleConsole();
         private:
             // Console output history
@@ -44,10 +39,6 @@ namespace Arya
             // Console key binding
             InputBinding bindTilde;
             InputBinding bindShiftTilde;
-
-            // Command bindings
-            void handleConsoleInput(string line);
-            map<string, function<void()>> bindings;
 
             // Graphics
             bool graphicsInitialized;

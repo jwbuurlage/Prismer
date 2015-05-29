@@ -82,6 +82,16 @@ namespace Arya
         private:
             int windowWidth, windowHeight;
 
+            //! Fix for duplicate handling of key that comes as keydown and as textinput
+            //! User presses ~
+            //! Console opens because ~ keydown is bound to console, this happens during the handling of keydown
+            //! The textinput ~ is also in the message queue and is handled after the keydown
+            //! but now the console is active (activated completely in keydown handling)
+            //! so the console already gets a ~ as text.
+            //! The fix is that if a keydown is handled, then the same key,
+            //! purely identified by timestamp, should not be sent as textinput.
+            unsigned int lastHandledTimeStamp;
+
             //pimpl
             struct Bindings;
             unique_ptr<Bindings> bindings;

@@ -1,6 +1,7 @@
 #include "common/Logger.h"
 #include "Files.h"
 #include "Graphics.h"
+#include "CommandHandler.h"
 #include "Console.h"
 #include "InputSystem.h"
 #include "Interface.h"
@@ -37,12 +38,14 @@ namespace Arya
         world = new World;
         interface = new Interface;
         graphics = new Graphics;
+        commandHandler = new CommandHandler;
         console = new Console;
         inputSystem = new InputSystem;
         modelManager = new ModelManager;
         materialManager = new MaterialManager;
         textureManager = new TextureManager;
         Locator::provide(world);
+        Locator::provide(commandHandler);
         Locator::provide(console);
         Locator::provide(inputSystem);
         Locator::provide(modelManager);
@@ -63,6 +66,7 @@ namespace Arya
         delete modelManager;
         delete inputSystem;
         delete console;
+        delete commandHandler;
         delete graphics;
         delete interface;
         delete world;
@@ -73,6 +77,7 @@ namespace Arya
         fileSystem = 0;
         inputSystem = 0;
         console = 0;
+        commandHandler = 0;
         world = 0;
         //Unset the Locator pointers
         Locator::provide(textureManager);
@@ -80,6 +85,7 @@ namespace Arya
         Locator::provide(modelManager);
         Locator::provide(inputSystem);
         Locator::provide(console);
+        Locator::provide(commandHandler);
         Locator::provide(world);
         Locator::provide(fileSystem);
         Locator::provide((Root*)0);

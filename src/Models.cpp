@@ -206,7 +206,7 @@ namespace Arya
             //All materials in the file
             vector< shared_ptr<Material> > materials;
 
-            LogDebug << "Loading model " << filename << " with " << header->submeshCount << " meshes." << endLog;
+            //LogDebug << "Loading model " << filename << " with " << header->submeshCount << " meshes." << endLog;
 
             //Parse all materials
             pointer += sizeof(AryaHeader);
@@ -239,11 +239,11 @@ namespace Arya
             {
                 model->shaderProgram = staticShader;
                 model->animationData = nullptr;
-                LogDebug << "Model has no animations" << endLog;
+                //LogDebug << "Model has no animations" << endLog;
             }
             else
             {
-                LogDebug << "Model has " << animationCount << " animations in " << header->frameCount << " frames: ";
+                //LogDebug << "Model has " << animationCount << " animations in " << header->frameCount << " frames: ";
 
                 model->shaderProgram = animatedShader;
 
@@ -258,7 +258,7 @@ namespace Arya
                     nameBuf[0] = *pointer++;
                     while(nameBuf[count]){ ++count; nameBuf[count] = *pointer++; }
 
-                    LogDebug << nameBuf << " ";
+                    //LogDebug << nameBuf << " ";
 
                     newAnim.frameTimes.clear();
                     newAnim.startFrame = *(int*)pointer; pointer += 4;
@@ -272,11 +272,11 @@ namespace Arya
                     //Only add the animation if there are actually enough frames
                     if( newAnim.startFrame < header->frameCount && newAnim.endFrame < header->frameCount )
                         animData->animations.insert(make_pair(nameBuf, newAnim));
-                    else
-                        LogDebug << "(not enough frames) ";
+                    //else
+                    //    LogDebug << "(not enough frames) ";
                 }
 
-                LogDebug << endLog;
+                //LogDebug << endLog;
 
             }
 

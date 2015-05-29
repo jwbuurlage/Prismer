@@ -5,6 +5,7 @@ namespace Arya
     class Root;
     class World;
     class Console;
+    class CommandHandler;
     class FileSystem;
     class InputSystem;
     class ModelManager;
@@ -18,6 +19,7 @@ namespace Arya
             static Root& getRoot() { return *root; }
             static World& getWorld() { return *world; }
             static Console& getConsole() { return *console; }
+            static CommandHandler& getCommandHandler() { return *commandHandler; }
             static FileSystem& getFileSystem() { return *fileSystem; }
             static InputSystem& getInputSystem() { return *inputSystem; }
             static ModelManager& getModelManager() { return *modelManager; }
@@ -28,6 +30,7 @@ namespace Arya
             static void provide(Root* r) { root = r; }
             static void provide(World* r) { world = r; }
             static void provide(Console* r) { console = r; }
+            static void provide(CommandHandler* r) { commandHandler = r; }
             static void provide(FileSystem* f) { fileSystem = f; }
             static void provide(InputSystem* i) { inputSystem = i; }
             static void provide(ModelManager* m) { modelManager = m; }
@@ -38,6 +41,7 @@ namespace Arya
             static Root* root;
             static World* world;
             static Console* console;
+            static CommandHandler* commandHandler;
             static FileSystem* fileSystem;
             static InputSystem* inputSystem;
             static ModelManager* modelManager;
