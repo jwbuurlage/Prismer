@@ -55,6 +55,9 @@ class GameSession
         /** Debug function */
         void _listUnits() const;
 
+        /** Debug function */
+        void _getVision() const;
+
         shared_ptr<Grid> getGrid() {
             return _grid;
         }

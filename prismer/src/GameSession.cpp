@@ -67,4 +67,16 @@ void GameSession::_listUnits() const
     }
 }
 
+void GameSession::_getVision() const
+{
+    GameLogInfo << "Vision:" << endLog;
+    auto visionlist = _grid->getVision(_grid->getTile(0,1));
+    GameLogDebug << "The list has " << visionlist.size() << " elements." << endLog;
+    for(auto t:visionlist)
+    {
+        GameLogInfo << "Tile x:" << t->getX() << " Tile y:" << t->getY() << endLog;
+    }
+    GameLogInfo << endLog;
+}
+
 } // namespace Prismer

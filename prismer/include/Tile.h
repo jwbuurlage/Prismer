@@ -73,10 +73,15 @@ class TileInfo {
             return _hovered;
         }
 
+        bool isVisible() const {
+            return _visible;
+        }
+
     friend class Tile;
     protected:
         bool _active = false;
         bool _hovered = false;
+        bool _visible = true;
         shared_ptr<Unit> _unit = nullptr;
         vector<ColorID> _resources;
 };
