@@ -140,7 +140,7 @@ void GameSessionClient::update(float elapsedTime)
         auto label = Label::create();
         label->setPosition(vec2(0.0f, 0.0f), vec2(0.0f));
         label->setSize(vec2(1.0f), vec2(0.0f));
-        label->setText("This is a font test. iijjAABB Newline check\nThis is the new line.");
+        label->setText("This is a font test.\nNewline test\nKerning test AVAVAV ijijAABB...M'N\nUTF-8 é â np");
 
         image->addToRootView();
         //image->add(image2);

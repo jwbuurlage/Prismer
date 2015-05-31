@@ -152,8 +152,42 @@ namespace Arya
         float maxY = -10000.0f;
         stbtt_aligned_quad q;
         //char prevCharacter = 0;
-        for (auto character : text)
+        for (unsigned int i = 0; i < text.size(); i++)
 		{
+            int codepoint = text[i];
+
+            //UTF-8
+            if (text[i] & 0x80) //if highest bit set, its a multi-byte character
+            {
+                if ((text[i] & 0xE0) == 0xC0) // if ???xxxxx is 110xxxxx ==> 2-byte character
+                {
+                    if (i+1 == text.size())
+                    {
+                        LogWarning << "Invalid UTF-8 string '" << text << '\'' << endLog;
+                        continue;
+                    }
+                    codepoint = int(text[i] & 0x1F);
+                    i++;
+                    codepoint = (codepoint << 6) | int(text[i] & 0x3F);
+                }
+                else if ((text[i] & 0xF0) == 0xE0) // if ????xxxx is 1110xxxx ==> 3-byte character
+                {
+                    if (i+2 == text.size())
+                    {
+                        LogWarning << "Invalid UTF-8 string '" << text << '\'' << endLog;
+                        continue;
+                    }
+                    codepoint = int(text[i] & 0x0F);
+                    i++;
+                    codepoint = (codepoint << 6) | int(text[i] & 0x3F);
+                    i++;
+                    codepoint = (codepoint << 6) | int(text[i] & 0x3F);
+                }
+                else
+                    LogWarning << "Rendering font with unkown (more than 3 bytes) UTF-8 character '" << text << '\'' << endLog;
+            }
+
+
             //if (prevCharacter)
             //{
             //    xpos += scale*stbtt_GetCodepointKernAdvance(&info->fontInfo, prevCharacter, character);
@@ -164,7 +198,7 @@ namespace Arya
             //float x_shift = xpos - (float)floor(xpos);
             //stbtt_GetCodepointHMetrics(&info->fontInfo, character, &advance, &lsb);
 
-            if (character == '\n')
+            if (codepoint == '\n')
             {
                 ypos += newlineAdvance;
                 xpos = 0.0f;
@@ -172,7 +206,7 @@ namespace Arya
             }
 
             // This will advance xpos appropriately
-            stbtt_GetPackedQuad(info->charInfo, BitmapWidth, BitmapHeight, character, &xpos, &ypos, &q, 0);
+            stbtt_GetPackedQuad(info->charInfo, BitmapWidth, BitmapHeight, codepoint, &xpos, &ypos, &q, 0);
 
             // a---d
             // |   |
