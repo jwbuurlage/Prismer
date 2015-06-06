@@ -1,7 +1,11 @@
+#include <vector>
+
 #include <Abilities/Ability.h>
 #include <AryaBinding.h>
 
 namespace Prismer {
+
+using std::vector;
 
 class AMove : public Ability
 {
@@ -16,7 +20,7 @@ class AMove : public Ability
         virtual void deactivate() override;
 
     private:
-        Arya::InputBinding keyBinding;
+        vector<Arya::InputBinding> keyBindings;
 };
 
 } // namespace Prismer

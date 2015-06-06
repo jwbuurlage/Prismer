@@ -39,7 +39,7 @@ void UnitEntity::update(float elapsed_time, float total_time)
         _current_position += glm::normalize(diff) * _unit->getSpeed() * _grid_entity->getScale() * elapsed_time;
 
     _entity->setPosition(_current_position);
-    _entity->setYaw(sin(total_time));
+    _entity->setYaw(total_time);
 }
 
 } // namespace Prismer
