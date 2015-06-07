@@ -13,6 +13,8 @@
     - Tab-completion
 - **Shadows**
 - **Line strokes** for fancy looking primitives
+- **Skybox**
+- **Particle effects** If possible, support for the standard particle effect format
 
 ## Networking
 
