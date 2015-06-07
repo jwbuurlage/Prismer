@@ -29,6 +29,7 @@ ELSE()
         "GL"
         "GLEW"
         "SDL2"
+        "SDL2_mixer"
         )
 ENDIF()
 
@@ -38,6 +39,7 @@ SET(
     LIB_SOURCES
     "../src/common/Logger.cpp"
     "../src/AnimationVertex.cpp"
+    "../src/Audio.cpp"
     "../src/Camera.cpp"
     "../src/CommandHandler.cpp"
     "../src/Console.cpp"

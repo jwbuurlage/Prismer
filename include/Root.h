@@ -14,6 +14,7 @@ namespace Arya
     class ModelManager;
     class MaterialManager;
     class TextureManager;
+    class AudioManager;
 
     struct SDLValues; //This prevents including SDL headers here
 
@@ -56,6 +57,7 @@ namespace Arya
             ModelManager* modelManager;
             MaterialManager* materialManager;
             TextureManager* textureManager;
+            AudioManager* audioManager;
 
             bool loopRunning;
 

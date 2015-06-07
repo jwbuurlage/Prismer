@@ -11,6 +11,7 @@
 #include "Root.h"
 #include "Textures.h"
 #include "World.h"
+#include "Audio.h"
 
 #include <SDL2/SDL.h>
 
@@ -44,6 +45,7 @@ namespace Arya
         modelManager = new ModelManager;
         materialManager = new MaterialManager;
         textureManager = new TextureManager;
+        audioManager = new AudioManager;
         Locator::provide(world);
         Locator::provide(commandHandler);
         Locator::provide(console);
@@ -61,6 +63,7 @@ namespace Arya
 
     Root::~Root()
     {
+        delete audioManager;
         delete textureManager;
         delete materialManager;
         delete modelManager;
@@ -71,6 +74,7 @@ namespace Arya
         delete interface;
         delete world;
         delete fileSystem;
+        audioManager = 0;
         textureManager = 0;
         materialManager = 0;
         modelManager = 0;
@@ -146,6 +150,8 @@ namespace Arya
         inputSystem->resize(windowWidth, windowHeight);
 
         if (!console->init()) return false; //console must be after interface and inputsystem
+
+        audioManager->init();
 
         return true;
     }
