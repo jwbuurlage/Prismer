@@ -6,21 +6,15 @@
 namespace Prismer {
 
 Unit::Unit(int id,
-            UnitInfo info,
             shared_ptr<GameSession> session)
-    : _id(id), _info(info), _session(session)
+    : _id(id), _session(session)
 {
-    // FIXME: create entity from unitInfo
 }
 
 void Unit::update(float dt, float t)
 {
-    _entity->update(dt, t);
-}
-
-void Unit::addColor(ColorID color)
-{
-    // shape...
+    if(_entity)
+        _entity->update(dt, t);
 }
 
 void Unit::setTile(shared_ptr<Tile> tile)
@@ -41,16 +35,10 @@ void Unit::setTile(shared_ptr<Tile> tile)
 
 void Unit::activate(shared_ptr<GridInput> grid_input)
 {
-    for (auto& ability : _info.shape.getAbilities()) {
-        ability->activate(shared_from_this(), grid_input);
-    }
 }
 
 void Unit::deactivate()
 {
-    for (auto& ability : _info.shape.getAbilities()) {
-        ability->deactivate();
-    }
 }
 
 } // namespace Prismer

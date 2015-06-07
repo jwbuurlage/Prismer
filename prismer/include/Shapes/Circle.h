@@ -7,7 +7,11 @@ namespace Prismer {
 class Circle : public Shape
 {
     public:
-        Circle(vector<ColorID> colors);
+        Circle(int id,
+            shared_ptr<GameSession> session,
+            vector<ColorID> colors);
+        
+        virtual ~Circle() { }
 };
 
-} // namespace Prismer
+}// namespace Prismer

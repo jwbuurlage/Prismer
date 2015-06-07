@@ -9,7 +9,7 @@
 #include "GameSessionInput.h"
 #include "GameCamera.h"
 #include "Unit.h"
-#include "UnitGraphics.h"
+#include "Shapes/CircleGraphics.h"
 
 namespace Prismer {
 
@@ -66,17 +66,18 @@ void GameSessionClient::updateGameLogic(int elapsedTime)
     return;
 }
 
-shared_ptr<Unit> GameSessionClient::createUnit(UnitInfo info, int x, int y)
+shared_ptr<Unit> GameSessionClient::createUnit(int x, int y)
 {
-    auto unit = GameSession::createUnit(info, x, y);
+    auto unit = GameSession::createUnit(x, y);
 
     if (!unit)
         return unit;
 
     GameLogInfo << "GameSessionClient::createUnit()" << endLog;
     // also create a unit entity
-    auto unitEntity = make_shared<UnitEntity>(unit, _grid_entity);
+    auto unitEntity = make_shared<CircleEntity>(unit, _grid_entity);
     unit->setEntity(unitEntity);
+
     return unit;
 }
 

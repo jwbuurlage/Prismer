@@ -41,7 +41,8 @@ class GameSession
         }
 
         //! Creates a unit
-        virtual shared_ptr<Unit> createUnit(UnitInfo info, int x, int y);
+        //FIXME: prototype? just circles for now..
+        virtual shared_ptr<Unit> createUnit(int x, int y);
 
         /** Generate a unique id */
         int generateId() const {

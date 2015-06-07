@@ -11,7 +11,10 @@ namespace Prismer {
 
 using std::make_shared;
 
-Circle::Circle(vector<ColorID> colors) : Shape(colors)
+Circle::Circle(int id,
+            shared_ptr<GameSession> session,
+            vector<ColorID> colors)
+     : Shape(id, session, colors)
 {
     _abilities.push_back(make_shared<AGather>());
     _abilities.push_back(make_shared<AMove>());

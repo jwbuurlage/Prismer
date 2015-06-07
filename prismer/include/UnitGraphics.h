@@ -17,11 +17,13 @@ class UnitEntity
         UnitEntity(shared_ptr<Unit> unit,
                 shared_ptr<GridEntity> grid_entity);
 
-         // unit state changed; update appearance
-        void updateState();
-        void update(float dt, float t);
+        virtual ~UnitEntity() { }
 
-    private:
+         // unit state changed; update appearance
+        virtual void updateState();
+        virtual void update(float dt, float t);
+
+    protected:
         shared_ptr<Unit> _unit;
         shared_ptr<GridEntity> _grid_entity;
         shared_ptr<Arya::Entity> _entity;

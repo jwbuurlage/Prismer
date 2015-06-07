@@ -31,13 +31,12 @@ void GameSessionInput::init()
             // create unit?
             if(down) {
                 auto colors = vector<ColorID> { ColorID::red, ColorID::red };
-                auto unitInfo = UnitInfo(Circle(colors));
 
                 // bad way to do this, but just for lolz
                 int x = (_session->getGrid()->getWidth() / 2);
                 int y = (_session->getGrid()->getHeight() / 2);
 
-                auto unit = _session->createUnit(unitInfo, x, y);
+                auto unit = _session->createUnit(x, y);
                 if (!unit) {
                     GameLogInfo << "cannot create unit" << endLog;
                 } else {

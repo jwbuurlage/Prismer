@@ -10,6 +10,8 @@ SET(
 SET(
     PROJECT_SOURCES
     "../src/Shapes/Circle.cpp"
+    "../src/Shapes/CircleGraphics.cpp"
+    "../src/Shapes/Shape.cpp"
     "../src/Abilities/AGather.cpp"
     "../src/Abilities/AMove.cpp"
     "../src/Grid.cpp"

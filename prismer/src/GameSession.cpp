@@ -1,15 +1,18 @@
 #include "GameSession.h"
 #include "GameLogger.h"
-#include "Unit.h"
+#include "Shapes/Circle.h"
+#include "Colors.h"
 #include "Grid.h"
 
 #include <memory>
+#include <vector>
 
 namespace Prismer {
 
 using std::make_shared;
 using std::make_unique;
 using std::shared_ptr;
+using std::vector;
 
 GameSession::GameSession()
 {
@@ -29,13 +32,14 @@ void GameSession::init()
     _grid->init();
 }
 
-shared_ptr<Unit> GameSession::createUnit(UnitInfo info, int x, int y)
+shared_ptr<Unit> GameSession::createUnit(int x, int y)
 {
     if (_grid->getTile(x, y)->getInfo()->hasUnit())
         return nullptr;
 
     auto id = generateId();
-    auto unit = make_shared<Unit>(id, info, shared_from_this());
+    vector<ColorID> colors;
+    shared_ptr<Unit> unit = make_shared<Circle>(id, shared_from_this(), colors);
     unit->setTile(_grid->getTile(x, y));
     unitMap.insert(std::pair<int, shared_ptr<Unit>>(unit->getId(), unit));
     return unit;
