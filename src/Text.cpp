@@ -282,6 +282,7 @@ namespace Arya
 
     float Font::getLineAdvance()
     {
+        if (!info->valid) return 0.0f;
         float scale = stbtt_ScaleForPixelHeight(&info->fontInfo, info->fontHeight);
         int ascent, descent, lineGap;
         stbtt_GetFontVMetrics(&info->fontInfo, &ascent, &descent, &lineGap);
