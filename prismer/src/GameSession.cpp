@@ -1,6 +1,6 @@
 #include "GameSession.h"
 #include "GameLogger.h"
-#include "Shapes/Circle.h"
+#include "Shapes/Triangle.h"
 #include "Colors.h"
 #include "Grid.h"
 
@@ -39,7 +39,7 @@ shared_ptr<Unit> GameSession::createUnit(int x, int y)
 
     auto id = generateId();
     vector<ColorID> colors;
-    shared_ptr<Unit> unit = make_shared<Circle>(id, shared_from_this(), colors);
+    shared_ptr<Unit> unit = make_shared<Triangle>(id, shared_from_this(), colors);
     unit->setTile(_grid->getTile(x, y));
     unitMap.insert(std::pair<int, shared_ptr<Unit>>(unit->getId(), unit));
     return unit;

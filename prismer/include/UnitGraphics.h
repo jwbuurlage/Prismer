@@ -29,6 +29,7 @@ class UnitEntity
         shared_ptr<Arya::Entity> _entity;
 
         vec3 _current_position;
+        float _current_yaw;
 };
 
 } // namespace Prismer

@@ -47,7 +47,7 @@ class Unit
         }
 
         float getSpeed() const {
-            return (float)_mp;
+            return _speed;
         }
 
         virtual void activate(shared_ptr<GridInput> grid_input);
@@ -59,11 +59,14 @@ class Unit
             return _tile;
         }
 
+    protected:
+        int _mp = 2;
+        float _speed = 2.0f;
+
     private:
         int _id;
         int _x = 0;
         int _y = 0;
-        int _mp = 2;
 
         shared_ptr<GameSession> _session;
         shared_ptr<UnitEntity> _entity;

@@ -12,7 +12,7 @@ CircleEntity::CircleEntity(shared_ptr<Unit> unit,
 {
     // we make a 'shapeEntity' and delegate most things to that
     auto& root = Arya::Locator::getRoot();
-    auto triangle = root.getModelManager()->getModel("triangle");
+    auto triangle = root.getModelManager()->getModel("circle");
     triangle->setMaterial(root.getMaterialManager()->createMaterial(vec4(0.6f, 0.6f, 0.6f, 0.5f)));
 
     _entity = Arya::Entity::create();
@@ -39,7 +39,6 @@ void CircleEntity::update(float elapsed_time, float total_time)
         _current_position += glm::normalize(diff) * _unit->getSpeed() * _grid_entity->getScale() * elapsed_time;
 
     _entity->setPosition(_current_position);
-    _entity->setYaw(total_time);
 }
 
 } // namespace Prismer

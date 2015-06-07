@@ -1,5 +1,7 @@
 #include "UnitGraphics.h"
 
+#include <Arya.h>
+
 namespace Prismer {
 
 using std::shared_ptr;
@@ -17,6 +19,9 @@ class ShapeEntity
         { }
 
         virtual ~ShapeEntity() { }
+
+    protected:
+
 };
 
 } // namespace Prismer

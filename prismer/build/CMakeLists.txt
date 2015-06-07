@@ -9,9 +9,11 @@ SET(
 
 SET(
     PROJECT_SOURCES
+    "../src/Shapes/Shape.cpp"
     "../src/Shapes/Circle.cpp"
     "../src/Shapes/CircleGraphics.cpp"
-    "../src/Shapes/Shape.cpp"
+    "../src/Shapes/Triangle.cpp"
+    "../src/Shapes/TriangleGraphics.cpp"
     "../src/Abilities/AGather.cpp"
     "../src/Abilities/AMove.cpp"
     "../src/Grid.cpp"

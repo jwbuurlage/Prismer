@@ -9,7 +9,7 @@
 #include "GameSessionInput.h"
 #include "GameCamera.h"
 #include "Unit.h"
-#include "Shapes/CircleGraphics.h"
+#include "Shapes/TriangleGraphics.h"
 
 namespace Prismer {
 
@@ -75,7 +75,7 @@ shared_ptr<Unit> GameSessionClient::createUnit(int x, int y)
 
     GameLogInfo << "GameSessionClient::createUnit()" << endLog;
     // also create a unit entity
-    auto unitEntity = make_shared<CircleEntity>(unit, _grid_entity);
+    auto unitEntity = make_shared<TriangleEntity>(unit, _grid_entity);
     unit->setEntity(unitEntity);
 
     return unit;
