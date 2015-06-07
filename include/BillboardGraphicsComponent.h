@@ -12,8 +12,8 @@ namespace Arya
             ~BillboardGraphicsComponent(){};
             RenderType getRenderType() const override { return TYPE_BILLBOARD; }
 
-            void setScale(float _scale) override { scale = _scale; }
-            float getScale() const override { return scale; }
+            void setScale(const vec3& _scale) override { scale = vec2(_scale); }
+            vec3 getScale() const override { return vec3(scale.x, scale.y, 1.0f); }
 
             virtual void setScreenOffset(const vec2& offset) override { screenOffset = offset; }
             virtual vec2 getScreenOffset() const override { return screenOffset; }
@@ -25,7 +25,7 @@ namespace Arya
             void setMaterial(shared_ptr<Material> mat) { material = mat; }
         private:
             shared_ptr<Material> material;
-            float scale;
+            vec2 scale;
             vec2 screenOffset;
             vec2 screenSize;
     };

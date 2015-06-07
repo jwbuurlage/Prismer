@@ -6,6 +6,7 @@
 namespace Arya
 {
     using glm::vec2;
+    using glm::vec3;
     using glm::mat4;
 
     class AnimationState;
@@ -36,8 +37,12 @@ namespace Arya
 
             // Subclasses can choose which of these they actually implement
 
-            virtual void setScale(float /* scale */) { return; }
-            virtual float getScale() const { return 1.0; }
+            //! Set scale in x,y,z directions seperately
+            virtual void setScale(const vec3& /* scale */) { return; }
+            virtual vec3 getScale() const { return vec3(1.0f); }
+
+            //! Set scale in x,y,z directions simultaneously
+            void setScale(float scale) { return setScale(vec3(scale)); }
 
             virtual void setScreenOffset(const vec2& /* offset */) { return; }
             virtual vec2 getScreenOffset() const { return vec2(0,0); }
