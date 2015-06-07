@@ -47,7 +47,7 @@ namespace Arya
         auto x = bindings.find(cmd);
         if (x == bindings.end())
         {
-            LogWarning << "Unkown command '" << cmd << "'" << endLog;
+            LogWarning << "Unknown command '" << cmd << "'" << endLog;
             return 0;
         }
         x->second(line);
