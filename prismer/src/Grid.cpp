@@ -94,31 +94,35 @@ vector<shared_ptr<Tile>> Grid::getVision(shared_ptr<Tile> origin)
         {
             int originX = origin->getX();
             int originY = origin->getY();
-            if( getTile(k + originX, l + originY) == nullptr)
+            auto targetTile = getTile(k + originX, l + originY);
+            if( targetTile == nullptr)
             {
                 continue;
             }
             int distance = (abs(k) + abs(l) + abs(k-l)/2);
-            float step = 1/(float(distance) + 1);
-            //GameLogDebug << "distance = " << distance << ",  and step = " << step << endLog;
+            GameLogDebug << "distance = " << distance << endLog;
             bool isTargetVisible = true;
+            float step = 1.0/float(distance);
             for( int n = 1; n < distance + 1; n++) //Change this if tiles that block visibility should be invisible themselves.
             {
-                //GameLogDebug << "x = " << targetX << ",  y = " << targetY << endLog;
-                auto target = getEntity()->worldToBoard(n*k*step + originX, n*l*step + originY);
+                GameLogDebug << "Target x coordinate is: " << step*float(k)*float(n) + float(originX) << endLog;
+                GameLogDebug << "Target y coordinate is: " << step*float(l)*float(n) + float(originY) << endLog;
+                auto target = getEntity()->worldToBoard(step*float(k)*float(n)+float(originX), step*float(l)*float(n) + float(originY));
+                GameLogDebug << "The tile now being checked is: " << target->getX() << ", " << target->getY() << endLog;
                 if(target->getInfo()->isVisible()==false)
                 {
                     isTargetVisible=false;
                     break;
                 }
             }
+            GameLogDebug << "The target is visible: " << isTargetVisible << endLog;
             if(isTargetVisible==true)
             {
-                result.push_back(getTile(k + originX, l + originY));
+                GameLogDebug << "Target tile coordinates are: " << targetTile->getX() << "  " << targetTile->getY() << endLog;
+                result.push_back(targetTile);
             }
         }
     }
-    //GameLogDebug << "Ben ik weer" << endLog;
     return result;
 }
 
