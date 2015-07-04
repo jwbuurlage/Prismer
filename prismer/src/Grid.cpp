@@ -7,9 +7,11 @@
 //axialToRadius:(x,y)-> R,
 //axialToAngle:(x,y)-> phi,
 //Make the object type:
-//polarCoordinates, consisting of a Radius and an Angle, ordered first by angle and then by Radius
+//PolarCoordinate, consisting of a Radius and an Angle, ordered first by angle and then by Radius
+//WallSegment, consisting of a pair of PolarCoordinates representing the begin and endpoints and a float that represents the distance.
 //Hardcode an array:
 //axialX,YOffset
+//In Tile.h add walls!!!
 using std::vector;
 
 #include "Grid.h"
@@ -103,7 +105,7 @@ vector<float> Grid::getVision(shared_ptr<Tile> origin)
             }
         }
     }
-    priority_queue<polarcoordinates> walls;
+    priority_queue<WallSegment> walls;
     while (! nonemptytiles.empty()) //Make a priority queue filled with the edges that block view.
     {
         Tile target = nonemptytiles.back();
@@ -113,11 +115,22 @@ vector<float> Grid::getVision(shared_ptr<Tile> origin)
             relativeX = target->getX() - originX;
             relativeY = target->getY() - originY;
             if (target->getInfo->wall(i))
-            {
-                targetradius = axialToRadius(relativeX+axialXOffset(i),relativeY+axialYOffset);
-                //Pick up here
+            { //CW for clockwise and CCW for counterclockwise
+                float targetRadiusCW = axialToRadius(relativeX+axialXOffsetCW(i),relativeY+axialYOffsetCW(i));
+                float targetAngleCW = axialToAngle(relativeX+axialXOffsetCW(i),relativeY+axialYOffsetCW(i));
+                PolarCoordinateCW targetPolarCoordinateCW = (targetAngleCW, targetRadiusCW);
+                float targetRadiusCCW = axialToRadius(relativeX+axialXOffsetCCW(i),relativeY+axialYOffsetCCW(i));
+                float targetAngleCCW = axialToAngle(relativeX+axialXOffsetCCW(i),relativeY+axialYOffsetCCW(i));
+                PolarCoordinateCCW targetPolarCoordinateCCW = (targetAngleCCW, targetRadiusCCW);
+                float targetDistance = (targetRadiusCW + targetRadiusCCW)*0.5;
+                WallSegment targetWall = (targetPolarCoordinateCW,targetPolarCoordinateCCW,targetDistance);
+                walls.push(targetWall);
             }
         }
+    }
+    vector<PolarCoordinate> result;
+    while (!walls.empty()); //Build the result.
+    {
     }
 }
 
