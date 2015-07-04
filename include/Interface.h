@@ -164,6 +164,7 @@ namespace Arya
 
             Material* getFontMaterial() { return material.get(); }
             Geometry* getTextGeometry() { return geometry.get(); }
+
         private:
             string text;
 

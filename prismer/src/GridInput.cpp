@@ -1,5 +1,6 @@
 #include "GridInput.h"
 
+#include "Faction.h"
 #include "Grid.h"
 #include "GridGraphics.h"
 #include "GameLogger.h"
@@ -95,6 +96,21 @@ void GridInput::deactivate()
 }
 
 void GridInput::setActive(shared_ptr<Tile> tile) {
+    if (tile) {
+        if (!tile->getInfo()->hasUnit()) {
+            GameLogInfo << "Trying to select tile without a unit." << endLog;
+            return;
+        }
+
+        auto unit = tile->getInfo()->getUnit();
+
+        if (unit->getFaction() && !unit->getFaction()->isActive()) {
+            // FIXME: if the current faction is not a human player then this may not be sufficient
+            GameLogInfo << "Trying to select unit which does not belong to the current faction." << endLog;
+            return;
+        }
+    }
+
     if (_active) {
         _active->setActive(false);
         if (_active->getInfo()->hasUnit()) {
@@ -104,13 +120,10 @@ void GridInput::setActive(shared_ptr<Tile> tile) {
 
     _active = tile;
 
-    if (!_active)
-        return;
-
-    _active->setActive(true);
-
-    if (_active->getInfo()->hasUnit())
-        _active->getInfo()->getUnit()->activate(shared_from_this());
+    if (tile) {
+        _active->setActive(true);
+        tile->getInfo()->getUnit()->activate(shared_from_this());
+    }
 }
 
 void GridInput::toggleVisible(shared_ptr<Tile> tile)

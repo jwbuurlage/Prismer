@@ -34,7 +34,6 @@ void TriangleEntity::updateState()
 
 void TriangleEntity::setTintColor(vec3 tintColor)
 {
-    GameLogInfo << "updateee" << endLog;
     auto& root = Arya::Locator::getRoot();
     UnitEntity::setTintColor(tintColor);
     triangle->setMaterial(root.getMaterialManager()->createMaterial(vec4(tintColor, 1.0)));
@@ -74,7 +73,7 @@ void TriangleEntity::update(float elapsed_time, float)
                 > close_enough) {
                 // is + or - closer
                 // two distances
-                // DISTANCE (SMALLESR):    SIGN
+                // DISTANCE (SMALLER):    SIGN
                 // _current_yaw - alpha    +
                 // alpha - _current_yaw    -
                 //
@@ -95,12 +94,15 @@ void TriangleEntity::update(float elapsed_time, float)
                         sign = 1.0f;
                 }
 
-                _current_yaw += sign * rotate_speed * elapsed_time;
+                auto next_yaw = _current_yaw + sign * rotate_speed * elapsed_time;
+                if (next_yaw > M_PI)
+                    next_yaw -= 2.0f * M_PI;
+                if (next_yaw < -M_PI)
+                    next_yaw += 2.0f * M_PI;
 
-                if (_current_yaw > M_PI)
-                    _current_yaw -= 2.0f * M_PI;
-                if (_current_yaw < -M_PI)
-                    _current_yaw += 2.0f * M_PI;
+                // if alpha is inbetween _current_yaw and next_yaw we want to snap to it
+                // FIXME
+                _current_yaw = next_yaw;
 
             } else {
                 // 3) fly to goal
