@@ -1,8 +1,12 @@
 #pragma once
+
 #include <functional>
 #include <map>
 #include <memory>
+#include <vector>
 #include "AryaBinding.h"
+
+#include <SDL2/SDL.h>
 
 union SDL_Event;
 struct SDL_Keysym;
@@ -13,6 +17,7 @@ namespace Arya
     using std::map;
     using std::unique_ptr;
     using std::make_unique;
+    using std::vector;
 
     enum INPUTEVENT
     {
@@ -64,6 +69,7 @@ namespace Arya
             InputBinding bindMouseMove(function<bool(const MousePos&,int,int)> f, CHAIN_POS pos = CHAIN_FIRST);
             InputBinding bindMouseButton(function<bool(MOUSEBUTTON,bool,const MousePos&)> f, CHAIN_POS pos = CHAIN_FIRST);
             InputBinding bind(const char* key, function<bool(bool,const MousePos&)> f, CHAIN_POS pos = CHAIN_FIRST);
+            InputBinding bindControllerButton(const char* key, function<bool(bool)> f, CHAIN_POS pos = CHAIN_FIRST);
 
             // TextInput is UTF-8 encoded (so lowest 128 is simple ascii)
             // TextInput blocks all other forms of key-input
@@ -79,6 +85,14 @@ namespace Arya
 
             //! Called by Root when window resizes
             void resize(int w, int h) { windowWidth = w; windowHeight = h; }
+
+            //! Initialize game controllers
+            void initializeControllers();
+
+            bool controllerEnabled() const {
+                return _controllerEnabled;
+            }
+
         private:
             int windowWidth, windowHeight;
 
@@ -104,17 +118,35 @@ namespace Arya
                 InputKey() : keysym(0), mod(0) {}
                 InputKey(int k, int m) : keysym(k), mod(m) {}
                 InputKey(const SDL_Keysym& sdlkey);
-                ~InputKey(){}
+                ~InputKey() {}
 
                 //! Parse and save into this struct
                 bool parseKey(const char* key);
 
                 bool operator<(const InputKey& rhs) const {
-                    if( keysym != rhs.keysym ) return keysym < rhs.keysym;
-                    if( mod != rhs.mod ) return mod < rhs.mod;
+                    if (keysym != rhs.keysym) return keysym < rhs.keysym;
+                    if (mod != rhs.mod) return mod < rhs.mod;
                     return false;
                 }
             };
 
+            struct InputButton
+            {
+                SDL_GameControllerButton button;
+
+                InputButton() : button(SDL_CONTROLLER_BUTTON_INVALID) {}
+                InputButton(SDL_GameControllerButton _button) : button(_button) {}
+                ~InputButton() {}
+
+                //! Parse and save into this struct
+                bool parseButton(const char* key);
+
+                bool operator<(const InputButton& rhs) const {
+                    return button < rhs.button;
+                }
+            };
+
+           vector<SDL_GameController*> controllerHandles;
+           bool _controllerEnabled = false;
     };
 }

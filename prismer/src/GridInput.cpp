@@ -53,6 +53,13 @@ void GridInput::activate()
     keyBindings.push_back(input->bind("v", [this](bool down, const Arya::MousePos&) {
                 if (down) toggleVisible(_hovered); return down; }));
 
+    if (input->controllerEnabled()) {
+        keyBindings.push_back(input->bindControllerButton("a", [this](bool down) {
+                if (down)
+                    setActive(_hovered);
+                return down;
+            }));
+    }
 
     //DEBUG---
     keyBindings.push_back(input->bind("j", [this](bool down, const Arya::MousePos&) {
