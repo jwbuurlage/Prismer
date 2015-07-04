@@ -22,7 +22,6 @@ SET(
     "../src/Tile.cpp"
     "../src/TileGraphics.cpp"
     "../src/Unit.cpp"
-    "../src/UnitGraphics.cpp"
     "../src/Game.cpp"
     "../src/GameLogger.cpp"
     "../src/GameSessionInput.cpp"

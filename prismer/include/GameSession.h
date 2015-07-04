@@ -7,6 +7,7 @@
 #pragma once
 
 #include <map>
+#include <list>
 #include <memory>
 
 namespace Prismer {
@@ -16,6 +17,7 @@ using std::unique_ptr;
 
 class Unit;
 class UnitInfo;
+class Faction;
 class Grid;
 
 class GameSession
@@ -76,6 +78,9 @@ class GameSession
         friend class Unit;
 
         std::map<int,shared_ptr<Unit>> unitMap;
+
+        std::list<shared_ptr<Faction>> _factions;
+        shared_ptr<Faction> _currentFaction = nullptr;
 
         // Called in Unit deconstructor
         void destroyUnit(int id);

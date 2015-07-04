@@ -59,6 +59,11 @@ class Unit
             return _tile;
         }
 
+        void resetPoints()
+        {
+            // FIXME: implement
+        }
+
     protected:
         int _mp = 2;
         float _speed = 2.0f;

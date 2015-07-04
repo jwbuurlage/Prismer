@@ -1,11 +1,12 @@
+#include <memory>
+#include <vector>
+
 #include "GameSession.h"
 #include "GameLogger.h"
 #include "Shapes/Triangle.h"
 #include "Colors.h"
 #include "Grid.h"
-
-#include <memory>
-#include <vector>
+#include "Faction.h"
 
 namespace Prismer {
 
@@ -30,6 +31,14 @@ void GameSession::init()
 {
     _grid = make_shared<Grid>(10, 10);
     _grid->init();
+
+    // make factions
+    int numFactions = 2;
+    for (int i = 0; i < numFactions; ++i) {
+        _factions.push_back(make_shared<Faction>());
+    }
+
+    _currentFaction = _factions.front();
 }
 
 shared_ptr<Unit> GameSession::createUnit(int x, int y)
