@@ -5,17 +5,25 @@
 #include "GameLogger.h"
 #include "GameSession.h"
 #include "Unit.h"
+#include "UnitGraphics.h"
 
 namespace Prismer {
 
 Faction::Faction(int id, weak_ptr<GameSession> session)
     : _id(id), _session(session)
 {
+    static vec3 colors[4] = {
+        vec3(1.0, 0.0, 0.0),
+        vec3(1.0, 1.0, 0.0),
+        vec3(0.0, 1.0, 0.0),
+        vec3(0.0, 1.0, 1.0)
+    };
+
+    _color = colors[_id];
 }
 
 Faction::~Faction()
 {
-
 }
 
 void Faction::beginTurn()
@@ -39,6 +47,14 @@ void Faction::endTurn()
 
     if (auto session = _session.lock())
         session->nextFaction();
+}
+
+void Faction::addUnit(shared_ptr<Unit>& unit)
+{
+    GameLogInfo << "Add unit: " << _id << endLog;
+
+   _units.push_back(unit);
+
 }
 
 } //namespace Prismer

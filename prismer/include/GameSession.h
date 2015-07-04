@@ -47,11 +47,7 @@ class GameSession
         virtual shared_ptr<Unit> createUnit(int x, int y);
 
         /** Generate a unique id */
-        int generateId() const {
-            static int id = 1;
-            return id++;
-        }
-
+        int generateId() const;
         /** Return unit by id */
         shared_ptr<Unit> getUnitById(int id);
 
@@ -79,7 +75,7 @@ class GameSession
         shared_ptr<Grid> _grid;
 
         std::list<shared_ptr<Faction>> _factions;
-        decltype(_factions)::iterator _currentFactionIt;
+        decltype(_factions)::iterator _currentFactionIter;
 
         int _turn = 0;
 

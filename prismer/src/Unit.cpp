@@ -1,13 +1,14 @@
+#include "Colors.h"
+#include "Faction.h"
 #include "Tile.h"
 #include "Unit.h"
 #include "UnitGraphics.h"
-#include "Colors.h"
 
 namespace Prismer {
 
 Unit::Unit(int id,
-            shared_ptr<GameSession> session)
-    : _id(id), _session(session)
+            weak_ptr<Faction> faction)
+    : _id(id), _faction(faction)
 {
 }
 

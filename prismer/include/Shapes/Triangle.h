@@ -8,7 +8,7 @@ class Triangle : public Shape
 {
     public:
         Triangle(int id,
-            shared_ptr<GameSession> session,
+            weak_ptr<Faction> faction,
             vector<ColorID> colors);
         
         virtual ~Triangle() { }

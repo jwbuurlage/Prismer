@@ -11,9 +11,9 @@ namespace Prismer {
 using std::make_shared;
 
 Triangle::Triangle(int id,
-            shared_ptr<GameSession> session,
+            weak_ptr<Faction> faction,
             vector<ColorID> colors)
-     : Shape(id, session, colors)
+     : Shape(id, faction, colors)
 {
     _abilities.push_back(make_shared<AMove>());
 

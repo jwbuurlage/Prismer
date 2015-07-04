@@ -22,9 +22,6 @@ GameSession::GameSession()
 
 GameSession::~GameSession()
 {
-    //After deleting the factions, there should be no more units left
-    if(!unitMap.empty())
-        GameLogError << "List of units is not empty at deconstruction of GameSession. Possible memory leak" << endLog;
 }
 
 void GameSession::init()
@@ -39,7 +36,13 @@ void GameSession::init()
                     weak_ptr<GameSession>(shared_from_this())));
     }
 
-    _currentFactionIt = _factions.begin();
+    _currentFactionIter = _factions.begin();
+}
+
+int GameSession::generateId() const
+{
+    static int id = 1;
+    return id++;
 }
 
 shared_ptr<Unit> GameSession::createUnit(int x, int y)
@@ -49,28 +52,33 @@ shared_ptr<Unit> GameSession::createUnit(int x, int y)
 
     auto id = generateId();
     vector<ColorID> colors;
-    shared_ptr<Unit> unit = make_shared<Triangle>(id, shared_from_this(), colors);
+    shared_ptr<Unit> unit = make_shared<Triangle>(id,
+            weak_ptr<Faction>(*_currentFactionIter),
+            colors);
     unit->setTile(_grid->getTile(x, y));
     unitMap.insert(std::pair<int, shared_ptr<Unit>>(unit->getId(), unit));
+
+    (*_currentFactionIter)->addUnit(unit);
+
     return unit;
 }
 
 void GameSession::startMatch()
 {
     _turn = 1;
-    (*_currentFactionIt)->beginTurn();
+    (*_currentFactionIter)->beginTurn();
 }
 
 void GameSession::nextFaction()
 {
-    _currentFactionIt++;
+    _currentFactionIter++;
 
-    if (_currentFactionIt == _factions.end()) {
+    if (_currentFactionIter == _factions.end()) {
         _turn++;
-        _currentFactionIt = _factions.begin();
+        _currentFactionIter = _factions.begin();
     }
 
-    (*_currentFactionIt)->beginTurn();
+    (*_currentFactionIter)->beginTurn();
 }
 
 void GameSession::destroyUnit(int id)

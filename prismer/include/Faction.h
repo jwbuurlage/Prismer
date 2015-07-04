@@ -27,8 +27,16 @@ class Faction
         void beginTurn();
         void endTurn();
 
+        void addUnit(shared_ptr<Unit>& unit);
+
+        vec3 getColor() const {
+            return _color;
+        }
+
     private:
         int _id;
+
+        vec3 _color;
 
         vector<shared_ptr<Unit>> _units;
         shared_ptr<FactionInput> _input;

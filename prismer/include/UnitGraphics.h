@@ -24,12 +24,17 @@ class UnitEntity
         virtual void updateState() = 0;
         virtual void update(float dt, float t) = 0;
 
+        virtual void setTintColor(vec3 tintColor) {
+            _tintColor = tintColor;
+        }
+
     protected:
         shared_ptr<Unit> _unit;
         shared_ptr<GridEntity> _grid_entity;
         shared_ptr<Arya::Entity> _entity;
 
         vec3 _current_position;
+        vec3 _tintColor;
         float _current_yaw;
 };
 

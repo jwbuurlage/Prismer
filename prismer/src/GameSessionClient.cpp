@@ -47,6 +47,7 @@ bool GameSessionClient::init()
         fac->setInput(make_shared<FactionInput>(fac));
     }
 
+
     return true;
 }
 
@@ -83,6 +84,8 @@ shared_ptr<Unit> GameSessionClient::createUnit(int x, int y)
     // also create a unit entity
     auto unitEntity = make_shared<TriangleEntity>(unit, _grid_entity);
     unit->setEntity(unitEntity);
+
+    unitEntity->setTintColor((*_currentFactionIter)->getColor());
 
     return unit;
 }
