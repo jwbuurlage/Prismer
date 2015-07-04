@@ -36,6 +36,8 @@ void Faction::beginTurn()
     for (auto& unit : _units) {
         unit->resetPoints();
     }
+
+    _active = true;
 }
 
 void Faction::endTurn()
@@ -47,6 +49,8 @@ void Faction::endTurn()
 
     if (auto session = _session.lock())
         session->nextFaction();
+
+    _active = false;
 }
 
 void Faction::addUnit(shared_ptr<Unit>& unit)

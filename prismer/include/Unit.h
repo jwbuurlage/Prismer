@@ -64,6 +64,10 @@ class Unit
             return _tile;
         }
 
+        shared_ptr<Faction> getFaction() const {
+            return _faction.lock();
+        }
+
         void resetPoints()
         {
             // FIXME: implement

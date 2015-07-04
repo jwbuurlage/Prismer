@@ -33,8 +33,13 @@ class Faction
             return _color;
         }
 
+        bool isActive() const {
+            return _active;
+        }
+
     private:
-        int _id;
+        int _id = 0;
+        bool _active = false;
 
         vec3 _color;
 
