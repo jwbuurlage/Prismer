@@ -20,8 +20,8 @@ class Shape
 {
     public:
         Shape(int id,
-            shared_ptr<GameSession> session,
-            vector<ColorID> colors) : Unit(id, session), _colors(colors)
+            weak_ptr<Faction> faction,
+            vector<ColorID> colors) : Unit(id, faction), _colors(colors)
         { }
 
         virtual ~Shape() { }

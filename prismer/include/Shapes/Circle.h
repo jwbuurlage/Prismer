@@ -8,7 +8,7 @@ class Circle : public Shape
 {
     public:
         Circle(int id,
-            shared_ptr<GameSession> session,
+            weak_ptr<Faction> faction,
             vector<ColorID> colors);
         
         virtual ~Circle() { }

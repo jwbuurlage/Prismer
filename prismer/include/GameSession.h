@@ -7,6 +7,7 @@
 #pragma once
 
 #include <map>
+#include <list>
 #include <memory>
 
 namespace Prismer {
@@ -16,6 +17,7 @@ using std::unique_ptr;
 
 class Unit;
 class UnitInfo;
+class Faction;
 class Grid;
 
 class GameSession
@@ -45,11 +47,7 @@ class GameSession
         virtual shared_ptr<Unit> createUnit(int x, int y);
 
         /** Generate a unique id */
-        int generateId() const {
-            static int id = 1;
-            return id++;
-        }
-
+        int generateId() const;
         /** Return unit by id */
         shared_ptr<Unit> getUnitById(int id);
 
@@ -63,6 +61,10 @@ class GameSession
             return _grid;
         }
 
+        void startMatch();
+
+        void nextFaction();
+
     protected:
         int gameTimer;
 
@@ -71,6 +73,11 @@ class GameSession
         }
 
         shared_ptr<Grid> _grid;
+
+        std::list<shared_ptr<Faction>> _factions;
+        decltype(_factions)::iterator _currentFactionIter;
+
+        int _turn = 0;
 
     private:
         friend class Unit;

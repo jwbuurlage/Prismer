@@ -84,7 +84,10 @@ namespace Arya
     void Geometry::draw(int frame)
     {
         glBindVertexArray(vaoHandles[frame]);
-        glDrawArrays(primitiveType, 0, vertexCount);
+        if (indexCount)
+            glDrawElements(primitiveType, indexCount, GL_UNSIGNED_INT, 0);
+        else
+            glDrawArrays(primitiveType, 0, vertexCount);
     }
 
 }

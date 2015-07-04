@@ -15,13 +15,14 @@ class GridInput;
 class GameSession;
 class UnitEntity;
 class Tile;
+class Faction;
 
 class Unit
     : public std::enable_shared_from_this<Unit>
 {
     public:
         Unit(int id,
-            shared_ptr<GameSession> session);
+            weak_ptr<Faction> faction);
         virtual ~Unit() { }
 
         int getId() const {
@@ -32,6 +33,10 @@ class Unit
 
         void setEntity(shared_ptr<UnitEntity> entity) {
             _entity = entity;
+        }
+
+        shared_ptr<UnitEntity> getEntity() const {
+            return _entity;
         }
 
         int getX() const {
@@ -59,6 +64,11 @@ class Unit
             return _tile;
         }
 
+        void resetPoints()
+        {
+            // FIXME: implement
+        }
+
     protected:
         int _mp = 2;
         float _speed = 2.0f;
@@ -68,7 +78,7 @@ class Unit
         int _x = 0;
         int _y = 0;
 
-        shared_ptr<GameSession> _session;
+        weak_ptr<Faction> _faction;
         shared_ptr<UnitEntity> _entity;
         weak_ptr<Tile> _tile;
 };

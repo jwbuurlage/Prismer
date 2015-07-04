@@ -1,6 +1,8 @@
 #include <Arya.h>
 #include <memory>
 
+#include "Faction.h"
+#include "FactionInput.h"
 #include "GameSessionClient.h"
 #include "Grid.h"
 #include "GridGraphics.h"
@@ -41,6 +43,11 @@ bool GameSessionClient::init()
 
     _camera = make_shared<GameCamera>();
 
+    for (auto& fac : _factions) {
+        fac->setInput(make_shared<FactionInput>(fac));
+    }
+
+
     return true;
 }
 
@@ -77,6 +84,8 @@ shared_ptr<Unit> GameSessionClient::createUnit(int x, int y)
     // also create a unit entity
     auto unitEntity = make_shared<TriangleEntity>(unit, _grid_entity);
     unit->setEntity(unitEntity);
+
+    unitEntity->setTintColor((*_currentFactionIter)->getColor());
 
     return unit;
 }

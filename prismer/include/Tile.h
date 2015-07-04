@@ -81,7 +81,7 @@ class TileInfo {
     protected:
         bool _active = false;
         bool _hovered = false;
-        bool _visible = true;
+        bool _visible = false;
         shared_ptr<Unit> _unit = nullptr;
         vector<ColorID> _resources;
 };

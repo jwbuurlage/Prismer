@@ -16,6 +16,11 @@ class TriangleEntity
          // unit state changed; update appearance
         virtual void updateState() override;
         virtual void update(float dt, float t) override;
+
+        virtual void setTintColor(vec3 tintColor) override;
+
+    private:
+        shared_ptr<Arya::Model> triangle;
 };
 
 } // namespace Prismer
