@@ -52,6 +52,8 @@ bool Game::init()
 
 void Game::run()
 {
+    session->startMatch();
+
     root->gameLoop([this] (float f) { this->update(f); });
 }
 

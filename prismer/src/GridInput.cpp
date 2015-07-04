@@ -53,26 +53,6 @@ void GridInput::activate()
     keyBindings.push_back(input->bind("v", [this](bool down, const Arya::MousePos&) {
                 if (down) toggleVisible(_hovered); return down; }));
 
-
-    //DEBUG---
-    keyBindings.push_back(input->bind("j", [this](bool down, const Arya::MousePos&) {
-            // create unit?
-            if (down && _hovered!=nullptr)
-            {
-                auto l_grid = _grid.lock();
-                GameLogInfo << "Vision:" << endLog;
-                auto visionlist = l_grid->getVision(_hovered);
-                GameLogDebug << "The list has " << visionlist.size() << " elements." << endLog;
-                for(auto t:visionlist)
-                {
-                    GameLogInfo << "Tile x:" << t->getX() << " Tile y:" << t->getY() << endLog;
-                }
-                GameLogInfo << endLog;
-            }
-            return down;
-        }));
-
-
     // mouse movement
     keyBindings.push_back(input->bindMouseMove(
             [this](const Arya::MousePos& position, int dx, int dy) { 

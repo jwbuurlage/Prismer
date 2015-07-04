@@ -65,6 +65,10 @@ class GameSession
             return _grid;
         }
 
+        void startMatch();
+
+        void nextFaction();
+
     protected:
         int gameTimer;
 
@@ -74,13 +78,15 @@ class GameSession
 
         shared_ptr<Grid> _grid;
 
+        std::list<shared_ptr<Faction>> _factions;
+        decltype(_factions)::iterator _currentFactionIt;
+
+        int _turn = 0;
+
     private:
         friend class Unit;
 
         std::map<int,shared_ptr<Unit>> unitMap;
-
-        std::list<shared_ptr<Faction>> _factions;
-        shared_ptr<Faction> _currentFaction = nullptr;
 
         // Called in Unit deconstructor
         void destroyUnit(int id);

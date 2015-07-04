@@ -34,7 +34,7 @@ void GameSessionInput::init()
 
                 // bad way to do this, but just for lolz
                 int x = (_session->getGrid()->getWidth() / 2);
-                int y = (_session->getGrid()->getHeight() / 2);t pu
+                int y = (_session->getGrid()->getHeight() / 2);
 
                 auto unit = _session->createUnit(x, y);
                 if (!unit) {

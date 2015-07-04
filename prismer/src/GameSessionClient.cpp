@@ -1,6 +1,8 @@
 #include <Arya.h>
 #include <memory>
 
+#include "Faction.h"
+#include "FactionInput.h"
 #include "GameSessionClient.h"
 #include "Grid.h"
 #include "GridGraphics.h"
@@ -40,6 +42,10 @@ bool GameSessionClient::init()
     _grid->setEntity(_grid_entity);
 
     _camera = make_shared<GameCamera>();
+
+    for (auto& fac : _factions) {
+        fac->setInput(make_shared<FactionInput>(fac));
+    }
 
     return true;
 }

@@ -35,10 +35,11 @@ void GameSession::init()
     // make factions
     int numFactions = 2;
     for (int i = 0; i < numFactions; ++i) {
-        _factions.push_back(make_shared<Faction>());
+        _factions.push_back(make_shared<Faction>(i,
+                    weak_ptr<GameSession>(shared_from_this())));
     }
 
-    _currentFaction = _factions.front();
+    _currentFactionIt = _factions.begin();
 }
 
 shared_ptr<Unit> GameSession::createUnit(int x, int y)
@@ -52,6 +53,24 @@ shared_ptr<Unit> GameSession::createUnit(int x, int y)
     unit->setTile(_grid->getTile(x, y));
     unitMap.insert(std::pair<int, shared_ptr<Unit>>(unit->getId(), unit));
     return unit;
+}
+
+void GameSession::startMatch()
+{
+    _turn = 1;
+    (*_currentFactionIt)->beginTurn();
+}
+
+void GameSession::nextFaction()
+{
+    _currentFactionIt++;
+
+    if (_currentFactionIt == _factions.end()) {
+        _turn++;
+        _currentFactionIt = _factions.begin();
+    }
+
+    (*_currentFactionIt)->beginTurn();
 }
 
 void GameSession::destroyUnit(int id)

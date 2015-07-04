@@ -16,6 +16,8 @@ SET(
     "../src/Shapes/TriangleGraphics.cpp"
     "../src/Abilities/AGather.cpp"
     "../src/Abilities/AMove.cpp"
+    "../src/Faction.cpp"
+    "../src/FactionInput.cpp"
     "../src/Grid.cpp"
     "../src/GridGraphics.cpp"
     "../src/GridInput.cpp"

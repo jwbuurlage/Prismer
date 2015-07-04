@@ -86,7 +86,7 @@ shared_ptr<Tile> Grid::getNeighbor(int x, int y, TileDirection dir)
     }
 }
 
-vector<float> Grid::getVision(shared_ptr<Tile> origin)
+/* vector<float> Grid::getVision(shared_ptr<Tile> origin)
 {
     int range = 3;
     int originX = origin->getX();
@@ -94,7 +94,7 @@ vector<float> Grid::getVision(shared_ptr<Tile> origin)
     vector<Tile> nonemptytiles;
     for(int k = -range; k + 1 < range; k++) //First make a list of Tiles that have nontrivial vision information.
     {
-        for(int l = std:max(-range, -k-range); l + 1 < std::min(range, range-k); l++)
+        for(int l = std::max(-range, -k-range); l + 1 < std::min(range, range-k); l++)
         {
             Tile targetTile = getTile(k + originX, l + originY);
             if( targetTile == nullptr)
@@ -132,7 +132,7 @@ vector<float> Grid::getVision(shared_ptr<Tile> origin)
     while (!walls.empty()); //Build the result.
     {
     }
-}
+} */
 
 ///Old version of getVision
 //! Get the visibility for the desired object
