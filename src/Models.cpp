@@ -147,8 +147,8 @@ namespace Arya
         animatedShader->addUniform3fv("tintColor", [](ShaderUniformBase*){ return vec3(0.5, 1.0, 0.5); });
 
         primitiveShader = make_shared<ShaderProgram>(
-                "../shaders/basic.vert",
-                "../shaders/basic.frag");
+                "../shaders/basiclighting.vert",
+                "../shaders/basiclighting.frag");
         if (!primitiveShader->isValid()) {
             primitiveShader = nullptr;
             LogError << "Could not load primitive shader." << endLog;

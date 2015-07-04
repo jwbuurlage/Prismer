@@ -12,7 +12,7 @@ UnitEntity::UnitEntity(shared_ptr<Unit> unit,
     : _unit(unit), _grid_entity(grid_entity)
 {
     auto& root = Arya::Locator::getRoot();
-    auto triangle = root.getModelManager()->getModel("triangle");
+    auto triangle = root.getModelManager()->getModel("thicktriangle");
     triangle->setMaterial(root.getMaterialManager()->createMaterial(vec4(0.6f, 0.6f, 0.6f, 0.5f)));
 
     _entity = Arya::Entity::create();
