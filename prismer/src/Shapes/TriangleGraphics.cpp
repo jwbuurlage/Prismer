@@ -16,13 +16,12 @@ TriangleEntity::TriangleEntity(shared_ptr<Unit> unit,
     _entity->setPosition(_current_position);
 
     auto& root = Arya::Locator::getRoot();
-    auto triangle = root.getModelManager()->getModel("triangle");
+    auto triangle = root.getModelManager()->getModel("thicktriangle");
     triangle->setMaterial(root.getMaterialManager()->createMaterial(vec4(0.6f, 0.6f, 0.6f, 0.5f)));
 
     _entity->setGraphics(triangle);
-    _entity->getGraphics()->setScale(5.0f);
 
-    _entity->getGraphics()->setScale(vec3(4.0f, 5.0f, 4.0f));
+    _entity->getGraphics()->setScale(vec3(4.0f, 5.0f, 2.0f));
 
     _current_yaw = 0.0f;
     _entity->setYaw(0.0f);

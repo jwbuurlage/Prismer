@@ -12,16 +12,17 @@ class GridEntity;
 class UnitEntity
 {
     public:
-        UnitEntity() { };
+        UnitEntity() { }
 
         UnitEntity(shared_ptr<Unit> unit,
-                shared_ptr<GridEntity> grid_entity);
+            shared_ptr<GridEntity> grid_entity)
+            : _unit(unit), _grid_entity(grid_entity) { }
 
         virtual ~UnitEntity() { }
 
          // unit state changed; update appearance
-        virtual void updateState();
-        virtual void update(float dt, float t);
+        virtual void updateState() = 0;
+        virtual void update(float dt, float t) = 0;
 
     protected:
         shared_ptr<Unit> _unit;
