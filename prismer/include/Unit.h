@@ -1,6 +1,7 @@
+#pragma once
+
 #include <Arya.h>
 
-#include "Shapes/Shape.h"
 #include "GameLogger.h"
 
 #include <memory>
@@ -10,30 +11,19 @@ namespace Prismer {
 using std::shared_ptr;
 using std::weak_ptr;
 
+class GridInput;
 class GameSession;
 class UnitEntity;
 class Tile;
-enum ColorID;
-
-// unit info is stuff that (in general) does not change turn-to-turn.
-// specific to a unit at creation
-struct UnitInfo
-{
-    UnitInfo(Shape shape_)
-        : shape(shape_)
-    { }
-
-    Shape shape;
-};
+class Faction;
 
 class Unit
     : public std::enable_shared_from_this<Unit>
 {
     public:
         Unit(int id,
-            UnitInfo info,
-            shared_ptr<GameSession> session);
-        ~Unit() { }
+            weak_ptr<Faction> faction);
+        virtual ~Unit() { }
 
         int getId() const {
             return _id;
@@ -41,14 +31,12 @@ class Unit
 
         void update(float dt, float t);
 
-        void addColor(ColorID color);
-
-        const Shape& getShape() const {
-            return _info.shape;
-        };
-
         void setEntity(shared_ptr<UnitEntity> entity) {
             _entity = entity;
+        }
+
+        shared_ptr<UnitEntity> getEntity() const {
+            return _entity;
         }
 
         int getX() const {
@@ -64,11 +52,11 @@ class Unit
         }
 
         float getSpeed() const {
-            return (float)_mp;
+            return _speed;
         }
 
-        void activate(shared_ptr<GridInput> grid_input);
-        void deactivate();
+        virtual void activate(shared_ptr<GridInput> grid_input);
+        virtual void deactivate();
 
         void setTile(shared_ptr<Tile> tile);
 
@@ -76,14 +64,25 @@ class Unit
             return _tile;
         }
 
+        shared_ptr<Faction> getFaction() const {
+            return _faction.lock();
+        }
+
+        void resetPoints()
+        {
+            // FIXME: implement
+        }
+
+    protected:
+        int _mp = 2;
+        float _speed = 2.0f;
+
     private:
         int _id;
         int _x = 0;
         int _y = 0;
-        int _mp = 2;
 
-        UnitInfo _info;
-        shared_ptr<GameSession> _session;
+        weak_ptr<Faction> _faction;
         shared_ptr<UnitEntity> _entity;
         weak_ptr<Tile> _tile;
 };

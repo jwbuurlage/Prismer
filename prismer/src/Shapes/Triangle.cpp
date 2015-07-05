@@ -1,7 +1,6 @@
 #include <memory>
 
-#include "Shapes/Circle.h"
-#include "Abilities/AGather.h"
+#include "Shapes/Triangle.h"
 #include "Abilities/AMove.h"
 
 #include "GameLogger.h"
@@ -11,15 +10,16 @@ namespace Prismer {
 
 using std::make_shared;
 
-Circle::Circle(int id,
+Triangle::Triangle(int id,
             weak_ptr<Faction> faction,
             vector<ColorID> colors)
      : Shape(id, faction, colors)
 {
-    _abilities.push_back(make_shared<AGather>());
     _abilities.push_back(make_shared<AMove>());
 
-    GameLogInfo << "Circle() -- colors:" << endLog;
+    _mp = 5;
+
+    GameLogInfo << "Triangle() -- colors:" << endLog;
     for (auto& color_bag : colors) {
         GameLogInfo << "(" << color_bag << ")" << endLog;
     }

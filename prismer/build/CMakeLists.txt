@@ -9,16 +9,21 @@ SET(
 
 SET(
     PROJECT_SOURCES
+    "../src/Shapes/Shape.cpp"
     "../src/Shapes/Circle.cpp"
+    "../src/Shapes/CircleGraphics.cpp"
+    "../src/Shapes/Triangle.cpp"
+    "../src/Shapes/TriangleGraphics.cpp"
     "../src/Abilities/AGather.cpp"
     "../src/Abilities/AMove.cpp"
+    "../src/Faction.cpp"
+    "../src/FactionInput.cpp"
     "../src/Grid.cpp"
     "../src/GridGraphics.cpp"
     "../src/GridInput.cpp"
     "../src/Tile.cpp"
     "../src/TileGraphics.cpp"
     "../src/Unit.cpp"
-    "../src/UnitGraphics.cpp"
     "../src/Game.cpp"
     "../src/GameLogger.cpp"
     "../src/GameSessionInput.cpp"

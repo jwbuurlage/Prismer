@@ -4,12 +4,18 @@
 #include "GameSession.h"
 #include <vector>
 #include <memory>
+#include <array>
+
+namespace Arya {
+    class Label;
+}
 
 namespace Prismer {
 
 using std::unique_ptr;
 using std::make_shared;
 using std::vector;
+using std::array;
 
 class GameSessionInput;
 class GameCamera;
@@ -41,7 +47,7 @@ class GameSessionClient : public GameSession
         void updateGameLogic(int elapsedTime); //in ms
 
         //! Creates a unit
-        virtual shared_ptr<Unit> createUnit(UnitInfo info, int x, int y) override;
+        virtual shared_ptr<Unit> createUnit(int x, int y) override;
 
      private:
         unique_ptr<GameSessionInput> input;
@@ -52,6 +58,9 @@ class GameSessionClient : public GameSession
         shared_ptr<GameCamera> _camera;
 
         float total_time = 0.0f;
+
+        shared_ptr<Arya::Label> _fpsCounterLabel;
+        array<float, 100> _elapsedTimes;
 };
 
 } // namespace Prismer
