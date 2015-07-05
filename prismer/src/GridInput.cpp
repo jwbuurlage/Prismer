@@ -1,6 +1,5 @@
 #include "GridInput.h"
 
-#include "Faction.h"
 #include "Grid.h"
 #include "GridGraphics.h"
 #include "GameLogger.h"
@@ -64,7 +63,7 @@ void GridInput::activate()
 
     // mouse movement
     keyBindings.push_back(input->bindMouseMove(
-            [this](const Arya::MousePos& position, int dx, int dy) { 
+            [this](const Arya::MousePos& position, int, int) { 
                 if(auto l_grid = _grid.lock()) {
                     // which tile is hovered over:
                     // world_x, world_y
@@ -104,7 +103,7 @@ void GridInput::setActive(shared_ptr<Tile> tile) {
 
         auto unit = tile->getInfo()->getUnit();
 
-        if (unit->getFaction() && !unit->getFaction()->isActive()) {
+        if (!unit->isActivatable()) {
             // FIXME: if the current faction is not a human player then this may not be sufficient
             GameLogInfo << "Trying to select unit which does not belong to the current faction." << endLog;
             return;

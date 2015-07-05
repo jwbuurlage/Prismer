@@ -62,7 +62,7 @@ void GameSessionInput::init()
         });
 }
 
-void GameSessionInput::update(float elapsedTime)
+void GameSessionInput::update(float)
 {
     return;
 }

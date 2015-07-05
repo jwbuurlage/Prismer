@@ -34,6 +34,14 @@ void Unit::setTile(shared_ptr<Tile> tile)
         _entity->updateState();
 }
 
+bool Unit::isActivatable() const
+{
+    if (auto faction = _faction.lock()) {
+        return faction->isActive();
+    }
+    return false;
+}
+
 void Unit::activate(shared_ptr<GridInput> grid_input)
 {
 }

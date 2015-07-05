@@ -35,8 +35,8 @@ void GameSession::init()
         _factions.push_back(make_shared<Faction>(i,
                     weak_ptr<GameSession>(shared_from_this())));
     }
-
-    _currentFactionIter = _factions.begin();
+    
+    _currentFactionIter = _factions.end();
 }
 
 int GameSession::generateId() const
@@ -66,6 +66,8 @@ shared_ptr<Unit> GameSession::createUnit(int x, int y)
 void GameSession::startMatch()
 {
     _turn = 1;
+
+    _currentFactionIter = _factions.begin();
     (*_currentFactionIter)->beginTurn();
 }
 

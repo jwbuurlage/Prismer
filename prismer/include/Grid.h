@@ -53,7 +53,9 @@ class Grid
             _input = input;
         }
 
-        vector<float> getVision(shared_ptr<Tile> origin) { };
+        vector<float> getVision(shared_ptr<Tile>) const {
+            return vector<float>();
+        }
 
     private:
         int _width;

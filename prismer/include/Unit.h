@@ -64,9 +64,7 @@ class Unit
             return _tile;
         }
 
-        shared_ptr<Faction> getFaction() const {
-            return _faction.lock();
-        }
+        bool isActivatable() const;
 
         void resetPoints()
         {
