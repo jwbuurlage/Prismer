@@ -6,19 +6,15 @@
 #include <memory>
 #include <array>
 
-namespace Arya {
-    class Label;
-}
-
 namespace Prismer {
 
 using std::unique_ptr;
 using std::make_shared;
 using std::vector;
-using std::array;
 
 class GameSessionInput;
 class GameCamera;
+class GameInterface;
 class GridEntity;
 class GridInput;
 class UnitInfo;
@@ -49,18 +45,18 @@ class GameSessionClient : public GameSession
         //! Creates a unit
         virtual shared_ptr<Unit> createUnit(int x, int y) override;
 
+        void toggleFPS();
+
      private:
-        unique_ptr<GameSessionInput> input;
-        vector<int> clients;
+        unique_ptr<GameSessionInput> _input;
 
         shared_ptr<GridEntity> _grid_entity;
         shared_ptr<GridInput> _grid_input;
         shared_ptr<GameCamera> _camera;
 
-        float total_time = 0.0f;
+        unique_ptr<GameInterface> _interface;
 
-        shared_ptr<Arya::Label> _fpsCounterLabel;
-        array<float, 100> _elapsedTimes;
+        float total_time = 0.0f;
 };
 
 } // namespace Prismer
