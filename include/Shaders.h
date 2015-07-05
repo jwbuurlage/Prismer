@@ -83,7 +83,8 @@ namespace Arya
         UNIFORM_VPMATRIX        = 4,    //mat4 vpMatrix
         UNIFORM_TEXTURE         = 8,    //sampler2D tex
         UNIFORM_MATERIALPARAMS  = 16,   //vec4 material
-        UNIFORM_ANIM_INTERPOL   = 32    //float interpolation
+        UNIFORM_ANIM_INTERPOL   = 32,   //float interpolation
+        UNIFORM_LIGHTMATRIX     = 64    //mat4 lightMatrix
     };
     //bit operators because it is not a primitive type
     using UnderType = std::underlying_type_t<UNIFORM_FLAG>;
@@ -135,6 +136,7 @@ namespace Arya
             void setMoveMatrix(const mat4& m);
             void setViewMatrix(const mat4& m);
             void setViewProjectionMatrix(const mat4& m);
+            void setLightMatrix(const mat4& m);
             void setTexture(int t);
             void setMaterialParams(vec4 par);
             void setAnimInterpolation(float t);
