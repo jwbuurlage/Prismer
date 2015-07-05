@@ -30,6 +30,7 @@ SET(
     "../src/GameSession.cpp"
     "../src/GameSessionClient.cpp"
     "../src/GameCamera.cpp"
+    "../src/GameInterface.cpp"
     "../src/main.cpp"
 )
 

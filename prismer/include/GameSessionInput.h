@@ -7,12 +7,12 @@ namespace Prismer {
 
 using std::shared_ptr;
 
-class GameSession;
+class GameSessionClient;
 
 class GameSessionInput
 {
     public:
-        GameSessionInput(shared_ptr<GameSession> session);
+        GameSessionInput(shared_ptr<GameSessionClient> session);
         ~GameSessionInput() { };
 
         void init();
@@ -20,7 +20,7 @@ class GameSessionInput
         void update(float elapsedTime);
 
     private: 
-        shared_ptr<GameSession> _session;
+        shared_ptr<GameSessionClient> _session;
 
         Arya::InputBinding bindingC, bindingL;
 };

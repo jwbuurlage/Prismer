@@ -98,6 +98,18 @@ InputSystem::InputSystem()
         keyMap["tab"] = SDLK_TAB;
         keyMap["tilde"] = SDLK_BACKQUOTE;
         keyMap["backspace"] = SDLK_BACKSPACE;
+        keyMap["f1"] = SDLK_F1;
+        keyMap["f2"] = SDLK_F2;
+        keyMap["f3"] = SDLK_F3;
+        keyMap["f4"] = SDLK_F4;
+        keyMap["f5"] = SDLK_F5;
+        keyMap["f6"] = SDLK_F6;
+        keyMap["f7"] = SDLK_F7;
+        keyMap["f8"] = SDLK_F8;
+        keyMap["f9"] = SDLK_F9;
+        keyMap["f10"] = SDLK_F10;
+        keyMap["f11"] = SDLK_F11;
+        keyMap["f12"] = SDLK_F12;
     }
 
     if(buttonMap.empty()) {
