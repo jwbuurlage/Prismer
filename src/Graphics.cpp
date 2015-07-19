@@ -1,6 +1,7 @@
 #include "common/Logger.h"
 #include "AnimationVertex.h"
 #include "Camera.h"
+#include "CommandHandler.h"
 #include "Entity.h"
 #include "Geometry.h"
 #include "Graphics.h"
@@ -49,14 +50,19 @@ bool Graphics::init(int width, int height)
     lightDirection = glm::normalize(vec3(-1.0f, -1.0f, -2.0f));
     makeLightMatrix();
 
-    //TODO
-    //Debug
+    showDepthMap = false;
     auto shadowMaterial = Material::createFromHandle(shadowRenderTarget->depthBuffer);
-    auto shadowImage = ImageView::create();
-    shadowImage->setMaterial(shadowMaterial);
-    shadowImage->setPosition(vec2(-1.0f, -1.0f), vec2(0.5f*512.0f + 10.0f, 0.5f*512.0f + 10.0f));
-    shadowImage->setSize(vec2(0.0f, 0.0f), vec2(512.0f, 512.0f)); //fullwidth + (-20px, +40px)
-    shadowImage->addToRootView();
+    depthMapView = ImageView::create();
+    depthMapView->setMaterial(shadowMaterial);
+    depthMapView->setPosition(vec2(-1.0f, -1.0f), vec2(0.5f*512.0f + 10.0f, 0.5f*512.0f + 10.0f));
+    depthMapView->setSize(vec2(0.0f, 0.0f), vec2(512.0f, 512.0f)); //fullwidth + (-20px, +40px)
+    depthMapView->setVisible(showDepthMap);
+    depthMapView->addToRootView();
+
+    Locator::getCommandHandler().bind("shadowmap", [this](const string&) {
+            showDepthMap = !showDepthMap;
+            depthMapView->setVisible(showDepthMap);
+            } );
 
     billboardShader = make_shared<ShaderProgram>(
             "../shaders/billboard.vert",

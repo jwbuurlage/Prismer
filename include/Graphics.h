@@ -17,6 +17,7 @@ class Entity;
 class Camera;
 class Geometry;
 class Renderer;
+class ImageView;
 class Interface;
 class RenderTarget;
 class ShaderProgram;
@@ -66,6 +67,9 @@ class Graphics
         // directional light. NOT point source
         vec3 lightDirection; //normalized, points along the lightbeams in light direction, from light towards objects
         mat4 lightMatrix; //for rendering the scene as seen from the light. includes orthographic projection
+
+        bool showDepthMap; // show the depth map in a View, for debugging purposes
+        shared_ptr<ImageView> depthMapView;
 
         void makeLightMatrix();
 
