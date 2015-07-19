@@ -291,6 +291,12 @@ namespace Arya
             setUniform1i("tex", t);
     }
 
+    void ShaderProgram::setShadowTexture(int t)
+    {
+        if (builtinUniforms & UNIFORM_SHADOWTEXTURE)
+            setUniform1i("shadowMap", t);
+    }
+
     void ShaderProgram::setMaterialParams(vec4 par)
     {
         if (builtinUniforms & UNIFORM_MATERIALPARAMS)

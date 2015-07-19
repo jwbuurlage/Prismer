@@ -103,7 +103,7 @@ void GameSessionClient::update(float elapsedTime)
         }
         else
         {
-            myShader->enableUniform(Arya::UNIFORM_MOVEMATRIX | Arya::UNIFORM_VPMATRIX | Arya::UNIFORM_TEXTURE);
+            myShader->enableUniform(Arya::UNIFORM_MOVEMATRIX | Arya::UNIFORM_VPMATRIX | Arya::UNIFORM_TEXTURE | Arya::UNIFORM_LIGHTMATRIX | Arya::UNIFORM_SHADOWTEXTURE);
             myShader->addUniform4fv("customUniform", [this](Arya::ShaderUniformBase* b){
                     Entity* e = static_cast<Entity*>(b);
                     if (e->getPosition().x > 50.0f && e->getPosition().x < 150.0f

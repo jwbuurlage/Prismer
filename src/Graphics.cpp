@@ -49,6 +49,15 @@ bool Graphics::init(int width, int height)
     lightDirection = glm::normalize(vec3(-1.0f, -1.0f, -2.0f));
     makeLightMatrix();
 
+    //TODO
+    //Debug
+    auto shadowMaterial = Material::createFromHandle(shadowRenderTarget->depthBuffer);
+    auto shadowImage = ImageView::create();
+    shadowImage->setMaterial(shadowMaterial);
+    shadowImage->setPosition(vec2(-1.0f, -1.0f), vec2(0.5f*512.0f + 10.0f, 0.5f*512.0f + 10.0f));
+    shadowImage->setSize(vec2(0.0f, 0.0f), vec2(512.0f, 512.0f)); //fullwidth + (-20px, +40px)
+    shadowImage->addToRootView();
+
     billboardShader = make_shared<ShaderProgram>(
             "../shaders/billboard.vert",
             "../shaders/billboard.frag");
@@ -141,6 +150,9 @@ void Graphics::render(World* world)
 
             renderModel((ModelGraphicsComponent*)gr, ent.get(), true);
         }
+        //TODO: Move this somewhere it belongs
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, shadowRenderTarget->depthBuffer);
     }
 
     //
@@ -246,16 +258,25 @@ void Graphics::renderModel(ModelGraphicsComponent* gr, Entity* e, bool shadowPas
     ShaderProgram* shader = model->getShaderProgram().get();
     if(!shader) return;
 
-    //TODO: one of these
-    // - different shader on shadow pass
-    // - uniform int 0/1 for shadow pass
+    static mat4 biasMatrix(
+            0.5f, 0.0f, 0.0f, 0.0f,
+            0.0f, 0.5f, 0.0f, 0.0f,
+            0.0f, 0.0f, 0.5f, 0.0f,
+            0.5f, 0.5f, 0.5f, 1.0f
+            );
 
     shader->use();
     shader->setMoveMatrix(gr->getMoveMatrix());
     shader->setViewMatrix(camera->getVMatrix());
-    shader->setViewProjectionMatrix(camera->getVPMatrix());
-    shader->setLightMatrix(lightMatrix);
+    shader->setViewProjectionMatrix(shadowPass ? lightMatrix : camera->getVPMatrix());
+    shader->setLightMatrix(biasMatrix * lightMatrix);
     shader->doUniforms(e);
+
+    //TODO: one of these
+    // - different shader on shadow pass
+    // - uniform int 0/1 for shadow pass
+    if (!shadowPass && shadowRenderTarget)
+        shader->setShadowTexture(1);
 
     //TODO: Investigate the bounding box and also check onScreen.z ?
     //mat4 totalMatrix = camera->getVPMatrix() * ent->getMoveMatrix();
@@ -331,7 +352,7 @@ void Graphics::makeLightMatrix()
 
     float shadowBoxSize = 2.0f*camera->getZoom();
     //left,right,bottom,top,near,far
-    mat4 orthoMatrix(glm::ortho(-shadowBoxSize, shadowBoxSize, -shadowBoxSize, shadowBoxSize, -shadowBoxSize, shadowBoxSize));
+    mat4 orthoMatrix(glm::ortho(-shadowBoxSize, shadowBoxSize, -shadowBoxSize, shadowBoxSize, -2.0f*shadowBoxSize, 2.0f*shadowBoxSize));
 
     lightMatrix = orthoMatrix * lightMatrix;
 }

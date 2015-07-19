@@ -7,9 +7,11 @@ uniform mat4 mMatrix;
 uniform mat4 vpMatrix;
 
 out vec2 texCoo;
+out vec4 worldPos;
 
 void main()
 {
     texCoo = vertexPosition.xy;
-    gl_Position = vpMatrix * mMatrix * vec4(vertexPosition, 1.0);
+    worldPos = mMatrix * vec4(vertexPosition, 1.0);
+    gl_Position = vpMatrix * worldPos;
 }
