@@ -1,19 +1,25 @@
 #include <Arya.h>
 #include <memory>
+#include <sstream>
+#include <algorithm>
 
+#include "Faction.h"
+#include "FactionInput.h"
 #include "GameSessionClient.h"
+#include "GameLogger.h"
+#include "GameCamera.h"
+#include "GameInterface.h"
+#include "GameSessionInput.h"
 #include "Grid.h"
 #include "GridGraphics.h"
 #include "GridInput.h"
-#include "GameLogger.h"
-#include "GameSessionInput.h"
-#include "GameCamera.h"
 #include "Unit.h"
-#include "UnitGraphics.h"
+#include "Shapes/TriangleGraphics.h"
 
 namespace Prismer {
 
 using std::make_shared;
+using std::stringstream;
 
 GameSessionClient::GameSessionClient() : GameSession()
 {
@@ -28,8 +34,10 @@ bool GameSessionClient::init()
 {
     GameSession::init();
 
-    input = make_unique<GameSessionInput>(shared_from_this());
-    input->init();
+    _input = make_unique<GameSessionInput>(
+            std::dynamic_pointer_cast<GameSessionClient>(
+                shared_from_this()));
+    _input->init();
 
     _grid_entity = make_shared<GridEntity>(_grid);
     _grid_entity->init();
@@ -41,6 +49,13 @@ bool GameSessionClient::init()
 
     _camera = make_shared<GameCamera>();
 
+    for (auto& fac : _factions) {
+        fac->setInput(make_shared<FactionInput>(fac));
+    }
+
+    _interface = make_unique<GameInterface>();
+    toggleFPS();
+
     return true;
 }
 
@@ -48,8 +63,11 @@ void GameSessionClient::update(float elapsedTime)
 {
     total_time += elapsedTime;
 
-    if (input)
-        input->update(elapsedTime);
+    if(_interface)
+        _interface->update(elapsedTime);
+
+    if (_input)
+        _input->update(elapsedTime);
 
     _camera->update(elapsedTime);
 
@@ -66,18 +84,26 @@ void GameSessionClient::updateGameLogic(int elapsedTime)
     return;
 }
 
-shared_ptr<Unit> GameSessionClient::createUnit(UnitInfo info, int x, int y)
+shared_ptr<Unit> GameSessionClient::createUnit(int x, int y)
 {
-    auto unit = GameSession::createUnit(info, x, y);
+    auto unit = GameSession::createUnit(x, y);
 
     if (!unit)
         return unit;
 
     GameLogInfo << "GameSessionClient::createUnit()" << endLog;
     // also create a unit entity
-    auto unitEntity = make_shared<UnitEntity>(unit, _grid_entity);
+    auto unitEntity = make_shared<TriangleEntity>(unit, _grid_entity);
     unit->setEntity(unitEntity);
+
+    unitEntity->setTintColor((*_currentFactionIter)->getColor());
+
     return unit;
+}
+
+void GameSessionClient::toggleFPS()
+{
+    _interface->toggleFPS();
 }
 
 } // namespace Prismer

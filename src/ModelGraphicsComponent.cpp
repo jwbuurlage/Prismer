@@ -6,7 +6,7 @@ namespace Arya
     ModelGraphicsComponent::ModelGraphicsComponent()
     {
         model = 0;
-        scale = 1.0f;
+        scale = vec3(1.0f);
     }
 
     ModelGraphicsComponent::~ModelGraphicsComponent()

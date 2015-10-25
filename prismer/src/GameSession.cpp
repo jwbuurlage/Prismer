@@ -1,15 +1,19 @@
+#include <memory>
+#include <vector>
+
 #include "GameSession.h"
 #include "GameLogger.h"
-#include "Unit.h"
+#include "Shapes/Triangle.h"
+#include "Colors.h"
 #include "Grid.h"
-
-#include <memory>
+#include "Faction.h"
 
 namespace Prismer {
 
 using std::make_shared;
 using std::make_unique;
 using std::shared_ptr;
+using std::vector;
 
 GameSession::GameSession()
 {
@@ -18,27 +22,65 @@ GameSession::GameSession()
 
 GameSession::~GameSession()
 {
-    //After deleting the factions, there should be no more units left
-    if(!unitMap.empty())
-        GameLogError << "List of units is not empty at deconstruction of GameSession. Possible memory leak" << endLog;
 }
 
 void GameSession::init()
 {
     _grid = make_shared<Grid>(10, 10);
     _grid->init();
+
+    // make factions
+    int numFactions = 2;
+    for (int i = 0; i < numFactions; ++i) {
+        _factions.push_back(make_shared<Faction>(i,
+                    weak_ptr<GameSession>(shared_from_this())));
+    }
+    
+    _currentFactionIter = _factions.end();
 }
 
-shared_ptr<Unit> GameSession::createUnit(UnitInfo info, int x, int y)
+int GameSession::generateId() const
+{
+    static int id = 1;
+    return id++;
+}
+
+shared_ptr<Unit> GameSession::createUnit(int x, int y)
 {
     if (_grid->getTile(x, y)->getInfo()->hasUnit())
         return nullptr;
 
     auto id = generateId();
-    auto unit = make_shared<Unit>(id, info, shared_from_this());
+    vector<ColorID> colors;
+    shared_ptr<Unit> unit = make_shared<Triangle>(id,
+            weak_ptr<Faction>(*_currentFactionIter),
+            colors);
     unit->setTile(_grid->getTile(x, y));
     unitMap.insert(std::pair<int, shared_ptr<Unit>>(unit->getId(), unit));
+
+    (*_currentFactionIter)->addUnit(unit);
+
     return unit;
+}
+
+void GameSession::startMatch()
+{
+    _turn = 1;
+
+    _currentFactionIter = _factions.begin();
+    (*_currentFactionIter)->beginTurn();
+}
+
+void GameSession::nextFaction()
+{
+    _currentFactionIter++;
+
+    if (_currentFactionIter == _factions.end()) {
+        _turn++;
+        _currentFactionIter = _factions.begin();
+    }
+
+    (*_currentFactionIter)->beginTurn();
 }
 
 void GameSession::destroyUnit(int id)

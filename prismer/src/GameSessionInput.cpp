@@ -4,7 +4,7 @@
 #include "common.h"
 #include "Unit.h"
 #include "Tile.h"
-#include "GameSession.h"
+#include "GameSessionClient.h"
 #include "GameSessionInput.h"
 #include "GameLogger.h"
 #include "Grid.h"
@@ -18,7 +18,7 @@ using std::vector;
 using Arya::Camera;
 using Arya::MousePos;
 
-GameSessionInput::GameSessionInput(shared_ptr<GameSession> session)
+GameSessionInput::GameSessionInput(shared_ptr<GameSessionClient> session)
 {
     _session = session;
 }
@@ -31,13 +31,12 @@ void GameSessionInput::init()
             // create unit?
             if(down) {
                 auto colors = vector<ColorID> { ColorID::red, ColorID::red };
-                auto unitInfo = UnitInfo(Circle(colors));
 
                 // bad way to do this, but just for lolz
                 int x = (_session->getGrid()->getWidth() / 2);
                 int y = (_session->getGrid()->getHeight() / 2);
 
-                auto unit = _session->createUnit(unitInfo, x, y);
+                auto unit = _session->createUnit(x, y);
                 if (!unit) {
                     GameLogInfo << "cannot create unit" << endLog;
                 } else {
@@ -52,11 +51,18 @@ void GameSessionInput::init()
             // create unit?
             if (down)
                 _session->_listUnits();
-            return down;
+            return true;
+        });
+
+    bindingL = input->bind("f10", [this](bool down, const MousePos&) {
+            // create unit?
+            if (down)
+                _session->toggleFPS();
+            return true;
         });
 }
 
-void GameSessionInput::update(float elapsedTime)
+void GameSessionInput::update(float)
 {
     return;
 }

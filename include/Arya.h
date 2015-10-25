@@ -9,6 +9,7 @@
 #include "Materials.h"
 #include "Root.h"
 #include "Shaders.h"
+#include "Text.h"
 #include "World.h"
 
 using glm::vec2;

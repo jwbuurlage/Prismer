@@ -4,14 +4,14 @@
 
 namespace Prismer {
 
-class Circle : public Shape
+class Triangle : public Shape
 {
     public:
-        Circle(int id,
+        Triangle(int id,
             weak_ptr<Faction> faction,
             vector<ColorID> colors);
         
-        virtual ~Circle() { }
+        virtual ~Triangle() { }
 };
 
 }// namespace Prismer

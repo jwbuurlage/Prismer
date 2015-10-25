@@ -148,6 +148,7 @@ namespace Arya
         if (!interface->init()) return false;
         interface->resize(windowWidth, windowHeight);
         inputSystem->resize(windowWidth, windowHeight);
+        inputSystem->initializeControllers();
 
         if (!console->init()) return false; //console must be after interface and inputsystem
 
@@ -212,6 +213,11 @@ namespace Arya
                 case SDL_MOUSEWHEEL:
                 case SDL_TEXTINPUT:
                 case SDL_TEXTEDITING:
+                case SDL_CONTROLLERDEVICEADDED:
+                case SDL_CONTROLLERDEVICEREMOVED:
+                case SDL_CONTROLLERBUTTONDOWN:
+                case SDL_CONTROLLERBUTTONUP:
+                case SDL_CONTROLLERAXISMOTION:
                     inputSystem->handleInputEvent(event);
                     break;
                 case SDL_QUIT:
@@ -229,8 +235,15 @@ namespace Arya
                             break;
                     }
                     break;
+                // explicitely ignore joystick events
+                case SDL_JOYBALLMOTION:
+                case SDL_JOYHATMOTION:
+                case SDL_JOYAXISMOTION:
+                case SDL_JOYBUTTONDOWN:
+                case SDL_JOYBUTTONUP:
+                    break;
                 default:
-                    LogDebug << "Unkown SDL event: " << event.type << endLog;
+                    LogDebug << "Unknown SDL event: " << event.type << endLog;
                     break;
             }
         }

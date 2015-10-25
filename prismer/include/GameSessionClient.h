@@ -4,6 +4,7 @@
 #include "GameSession.h"
 #include <vector>
 #include <memory>
+#include <array>
 
 namespace Prismer {
 
@@ -13,6 +14,7 @@ using std::vector;
 
 class GameSessionInput;
 class GameCamera;
+class GameInterface;
 class GridEntity;
 class GridInput;
 class UnitInfo;
@@ -41,15 +43,18 @@ class GameSessionClient : public GameSession
         void updateGameLogic(int elapsedTime); //in ms
 
         //! Creates a unit
-        virtual shared_ptr<Unit> createUnit(UnitInfo info, int x, int y) override;
+        virtual shared_ptr<Unit> createUnit(int x, int y) override;
+
+        void toggleFPS();
 
      private:
-        unique_ptr<GameSessionInput> input;
-        vector<int> clients;
+        unique_ptr<GameSessionInput> _input;
 
         shared_ptr<GridEntity> _grid_entity;
         shared_ptr<GridInput> _grid_input;
         shared_ptr<GameCamera> _camera;
+
+        unique_ptr<GameInterface> _interface;
 
         float total_time = 0.0f;
 };

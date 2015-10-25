@@ -85,6 +85,7 @@ void GameSessionClient::update(float elapsedTime)
         auto model = Model::create("ogros.aryamodel");
         auto hexagon = Model::create("hexagon");
         auto triangle = Model::create("triangle");
+        auto circle = Model::create("circle");
         auto mat = Material::create("grass.tga");
         auto mat2 = Material::create(vec4(0.0f, 1.0f, 0.0f, 0.8f));
         auto mat3 = Material::create(vec4(1.0f, 0.0f, 0.0f, 0.8f));
@@ -122,8 +123,8 @@ void GameSessionClient::update(float elapsedTime)
         triangle->setMaterial(mat3);
         debugEntity = Entity::create();
         debugEntity->setPosition(vec3(0.0f, 0.0f, -0.02f)); //hidden
-        debugEntity->setGraphics(triangle);
-        debugEntity->getGraphics()->setScale(1.0f);
+        debugEntity->setGraphics(circle);
+        debugEntity->getGraphics()->setScale(2.0f);
         //debugEntity->setUserData(something);
 
         // bar at top of screen. 50px high, 10px from all sides
