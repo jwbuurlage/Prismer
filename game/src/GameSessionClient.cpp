@@ -84,7 +84,7 @@ void GameSessionClient::update(float elapsedTime)
         shared_ptr<Entity> ent, ent2;
         auto model = Model::create("ogros.aryamodel");
         auto hexagon = Model::create("hexagon");
-        auto triangle = Model::create("triangle");
+        auto triangle = Model::create("triangle.aryamodel");
         auto circle = Model::create("circle");
         auto mat = Material::create("grass.tga");
         auto mat2 = Material::create(vec4(0.0f, 1.0f, 0.0f, 0.8f));
