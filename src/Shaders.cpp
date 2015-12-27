@@ -279,10 +279,22 @@ namespace Arya
             setUniformMatrix4fv("vpMatrix", m);
     }
 
+    void ShaderProgram::setLightMatrix(const mat4& m)
+    {
+        if (builtinUniforms & UNIFORM_LIGHTMATRIX)
+            setUniformMatrix4fv("lightMatrix", m);
+    }
+
     void ShaderProgram::setTexture(int t)
     {
         if (builtinUniforms & UNIFORM_TEXTURE)
             setUniform1i("tex", t);
+    }
+
+    void ShaderProgram::setShadowTexture(int t)
+    {
+        if (builtinUniforms & UNIFORM_SHADOWTEXTURE)
+            setUniform1i("shadowMap", t);
     }
 
     void ShaderProgram::setMaterialParams(vec4 par)

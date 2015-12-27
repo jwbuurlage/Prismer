@@ -31,7 +31,7 @@ typedef struct{
     int submeshCount;
     int materialCount;
     int frameCount; //1 for static meshes
-    SubmeshInfo submesh[0];
+    SubmeshInfo submesh[0]; // 0 is so that sizeof(AryaHeader) does not include submesh
 } AryaHeader;
 
 #define ARYAMAGICINT (('A' << 0) | ('r' << 8) | ('M' << 16) | ('o' << 24))
@@ -219,10 +219,10 @@ namespace Arya
                 int count = 0;
                 nameBuf[0] = *pointer++;
                 while(nameBuf[count]){ ++count; nameBuf[count] = *pointer++; }
-                nameBuf[count++] = '.';
-                nameBuf[count++] = 't';
-                nameBuf[count++] = 'g';
-                nameBuf[count++] = 'a';
+                //nameBuf[count++] = '.';
+                //nameBuf[count++] = 't';
+                //nameBuf[count++] = 'g';
+                //nameBuf[count++] = 'a';
                 nameBuf[count++] = 0;
                 
                 shared_ptr<Material> mat = Locator::getMaterialManager().getMaterial(nameBuf);

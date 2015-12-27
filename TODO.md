@@ -2,19 +2,25 @@
 
 ## Engine - Arya
 
+- **Line strokes** for fancy looking primitives
 - **Sound** Use SDL
-- **Text rendering** Benchmark these options
-    - Per label, save a list of quads (`Arya::Geometry`) and render these every frame
-    - Per label, prerender text to a texture by first generating quad geometry with `stb_truetype` and then using OpenGL Render-To-Texture
-    - Per label, prerender text to a texture on CPU by using `stb_truetype` methods
+- **Shaders**
+    - Better shader system. Adding a *custom* part to a shader should not require copying/rewriting the entire shader.
+- **Particle effects** If possible, support for the standard particle effect format
+
+### Low priority
+
 - **CommandHandler**
     - Set commands with argument and argument types
     - Argument parsing so callback gets proper arguments instead of `line`
     - Tab-completion
 - **Shadows**
-- **Line strokes** for fancy looking primitives
+    - Improve speed after completing shader system
 - **Skybox**
-- **Particle effects** If possible, support for the standard particle effect format
+- **Text rendering** Benchmark these options
+    - Per label, save a list of quads (`Arya::Geometry`) and render these every frame
+    - Per label, prerender text to a texture by first generating quad geometry with `stb_truetype` and then using OpenGL Render-To-Texture
+    - Per label, prerender text to a texture on CPU by using `stb_truetype` methods
 
 ## Networking
 

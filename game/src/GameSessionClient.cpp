@@ -84,7 +84,7 @@ void GameSessionClient::update(float elapsedTime)
         shared_ptr<Entity> ent, ent2;
         auto model = Model::create("ogros.aryamodel");
         auto hexagon = Model::create("hexagon");
-        auto triangle = Model::create("triangle");
+        auto triangle = Model::create("triangle.aryamodel");
         auto circle = Model::create("circle");
         auto mat = Material::create("grass.tga");
         auto mat2 = Material::create(vec4(0.0f, 1.0f, 0.0f, 0.8f));
@@ -103,7 +103,7 @@ void GameSessionClient::update(float elapsedTime)
         }
         else
         {
-            myShader->enableUniform(Arya::UNIFORM_MOVEMATRIX | Arya::UNIFORM_VPMATRIX | Arya::UNIFORM_TEXTURE);
+            myShader->enableUniform(Arya::UNIFORM_MOVEMATRIX | Arya::UNIFORM_VPMATRIX | Arya::UNIFORM_TEXTURE | Arya::UNIFORM_LIGHTMATRIX | Arya::UNIFORM_SHADOWTEXTURE);
             myShader->addUniform4fv("customUniform", [this](Arya::ShaderUniformBase* b){
                     Entity* e = static_cast<Entity*>(b);
                     if (e->getPosition().x > 50.0f && e->getPosition().x < 150.0f
