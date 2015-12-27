@@ -1,6 +1,6 @@
 #include "Audio.h"
 #include "common/Logger.h"
-#include <SDL2/SDL_mixer.h>
+//#include <SDL2/SDL_mixer.h>
 
 namespace Arya
 {
@@ -18,14 +18,17 @@ namespace Arya
 
     AudioManager::~AudioManager()
     {
+#if 0
         if (impl->mixerOpened)
             Mix_CloseAudio();
         if (impl->mixerInitialized)
             Mix_Quit();
+#endif
     }
 
     bool AudioManager::init()
     {
+#if 0
         //Mix_SetSoundFonts("./");
         if (!impl->mixerInitialized)
         {
@@ -49,7 +52,7 @@ namespace Arya
             }
             impl->mixerOpened = true;
         }
-
+#endif
         return true;
     }
 
